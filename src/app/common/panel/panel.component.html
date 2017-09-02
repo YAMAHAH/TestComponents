@@ -1,0 +1,11 @@
+<div class="panel panel-{{type}} {{cssClass}}" [ngClass]="{'panel-open': !isCollapsed}">
+    <div class="panel-heading" (click)="onCollapse()" [ngStyle]="{cursor: collapsable ? 'pointer' :'inherit','text-align': headTextAlign}">
+        <button type="button" class="close" *ngIf="closable" aria-label="Close" (click)="onClose($event)">
+      <span aria-hidden="true">&times;</span>
+    </button>
+        <ng-content select="x-panel-header,x-accordion-header"></ng-content>
+    </div>
+    <div class="panel-body collapse" [ngClass]="{in: !isCollapsed}">
+        <ng-content select="x-panel-body,x-accordion-body"></ng-content>
+    </div>
+</div>

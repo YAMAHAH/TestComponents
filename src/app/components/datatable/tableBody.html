@@ -1,0 +1,62 @@
+<ng-template ngFor let-rowData [ngForOf]="dt.dataToRender" let-even="even" let-odd="odd" let-rowIndex="index">
+    <tr #rowGroupElement class="ui-widget-header ui-rowgroup-header" *ngIf="dt.rowGroupMode=='subheader' && (rowIndex === 0||(dt.resolveFieldData(rowData,dt.groupField) !== dt.resolveFieldData(dt.dataToRender[rowIndex - 1], dt.groupField)))" (click)="dt.onRowGroupClick($event)"
+        [ngStyle]="{'cursor': dt.sortableRowGroup ? 'pointer' : 'auto'}">
+        <td [attr.colspan]="columns.length">
+            <a href="#" *ngIf="dt.expandableRowGroups" (click)="dt.toggleRowGroup($event,rowData)">
+                <span class="fa fa-fw" [ngClass]="{'fa-chevron-circle-down':dt.isRowGroupExpanded(rowData), 'fa-chevron-circle-right': !dt.isRowGroupExpanded(rowData)}"></span>
+            </a>
+            <p-templateLoader [template]="dt.rowGroupHeaderTemplate" [data]="rowData"></p-templateLoader>
+            <ng-container *jyComponentOutlet="dt.rowGroupHeaderComponent;context:{ 'datatable':dt,'col': col,'rowData': rowData, 'rowIndex': rowIndex + dt.first} "></ng-container>
+        </td>
+    </tr>
+    <tr #rowElement *ngIf="!dt.expandableRowGroups||dt.isRowGroupExpanded(rowData)" [class]="dt.getRowStyleClass(rowData,rowIndex)" (click)="dt.handleRowClick($event, rowData)" (dblclick)="dt.rowDblclick($event,rowData)" (contextmenu)="dt.onRowRightClick($event,rowData)"
+        (touchend)="dt.handleRowTouchEnd($event)" [ngClass]="{'ui-datatable-even':even&&dt.rowGroupMode!='rowspan','ui-datatable-odd':odd&&dt.rowGroupMode!='rowspan','ui-state-highlight': dt.isSelected(rowData)}">
+        <ng-template ngFor let-col [ngForOf]="columns" let-colIndex="index">
+            <td #cell *ngIf="!dt.rowGroupMode || (dt.rowGroupMode == 'subheader') ||
+                        (dt.rowGroupMode=='rowspan' && ((dt.sortField==col.field && dt.rowGroupMetadata[dt.resolveFieldData(rowData,dt.sortField)].index == rowIndex) || (dt.sortField!=col.field)))" [ngStyle]="col.style" [class]="col.styleClass" [style.display]="col.hidden ? 'none' : 'table-cell'"
+                [ngClass]="{'ui-editable-column':col.editable,'ui-selection-column':col.selectionMode}" (click)="dt.switchCellToEditMode(cell,col,rowData)" [attr.rowspan]="(dt.rowGroupMode=='rowspan' && dt.sortField == col.field && dt.rowGroupMetadata[dt.resolveFieldData(rowData,dt.sortField)].index == rowIndex) ? dt.rowGroupMetadata[dt.resolveFieldData(rowData,dt.sortField)].size : null">
+
+                <span class="ui-column-title" *ngIf="dt.responsive">{{col.header}}</span>
+
+                <span class="ui-cell-data" *ngIf=" !col.cellComponent && !col.bodyTemplate && !col.expander && !col.selectionMode">{{dt.resolveFieldData(rowData,col.field)}}</span>
+                <span class="ui-cell-data" *ngIf="col.bodyTemplate">
+                      <dt-columnBodyTemplateLoader *ngIf="col.bodyTemplate" [column]="col" [rowData]="rowData" [rowIndex]="rowIndex + dt.first"></dt-columnBodyTemplateLoader>
+                </span>
+                <span class="ui-cell-data" *ngIf="col.cellComponent">
+                    <ng-container *jyComponentOutlet="col.cellComponent;context:{ 'col': col,'rowData': rowData, 'rowIndex': rowIndex + dt.first} "></ng-container>
+                </span>
+
+                <div class="ui-cell-editor" *ngIf="col.editable">
+                    <input *ngIf="!col.editorTemplate && !col.cellEditor" type="text" jyInputText [(ngModel)]="rowData[col.field]" required="true" (keydown)="dt.onCellEditorKeydown($event, col, rowData, colIndex)" />
+                    <dt-columnEditorTemplateLoader *ngIf="col.editorTemplate" [column]="col" [rowData]="rowData"></dt-columnEditorTemplateLoader>
+                    <ng-container *jyComponentOutlet="col.cellEditor;context: {'col': col,'rowData': rowData, 'rowIndex': rowIndex + dt.first}"></ng-container>
+                </div>
+
+                <a href="#" *ngIf="col.expander" (click)="dt.toggleRow(rowData,$event)">
+                    <span class="ui-row-toggler fa fa-fw ui-c" [ngClass]="{'fa-chevron-circle-down':dt.isRowExpanded(rowData), 'fa-chevron-circle-right': !dt.isRowExpanded(rowData)}"></span>
+                </a>
+                <jy-dtRadioButton *ngIf="col.selectionMode=='single'" (onClick)="dt.selectRowWithRadio($event, rowData)" [checked]="dt.isSelected(rowData)"></jy-dtRadioButton>
+                <jy-dtCheckbox *ngIf="col.selectionMode=='multiple'" (onChange)="dt.toggleRowWithCheckbox($event,rowData)" [checked]="dt.isSelected(rowData)"></jy-dtCheckbox>
+            </td>
+        </ng-template>
+    </tr>
+    <tr class="ui-widget-header" *ngIf="dt.rowGroupFooterTemplate && dt.rowGroupMode=='subheader' && ((rowIndex === dt.dataToRender.length - 1)||(dt.resolveFieldData(rowData,dt.groupField) !== dt.resolveFieldData(dt.dataToRender[rowIndex + 1],dt.groupField))) && (!dt.expandableRowGroups || dt.isRowGroupExpanded(rowData))">
+        <p-templateLoader class="ui-helper-hidden" [data]="rowData" [template]="dt.rowGroupFooterTemplate"></p-templateLoader>
+    </tr>
+
+    <tr class="ui-widget-header" *ngIf="dt.rowGroupFooterComponent && dt.rowGroupMode=='subheader' && ((rowIndex === dt.dataToRender.length - 1)||(dt.resolveFieldData(rowData,dt.groupField) !== dt.resolveFieldData(dt.dataToRender[rowIndex + 1],dt.groupField))) && (!dt.expandableRowGroups || dt.isRowGroupExpanded(rowData))">
+
+        <ng-container class="ui-helper-hidden" *jyComponentOutlet="dt.rowGroupFooterComponent;context: { 'datatable':dt,'cols': columns,'rowData': rowData, 'rowIndex': rowIndex + dt.first}"></ng-container>
+    </tr>
+
+    <tr *ngIf="dt.expandableRows && dt.isRowExpanded(rowData)">
+        <td [attr.colspan]="dt.visibleColumns().length">
+            <jy-rowExpansionLoader [rowData]="rowData" [template]="dt.rowExpansionTemplate"></jy-rowExpansionLoader>
+            <ng-container *jyComponentOutlet="rowExpansionComponent;context: { 'datatable':dt,'cols': columns,'rowData': rowData, 'rowIndex': rowIndex + dt.first}"></ng-container>
+        </td>
+    </tr>
+</ng-template>
+
+<tr *ngIf="dt.isEmpty()" class="ui-widget-content">
+    <td [attr.colspan]="dt.visibleColumns().length" class="ui-datatable-emptymessage">{{dt.emptyMessage}}</td>
+</tr>

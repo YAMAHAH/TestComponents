@@ -1,0 +1,10 @@
+<fieldset [ngClass]="{'ui-fieldset ui-widget ui-widget-content ui-corner-all': true, 'ui-fieldset-toggleable': toggleable}" [ngStyle]="style" [class]="styleClass">
+    <legend class="ui-fieldset-legend ui-corner-all ui-state-default ui-unselectable-text" (click)="toggle($event)">
+        <span *ngIf="toggleable" class="ui-fieldset-toggler fa fa-w" [ngClass]="{'fa-minus': !collapsed,'fa-plus':collapsed}"></span> {{legend}}
+    </legend>
+    <div class="ui-fieldset-content-wrapper" [@fieldsetContent]="collapsed ? 'hidden' : 'visible'" [ngClass]="{'ui-fieldset-content-wrapper-overflown': collapsed||animating}">
+        <div class="ui-fieldset-content">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</fieldset>

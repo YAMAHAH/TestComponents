@@ -1,0 +1,4 @@
+<p>{{purList.title}}</p>
+<div style="display:flex; height:100%;">
+    <x-pur-detail [ngClass]="getClass(item)" style="flex-direction: column; margin: 5px; background-color: yellow" *ngFor="let item of purList.details" [detail]="item"></x-pur-detail>
+</div>

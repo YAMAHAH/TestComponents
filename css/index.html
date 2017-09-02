@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>交通诱导中央控制系统</title>
+    <base href="/">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <a class="navbar-brand"></a>
+        </div>
+        <ul class="user">
+            <li>
+                <span></span>
+                <a>sun17</a>
+            </li>
+            <li (click)="initLogout()">
+                <span></span>
+                <a>登出</a>
+            </li>
+        </ul>
+    </nav>
+    <div class="container-fluid leftside-wrap">
+        <div class="row">
+            <div id="navsidebar" role="navigation" class="sidebar">
+                <ul class="nav nav-sidebar">
+                    <li [routerLink]="['ScreenControl']" routerLinkActive="navbar-nav-menu">
+                        <i class="screen-control"></i>
+                        <a>我的应用</a>
+                    </li>
+                    <li [routerLink]="['ParkingControl']" routerLinkActive="navbar-nav-menu">
+                        <i class="parking-control"></i>
+                        <a>基础管理 </a>
+                    </li>
+                    <li [routerLink]="['ScreenManagement']" routerLinkActive="navbar-nav-menu">
+                        <i class="screen-management"></i>
+                        <a>系统应用</a>
+                    </li>
+                    <li [routerLink]="['RoadManagement']" routerLinkActive="navbar-nav-menu">
+                        <i class="road-management"></i>
+                        <a>产品管理</a>
+                    </li>
+                    <li [routerLink]="['ParkingManagement']" routerLinkActive="navbar-nav-menu">
+                        <i class="parking-management"></i>
+                        <a>销售管理</a>
+                    </li>
+                    <li [routerLink]="['ParkingSourceManagement']" routerLinkActive="navbar-nav-menu">
+                        <i class="parking-source-management"></i>
+                        <a>生产计划</a>
+                    </li>
+                    <li [routerLink]="['NoticeList']" routerLinkActive="navbar-nav-menu">
+                        <i class="notice-list"></i>
+                        <a>品质检验</a>
+                    </li>
+                    <li [routerLink]="['RangeManagement']" routerLinkActive="navbar-nav-menu">
+                        <i class="range-management"></i>
+                        <a>仓库管理</a>
+                    </li>
+                    <li [routerLink]="['EmployeeManagement']" routerLinkActive="navbar-nav-menu">
+                        <i class="employee-list"></i>
+                        <a>财务管理</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="rightside-wrap" style="background-color: skyblue">
+<router-outlet></router-outlet>
+</div>
+<div class="container-fluid rightside-wrap">
+    <div class="row">
+        <div id="navsidebar" role="navigation" class="sidebar">
+            <ul class="nav nav-sidebar">
+                <li [routerLink]="['ScreenControl']" routerLinkActive="navbar-nav-menu">
+                    <i class="screen-control"></i>
+                    <a>我的应用</a>
+                </li>
+                <li [routerLink]="['ParkingControl']" routerLinkActive="navbar-nav-menu">
+                    <i class="parking-control"></i>
+                    <a>基础管理 </a>
+                </li>
+                <li [routerLink]="['ScreenManagement']" routerLinkActive="navbar-nav-menu">
+                    <i class="screen-management"></i>
+                    <a>系统应用</a>
+                </li>
+                <li [routerLink]="['RoadManagement']" routerLinkActive="navbar-nav-menu">
+                    <i class="road-management"></i>
+                    <a>产品管理</a>
+                </li>
+                <li [routerLink]="['ParkingManagement']" routerLinkActive="navbar-nav-menu">
+                    <i class="parking-management"></i>
+                    <a>销售管理</a>
+                </li>
+                <li [routerLink]="['ParkingSourceManagement']" routerLinkActive="navbar-nav-menu">
+                    <i class="parking-source-management"></i>
+                    <a>生产计划</a>
+                </li>
+                <li [routerLink]="['NoticeList']" routerLinkActive="navbar-nav-menu">
+                    <i class="notice-list"></i>
+                    <a>品质检验</a>
+                </li>
+                <li [routerLink]="['RangeManagement']" routerLinkActive="navbar-nav-menu">
+                    <i class="range-management"></i>
+                    <a>仓库管理</a>
+                </li>
+                <li [routerLink]="['EmployeeManagement']" routerLinkActive="navbar-nav-menu">
+                    <i class="employee-list"></i>
+                    <a>财务管理</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+</html>

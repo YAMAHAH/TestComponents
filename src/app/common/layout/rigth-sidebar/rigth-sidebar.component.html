@@ -1,0 +1,46 @@
+<div class="container-fluid" [class.hide-right]="!isShowRight">
+    <div class="row">
+        <div id="navsidebar" role="navigation" class="sidebar">
+            <ul class="nav nav-sidebar">
+                <li [routerLink]="['/pc/desktop']" routerLinkActive="navbar-nav-menu">
+                    <i class="screen-control"></i>
+                    <a>我的应用NAV</a>
+                </li>
+                <li [routerLink]="['/pc/news']" routerLinkActive="navbar-nav-menu">
+                    <i class="parking-control"></i>
+                    <a>基础管理NEWS</a>
+                </li>
+                <li [routerLink]="['/pc/staticnews']" routerLinkActive="navbar-nav-menu">
+                    <i class="screen-management"></i>
+                    <a>系统应用SNEWS</a>
+                </li>
+                <li [routerLink]="['/pc/d3']" routerLinkActive="navbar-nav-menu">
+                    <i class="road-management"></i>
+                    <a>产品管理D3</a>
+                </li>
+                <li [routerLink]="['/pc/home']" routerLinkActive="navbar-nav-menu">
+                    <i class="parking-management"></i>
+                    <a>销售管理HOME</a>
+                </li>
+                <li [routerLink]="['ParkingSourceManagement']" routerLinkActive="navbar-nav-menu">
+                    <i class="parking-source-management"></i>
+                    <a>生产计划</a>
+                </li>
+                <li [routerLink]="['NoticeList']" routerLinkActive="navbar-nav-menu">
+                    <i class="notice-list"></i>
+                    <a>品质检验</a>
+                </li>
+                <li [routerLink]="['RangeManagement']" routerLinkActive="navbar-nav-menu">
+                    <i class="range-management"></i>
+                    <a>仓库管理</a>
+                </li>
+                <li [routerLink]="['EmployeeManagement']" routerLinkActive="navbar-nav-menu">
+                    <i class="employee-list"></i>
+                    <a>财务管理</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<ng-content></ng-content>
+<router-outlet name="right"></router-outlet>

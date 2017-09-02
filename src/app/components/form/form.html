@@ -1,0 +1,46 @@
+<div #container [ngClass]="{'ui-dialog ui-widget ui-widget-content ui-corner-all ui-shadow':true,'ui-dialog-rtl':rtl,'ui-dialog-draggable':draggable}" [ngStyle]="style" [class]="styleClass" [style.display]="visible ? 'block' : 'none'" [style.width.px]="width"
+    [style.height.px]="height" (mousedown)="moveOnTop()" [@dialogState]="visible ? 'visible' : 'hidden'">
+    <div [style.textAlign]="formTitleAlign[titleAlign]" class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix ui-corner-top" (dblclick)="maximize($event)" (mousedown)="initDrag($event)" (mouseup)="endDrag($event)" *ngIf="showHeader">
+        <span class="ui-dialog-title" *ngIf="header">{{header}}</span>
+        <span class="ui-dialog-title" *ngIf="headerFacet"><ng-content select="p-header"></ng-content></span>
+
+        <a *ngIf="closable" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="close($event)">
+            <span class="fa fa-windows fa-window-close"></span>
+        </a>
+        <a *ngIf="closable" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="maximize($event)">
+            <span [ngClass]="{'fa-window-maximize':modalWindowState == mwState.Normal || oldModalWindowState ==mwState.Normal,'fa-window-restore': modalWindowState==mwState.Maximized || oldModalWindowState == mwState.Maximized}" class="fa fa-fw"></span>
+        </a>
+        <a *ngIf="closable" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="minimize($event)">
+            <span class="fa fa-fw fa-window-minimize"></span>
+        </a>
+        <a *ngIf="closable" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="fullScreen($event)">
+            <span class="fa fa-fw fa-arrows-alt"></span>
+        </a>
+    </div>
+    <div #content class="ui-dialog-content ui-widget-content" [style.height.px]="contentHeight">
+        <ng-container *ngFor="let comp of componentOutlets">
+            <ng-container *jyComponentOutlet="comp;context: compctx"></ng-container>
+        </ng-container>
+        <ng-template *xyzHostContainer="formModel && formModel.componentRef? formModel.componentRef :componentRef;context:compctx"></ng-template>
+        <ng-content></ng-content>
+    </div>
+    <ng-content select="p-footer"></ng-content>
+    <ng-container *ngIf="resizable">
+        <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;" (mousedown)="initResize($event,spEnum.rightBottom)"></div>
+        <div class="ui-resizable-handle ui-resizable-righttop ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 91;" (mousedown)="initResize($event,spEnum.rightTop)"></div>
+        <div class="ui-resizable-handle ui-resizable-lefttop ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 92;" (mousedown)="initResize($event,spEnum.leftTop)"></div>
+        <div class="ui-resizable-handle ui-resizable-leftbottom ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 93;" (mousedown)="initResize($event,spEnum.leftBottom)"></div>
+        <div class="ui-resizable-handle ui-resizable-left ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 94;" (mousedown)="initResize($event,spEnum.leftCenter)"></div>
+        <div class="ui-resizable-handle ui-resizable-right ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 95;" (mousedown)="initResize($event,spEnum.rightCenter)"></div>
+        <div class="ui-resizable-handle ui-resizable-top ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 96;" (mousedown)="initResize($event,spEnum.topCenter)"></div>
+        <div class="ui-resizable-handle ui-resizable-bottom ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 97;" (mousedown)="initResize($event,spEnum.bottomCenter)"></div>
+    </ng-container>
+    <!--<div *ngIf="resizable" class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;" (mousedown)="initResize($event)"></div>
+    <div *ngIf="resizable" class="ui-resizable-handle ui-resizable-righttop ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 91;" (mousedown)="initResize($event)"></div>
+    <div *ngIf="resizable" class="ui-resizable-handle ui-resizable-lefttop ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 92;" (mousedown)="initResize($event)"></div>
+    <div *ngIf="resizable" class="ui-resizable-handle ui-resizable-leftbottom ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 93;" (mousedown)="initResize($event)"></div>
+    <div *ngIf="resizable" class="ui-resizable-handle ui-resizable-left ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 94;" (mousedown)="initResize($event)"></div>
+    <div *ngIf="resizable" class="ui-resizable-handle ui-resizable-right ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 95;" (mousedown)="initResize($event)"></div>
+    <div *ngIf="resizable" class="ui-resizable-handle ui-resizable-top ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 96;" (mousedown)="initResize($event)"></div>
+    <div *ngIf="resizable" class="ui-resizable-handle ui-resizable-bottom ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 97;" (mousedown)="initResize($event)"></div>-->
+</div>

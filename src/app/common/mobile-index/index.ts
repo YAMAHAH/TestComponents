@@ -1,0 +1,1 @@
+export const lazyPath = "./mobile-index.module#MobileIndexModule";

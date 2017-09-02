@@ -1,0 +1,23 @@
+x-desktop-layout-container {
+    /*height: 100%;*/
+    /*width: 100%;*/
+    /*border: 1px solid black;*/
+    padding: 0px;
+    display: flex;
+    flex: 1 0 auto;
+    flex-flow: column wrap;
+    justify-content: flex-start;
+    align-content: flex-start;
+    margin: 0px;
+    background-image: url(/assets/img/win10.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+x-desktop-item {
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    margin: 5px;
+    flex-grow: 0 0 auto;
+}

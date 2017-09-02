@@ -1,0 +1,8 @@
+<div #toasty id="toasty" [ngClass]="[position]">
+    <ng-container *ngFor="let toast of toasts">
+        <ng-template *xyzHostContainer="toast.componentRef;context:{tag:toast}"></ng-template>
+        <ng-container *jyComponentOutlet="toast.componentOutlet;context:{tag:toast};"></ng-container>
+        <x-toast *ngIf="!!!toast.elementRef" [toast]="toast" (closeToast)="closeToast(toast)"></x-toast>
+    </ng-container>
+    <ng-content></ng-content>
+</div>

@@ -1,0 +1,36 @@
+html {
+    font-size: 62.5%;
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    margin: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+x-desktop,
+x-pur-order {
+    display: flex;
+    flex: 1 0 auto;
+    color: invert(#000);
+    background-color: orangered // blue; 
+}
+
+.el-hide {
+    display: none;
+}
+
+.el-flex-show {
+    display: flex;
+    flex: 1 0 auto;
+}
+
+.active {
+    background-color: darkslateblue;
+}
+
+@import "/assets/css/font-awesome-4.7.0/css/font-awesome.min.css";
+@import "/assets/css/primeng/resources/primeng.min.css";
+@import "/assets/css/primeng/resources/themes/omega/theme.css";

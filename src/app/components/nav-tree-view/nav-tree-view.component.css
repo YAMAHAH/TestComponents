@@ -1,0 +1,34 @@
+x-nav-tree-view:host {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: flex-start;
+    overflow: scroll;
+}
+
+x-nav-treeview-item {
+    flex: 0 0 35px;
+}
+
+x-nav-treeview-item>li:hover {
+    cursor: pointer;
+    background-color: skyblue;
+}
+
+ul {
+    margin-top: 2px;
+    list-style: none;
+    text-align: start;
+}
+
+.item-wrap {
+    width: 188px;
+    line-height: 30px;
+}
+
+.item-wrap>li {
+    border: 1px solid dodgerblue;
+}
+
+.item-wrap>li:hover {
+    background: cornflowerblue;
+}

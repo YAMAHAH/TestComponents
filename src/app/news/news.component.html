@@ -1,0 +1,15 @@
+<ul>
+    <li *ngFor="let i of [1,2,3,4,5,6,8] | filter:filtercb">{{i}}</li>
+</ul>
+<button #exhaustMap class="btn btn-success">ExhaustMap</button>
+<button #audit class="btn btn-success">Audit</button>
+<button #window class="btn btn-success">Window</button>
+<button #combineAll class="btn btn-success">combineAll</button>
+<app-title [subtitle]="'NewTitle'"></app-title>
+<h2 #mytest style="display:block">news page for AOT {{test$ | async}}</h2>
+<pre>news Page for AOT {{result$ | async | json}}</pre>
+
+<input type="text" #input (keyup)="keyup(input.value)" />
+<pre>{{ text$ | async | json }}</pre>
+<p>version:{{version}}</p>
+<pre>{{clicks$ | async | json}}</pre>

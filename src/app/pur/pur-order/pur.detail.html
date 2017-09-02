@@ -1,0 +1,34 @@
+<a>Inbox <x-badge text="87"></x-badge></a>
+<p>{{formModel.key}}</p>
+<label>pono</label>
+<input class="form-control" [(ngModel)]="purOrder.pono">
+<label>ptnno</label>
+<input class="form-control" [(ngModel)]="purOrder.ptnno">
+<!--<section>
+    <h4>Auto disappear:</h4>
+    <div class="checkbox">
+        <label>
+        <input type="checkbox" [(ngModel)]="autoDisappear" (ngModelChange)="closed = false"/>Auto disappear after 2s?
+      </label>
+    </div>
+
+    <x-alert-box (click)="clickAlertBox(alert)" type="danger" [closable]="true" (close)="closeAlertBox()" *ngIf="!closed" [disappearTime]="autoDisappear? 2*1000: 0">
+        <strong>Oh snap!</strong> Change a few things up and try submitting again.
+    </x-alert-box>
+</section>
+<section>
+    <h4>Success:</h4>
+    <x-alert-box #alert (click)="clickAlertBox(alert)" type="success">
+        <strong>Well done!</strong> You successfully read this important alert message.
+    </x-alert-box>
+</section>
+<pre>{{formModel?.resolve | json}}</pre>
+<pre>{{context | json}}</pre>
+<pre> {{ 1234 | currency:'CNY':true}}</pre>-->
+<jy-accordion-menu></jy-accordion-menu>
+<p-footer>
+    <div class="modal-footer" style="display:flex;justify-content: center">
+        <button type="button" class="btn btn-primary" style="flex:0 0 80px" (click)="ok($event)">确定</button>
+        <button type="button" class="btn btn-warning" style="flex:0 0 80px" (click)="cancel($event)">取消</button>
+    </div>
+</p-footer>

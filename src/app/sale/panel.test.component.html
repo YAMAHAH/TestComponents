@@ -1,0 +1,15 @@
+<x-panel #xpanel='panel' type="info" headTextAlign="center" [isCollapsed]="true" [closable]="true" (close)="closePanel($event)" [collapsable]="true">
+    <x-panel-header>
+        下拉窗口数据传递
+    </x-panel-header>
+    <x-panel-body>
+        <pre>{{context |json}}</pre>
+        <!--<ad></ad>-->
+    </x-panel-body>
+</x-panel>
+<p-footer>
+    <div class="modal-footer" style="display:flex;justify-content: center">
+        <button type="button" class="btn btn-primary" style="flex:0 0 80px" (click)="ok($event)">确定</button>
+        <button type="button" class="btn btn-warning" style="flex:0 0 80px" (click)="cancel($event)">取消</button>
+    </div>
+</p-footer>

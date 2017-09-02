@@ -1,0 +1,6 @@
+<x-modal-window [instanceCount]="instanceCount" [isOpen]="isOpen" [minWidth]="minWidth" [minHeight]="minHeight" role="dialog" class="modal fade {{modalOptions.modalClass? modalOptions.modalClass : ''}}" [ngClass]="{'in': isOpen}" [ngStyle]="getStyle()"
+    tabindex="-1">
+</x-modal-window>
+
+<x-modal-backdrop [instanceCount]="instanceCount" [modalOptions]="modalOptions" [isOpen]="isOpen" *ngIf="modalOptions.backdrop !== false">
+</x-modal-backdrop>

@@ -1,0 +1,3 @@
+<x-desktop-layout-container>
+    <x-desktop-item (ItemDoubleClick)="itemDoubleClickHandler($event)" *ngFor="let item of items | filter:fCallback" [item]="item"></x-desktop-item>
+</x-desktop-layout-container>

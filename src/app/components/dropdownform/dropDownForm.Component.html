@@ -1,0 +1,6 @@
+<div style="position: absolute">
+    <jy-dropdown #dropdown [editable]="editable" (onKeydown)="keydownHandler($event,op,dropdown.container)" (onFocus)="focusHandler($event,op,dropdown.container)" [options]="options" [selectItemValue]="selectedOption" [(ngModel)]="selectedOption" [style]="dropdownStyle">
+    </jy-dropdown>
+    <jy-overlayPanel (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="context" [style]="panelStyle" [dismissable]="true" #op>
+    </jy-overlayPanel>
+</div>

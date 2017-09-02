@@ -1,0 +1,38 @@
+<ul class="item-wrap">
+    <li *ngFor="let node of root?.childs" [ngClass]="itemClass(node)">
+        <div class="item-border" style="display: flex;">
+            <span style="display: flex;" [style.width.px]="node.level*16">
+                <span style="width:16px; flex: 0 0 16px;" [class.bbit-tree-elbow-line]="! identNode.isLast" *ngFor="let identNode of node.getParents()"></span>
+            </span>
+            <span style="display: flex;">
+            <span class="item-link" (click)="node.expand()" style="width:16px;" [ngClass]="getHitArea(node)"></span>
+            <span (click)="node.checkBoxClick()" [ngClass]="getCheckBoxState(node)"></span>
+            <span (click)="onClick(node)" style="cursor: pointer;" [ngClass]="getItemIcon(node)"></span>
+            <span (click)="onClick(node)" class="item-link"> {{node.name}} </span>
+            <span (click)="onItemCloseClick(node)" [ngClass]="{'item-close':true}"></span>
+            </span>
+        </div>
+        <div *ngIf="node.expanded">
+            <x-nav-treeview-item (itemCloseClick)="onItemCloseClick($event)" (itemClick)="onClick($event)" [root]="node"></x-nav-treeview-item>
+        </div>
+    </li>
+</ul>
+
+<!--[routerLink]="[node.path]" [queryParams]="{subappid:node.param}"-->
+<!--
+<ul class="item-wrap" *ngFor="let node of items"> [style.margin-left.px]="node.level*16"
+    <li class="item-border" (click)="onclick(node)" [class.parent]="node.level == 1" [class.root]="node.level == 0">
+        <div [style.margin-left.px]="node.level*15">
+            <span [routerLink]="[node.path]" [queryParams]="{subappid:node.param}">
+            <span>{{node.level}}</span>
+            <span>{{node.name}}</span></span>
+            <span (click)="node.expand()"> {{node.geticon}} </span>
+        </div>
+    </li>
+    <div *ngIf="node.expanded">
+        <x-nav-treeview-item [root]="node"></x-nav-treeview-item>
+    </div>
+</ul>-->
+
+<!--[style.margin-left.px]=" node.level == 0 ? 0 :15" [style.width.px]=" 188 - node.level*15"-->
+<!--[routerLink]="[node.path]" [queryParams]="{subappid:node.param}-->

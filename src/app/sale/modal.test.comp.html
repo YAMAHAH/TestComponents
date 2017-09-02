@@ -1,0 +1,23 @@
+<div *ngIf="showTitle" class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cancel()">
+    <span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">模式窗口标题</h4>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="textInput" class="col-sm-2 control-label">Text:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="textInput" name="text" [(ngModel)]="context.text" />
+            </div>
+        </div>
+    </form>
+    <hr>
+    <strong>Modal context:</strong> <pre>{{context | json}}</pre>
+    <hr>
+    <button class="btn btn-default" (click)="show()">Open inner modal!</button>
+</div>
+<div class="modal-footer" style="display:flex;justify-content: center">
+    <button type="button" class="btn btn-primary" style="flex:0 0 80px" (click)="ok()">确定</button>
+    <button type="button" class="btn btn-warning" style="flex:0 0 80px" (click)="cancel()">取消</button>
+</div>

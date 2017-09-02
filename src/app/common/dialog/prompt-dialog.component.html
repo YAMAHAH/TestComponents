@@ -1,0 +1,23 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="no()">
+    <span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">{{context.title}}</h4>
+</div>
+<div class="modal-body">
+
+    <form class="form-horizontal">
+        <div class="form-group">
+            <p class="col-sm-12" *ngIf="!context.html">{{context.content}}</p>
+            <p class="col-sm-12" *ngIf="context.html" [innerHTML]="context.content"></p>
+            <!--<label for="textInput" class="col-sm-2 control-label">
+            </label>-->
+            <div class="col-sm-12">
+                <input type="text" focus class="form-control" id="textInput" name="text" [(ngModel)]="context.resolve.text" />
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer" style="display:flex;justify-content: center">
+    <button type="button" class="btn btn-primary" (click)="yes()">{{context.yes || 'Yes'}}</button>
+    <button type="button" class="btn btn-warning" (click)="no()">{{context.no || 'No'}}</button>
+</div>

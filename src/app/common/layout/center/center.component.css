@@ -1,0 +1,6 @@
+x-center-content:host {
+    display: flex;
+    flex-grow: 1;
+    background-color: #f2f2f2;
+    min-width: 300px;
+}

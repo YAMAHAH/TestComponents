@@ -1,0 +1,181 @@
+body{
+    margin: 0px;
+}
+
+.user{
+    top: 16px;
+  float: right;
+  height: 60px;
+  line-height: 60px;
+  margin-bottom: 0;
+  margin-right: 20px;
+}
+.user>li{
+  float: left;
+  height: 60px;
+  line-height: 60px;
+  cursor: pointer;
+}
+.user>li:first-child>span{
+  background: url("/assets/images/icon1.png") no-repeat -58px -37px ;
+  padding: 12px 19px;
+}
+.user>li:first-child>a{
+  background: url("/assets/images/left-icon.png") no-repeat -15px -333px;
+  padding-right: 30px;
+  border-right: 1px solid #fff;
+}
+.user>li:last-child>span{
+  background: url("/assets/images/left-icon.png") no-repeat -10px -373px;
+  padding: 12px 15px;
+}
+.user>li>a{
+  padding: 12px 5px;
+  color: #3747a0;
+  cursor: pointer;
+}
+.user>li>a:hover{
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navbar-header{
+  height: 60px;
+  line-height: 60px;
+  width: 371px;
+  background: url("/assets/images/logo_header.png") no-repeat;
+}
+.navbar-header>a{
+  display: block;
+  height: 60px;
+  line-height: 60px;
+}
+.navbar-fixed-top{
+  height: 60px;
+  /*background: #3247a0;*/
+  color: #fff;
+  border: none;
+  margin-bottom: 0;
+  min-height: 60px;
+  background: url("/assets/images/top-color.png") repeat-x;
+}
+.navbar-default .navbar-brand{
+  color: #fff;
+}
+.leftside-wrap{
+  position: fixed;
+  left: 0;
+  height: 100%;
+  z-index: 5;
+  overflow: hidden;
+  background-color: #f2f2f2;
+  padding: 0;
+  border-right: #3747a0 3px solid;
+  width: 185px;
+  top:60px
+}
+.leftside-wrap .row{
+  margin: 0;
+}
+.rightside-wrap{
+  margin-left: 185px;
+  margin-top: 60px;
+  overflow: hidden;
+}
+/*左侧兰*/
+
+.sidebar .nav>li{
+  height: 45px;
+  line-height: 45px;
+  padding-left: 20px;
+  background:url("/assets/images/left-bg.png") repeat-x ;
+  cursor: pointer;
+  /*list-style:none;*/
+  left: 0px;
+}
+.sidebar .nav>li:hover,.sidebar .nav>li:hover a,.sidebar .nav>li.navbar-nav-menu,.sidebar .nav>li.navbar-nav-menu a{
+  background: url("/assets/images/left-select.png") repeat-x;
+  color:#3747a0;
+  cursor: pointer;
+}
+.sidebar .nav>li>a{
+  display: block;
+  height: 45px;
+  line-height: 45px;
+  padding: 0;
+  float: left;
+  color: #333;
+  background:url("/assets/images/left-bg.png") repeat-x ;
+}
+.sidebar .nav>li>i{
+  float: left;
+  width: 40px;
+  height: 40px;
+}
+/*.sidebar .nav{
+   padding-left: 20px;
+}*/
+/*ul.nav.nav-sidebar{
+    padding-left: 10px;
+}*/
+ul{padding:0;list-style: none;margin: 0px;}
+
+.sidebar .nav>li .screen-control{
+  background: url("../../assets/images/left-icon.png") no-repeat -10px -290px;
+}
+.sidebar .nav>li .parking-control{
+  background: url("../../assets/images/left-icon.png") no-repeat -10px -43px;
+}
+.sidebar .nav>li .screen-management{
+  background: url("../../assets/images/left-icon.png") no-repeat -10px -255px;
+}
+.sidebar .nav>li .road-management{
+  background: url("../../assets/images/left-icon.png") no-repeat -10px -222px;
+}
+.sidebar .nav>li .parking-management{
+  background: url("../../assets/images/left-icon.png") no-repeat -10px -187px;
+}
+.sidebar .nav>li .parking-source-management{
+  background: url("../../assets/images/left-icon.png") no-repeat -10px -152px;
+}
+.sidebar .nav>li .notice-list{
+  background: url("../../assets/images/left-icon.png") no-repeat -10px -112px;
+}
+.sidebar .nav>li .range-management{
+  background: url("../../assets/images/left-icon.png") no-repeat -10px -75px;
+}
+.sidebar .nav>li .employee-list{
+  background: url("../../assets/images/left-icon.png") no-repeat -10px -43px;
+}
+
+/*悬停*/
+.sidebar .nav>li:hover .screen-control,.sidebar .nav>li.navbar-nav-menu .screen-control{
+  background: url("../../assets/images/left-icon.png") no-repeat -53px -290px;
+}
+.sidebar .nav>li:hover .parking-control,.sidebar .nav>li.navbar-nav-menu .parking-control{
+  background: url("../../assets/images/left-icon.png") no-repeat -53px -43px;
+}
+.sidebar .nav>li:hover .screen-management,.sidebar .nav>li.navbar-nav-menu .screen-management{
+  background: url("../../assets/images/left-icon.png") no-repeat -55px -255px;
+}
+.sidebar .nav>li:hover .road-management,.sidebar .nav>li.navbar-nav-menu .road-management{
+  background: url("../../assets/images/left-icon.png") no-repeat -54px -222px;
+}
+.sidebar .nav>li:hover .parking-management,.sidebar .nav>li.navbar-nav-menu .parking-management{
+  background: url("../../assets/images/left-icon.png") no-repeat -54px -187px;
+}
+.sidebar .nav>li:hover .parking-source-management,.sidebar .nav>li.navbar-nav-menu .parking-source-management{
+  background: url("../../assets/images/left-icon.png") no-repeat -56px -152px;
+}
+.sidebar .nav>li:hover .notice-list,.sidebar .nav>li.navbar-nav-menu .notice-list{
+  background: url("../../assets/images/left-icon.png") no-repeat -54px -112px;
+}
+.sidebar .nav>li:hover .range-management,.sidebar .nav>li.navbar-nav-menu .range-management{
+  background: url("../../assets/images/left-icon.png") no-repeat -57px -75px;
+}
+.sidebar .nav>li:hover .employee-list,.sidebar .nav>li.navbar-nav-menu .employee-list{
+  background: url("../../assets/images/left-icon.png") no-repeat -55px -43px;
+}
+
+
+

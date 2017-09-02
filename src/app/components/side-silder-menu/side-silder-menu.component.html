@@ -1,0 +1,29 @@
+<nav (mouseover)="mouseOverHandler($event)" (mouseleave)="mouseLeaveHandler($event)" [style.width.px]="isExpanded ? 255:55" class="side-silder-menu">
+    <div class="logo"></div>
+    <div (click)="headerClickHandler($event)" class="settings">
+        <a (click)="expandClick($event)">
+            <i jyTooltip="展开/伸缩" tooltipPosition="right" [tooltipDisabled]="isExpanded" class="fa fa-arrows-alt fa-lg"></i>
+            <span class="nav-text"></span>
+        </a>
+        <input type="text" placeholder="搜索关键字...">
+        <button><i jyTooltip="搜索" tooltipPosition="right" [tooltipDisabled]="!isExpanded" class="fa fa-search fa-lg"></i></button>
+    </div>
+    <ul style="clear: both">
+        <li *ngFor="let item of items">
+            <a (click)="itemClick($event)" [routerLink]="item.routerLink" [queryParams]="item.queryParams" [skipLocationChange]="item.skipLocationChange">
+                <i jyTooltip="{{item.title}}" [tooltipDisabled]="isExpanded" tooltipPosition="right" class="{{item.iconCss}}"></i>
+                <span class="nav-text">{{item.title}}</span>
+            </a>
+        </li>
+    </ul>
+    <ul class="logout ">
+        <li>
+            <a routerLink="/auth/login" [skipLocationChange]="true">
+                <i jyTooltip="注销" tooltipPosition="right" [tooltipDisabled]="isExpanded" class="fa fa-lightbulb-o fa-lg "></i>
+                <span class="nav-text ">注销</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!--(mouseover)="mouseOverHandler($event)" (mouseleave)="mouseLeaveHandler($event)"-->

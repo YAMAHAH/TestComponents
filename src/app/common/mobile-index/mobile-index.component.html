@@ -1,0 +1,13 @@
+<h1>Hello {{name}}</h1>
+
+<a [routerLink]="['/mobile/home']">  home </a>
+<a [routerLink]="['/mobile/news']"> news  </a>
+<a [routerLink]="['/mobile/staticnews']">  staticnews </a>
+<a [routerLink]="['/mobile/news/',{outlets:{bottom:'auxnews'}}]"> auxnews </a>
+<a [routerLink]="['/mobile/d3']"> d3 </a>
+<a [routerLink]="['/auth/login']">Logout</a>
+<button (click)="logout()" class="btn btn-success">注销</button>
+<pageloading></pageloading>
+<router-outlet></router-outlet>
+<router-outlet name="bottom"></router-outlet>
+<router-outlet name="right"></router-outlet>

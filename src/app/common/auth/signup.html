@@ -1,0 +1,20 @@
+<div class="center-block col-md-12">
+    <!--<h1>注册</h1>-->
+    <form #f="ngForm" (ngSubmit)="signup($event, f.value.credentials.username, f.value.credentials.password)">
+        <div ngModelGroup="credentials" class="form-group">
+            <label for="username">用户</label>
+            <input type="text" name='username' focus='true' ngModel required class="form-control" placeholder="Username">
+            <label for="password">密码</label>
+            <input type="password" name='password' ngModel required class="form-control" placeholder="Password">
+        </div>
+        <div ngModelGroup="person" class="form-group">
+            <p>First name: <input class="form-control" type="text" name="firstName" ngModel></p>
+            <p>Last name: <input class="form-control" type="text" name="lastName" ngModel></p>
+        </div>
+        <div style="display:flex;justify-content:space-around; align-items:Center; height:60px;">
+            <button type="submit" class="btn btn-default btn-primary">注册</button>
+            <button (click)="login($event)" class="btn btn-success">登录</button>
+        </div>
+    </form>
+    <!--<pre>{{f.value | json }}</pre>-->
+</div>
