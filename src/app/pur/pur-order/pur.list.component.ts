@@ -141,7 +141,7 @@ export class PurListComponent implements OnInit, IComponentBase {
         return new Promise<any>(resolve => {
             let subscription = this.dialogService.confirmAsync({
                 title: '确认',
-                content: '充许关闭当前窗体吗？',
+                content: '关闭当前窗体吗？',
                 yes: '是',
                 no: '否',
                 html: true,

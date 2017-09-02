@@ -479,6 +479,18 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         }
     }
 
+
+    closeBeforeCheckFn: Function = async (event: any) => {
+        return new Promise<any>(resolve => {
+            return resolve(event.cancel);
+        });
+    }
+
+
+    /**
+     * close self sucessful callback
+     */
+    closeAfterFn: Function = () => { };
     async closeTaskChildForm(taskModal: TabModel) {
         // let actionsBase = new ActionsBase(taskModal.key);
         // return this.appStore.dispatch(actionsBase.closeTaskGroupAction({ state: taskModal }), true);
@@ -493,11 +505,15 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         //     resolve(result.state);
         // });
         let state$ = new BehaviorSubject<any>(null);
-        let componentFactoryRef = await this.appStore.getComponentFactoryRef(taskModal.key);
-        if (componentFactoryRef) {
-            componentFactoryRef.closeAllForm({ target: taskModal.key, data: { sender: state$ } });
-        } else {
-            state$.next({ processFinish: true, result: true });
+        let eventArgs = { sender: this, cancel: true, data: taskModal };
+        let allowClose = await this.closeBeforeCheckFn(eventArgs);
+        if (allowClose) {
+            let componentFactoryRef = await this.appStore.getComponentFactoryRef(taskModal.key);
+            if (componentFactoryRef) {
+                componentFactoryRef.closeAllForm({ target: taskModal.key, data: { sender: state$ } });
+            } else {
+                state$.next({ processFinish: true, result: true });
+            }
         }
         return state$;
     }

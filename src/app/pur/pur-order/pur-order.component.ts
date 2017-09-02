@@ -21,6 +21,7 @@ import { NavTreeNode } from '../../components/nav-tree-view/nav-tree-node';
 import { FormStateEnum } from '../../components/form/FormStateEnum';
 import { IComponentFactoryContainer } from '../../basic/IComponentFactoryContainer';
 import { IFormModel } from '../../basic/IFormModel';
+import { isFunction } from '../../common/toasty/toasty.utils';
 
 
 // export interface PurList extends IFormModel {
@@ -388,14 +389,15 @@ export class PurOrderComponent implements OnInit, OnDestroy, IComponentFactoryCo
         Observable.from(nodeLists).flatMap(form => {
             if (form && form.tag && form.tag.modalRef && form.tag.modalRef.instance) {
                 return Observable.fromPromise(form.tag.modalRef.instance.forceClose(null));
-            } else {
-                return Observable.of(true);
+            }
+            else {
+                return Observable.fromPromise(this.closePage(form.tag));
             }
         }).concat(Observable.of(this.formModel).flatMap(form => {
             if (form && form.modalRef && form.modalRef.instance) {
                 return Observable.fromPromise(form.modalRef.instance.forceClose(null));
             } else {
-                return Observable.of(true);
+                return Observable.fromPromise(this.closePage(form));
             }
         })).every((val: boolean) => val === true).distinctUntilChanged().subscribe((res: boolean) => {
             let result = { processFinish: true, result: res };
@@ -404,14 +406,6 @@ export class PurOrderComponent implements OnInit, OnDestroy, IComponentFactoryCo
             }
             if (action.data.sender) action.data.sender.next(result);
         });
-
-        // .concat(Observable.from(this.instances).flatMap(form => {
-        //     if (form && form.modalRef && form.modalRef.instance) {
-        //         return Observable.fromPromise((form.modalRef.instance as Dialog).forceClose(null));
-        //     } else {
-        //         return Observable.of(true);
-        //     }
-        // }))
     }
 
     selectNextForm(formModel: IFormModel) {
@@ -521,7 +515,47 @@ export class PurOrderComponent implements OnInit, OnDestroy, IComponentFactoryCo
 
     async onItemCloseClick(navNode: NavTreeNode) {
         let formModel: IFormModel = navNode.tag;
-        this.removeFormModel(navNode.tag);
+        //根据model关闭,关闭前检查,等待关闭前处理函数
+        await this.closePage(formModel);
+    }
+
+    async closePage(formModel: IFormModel) {
+        //根据model关闭,关闭前检查,等待关闭前处理函数
+        return new Promise(async resolve => {
+            let event = { cancel: true, sender: formModel };
+            if (formModel) {
+                let destroyFn;
+                if (formModel.closeBeforeCheckFn && isFunction(formModel.closeBeforeCheckFn)) {
+                    destroyFn = await formModel.closeBeforeCheckFn(event);
+                }
+                if (event.cancel) {
+                    await this.closeChildPage(formModel);
+                    this.removeFormModel(formModel);
+                }
+                if (isFunction(destroyFn)) destroyFn();
+            }
+            resolve(event.cancel);
+        });
+    }
+    async closeChildPage(formModel: IFormModel) {
+        return new Promise(resolve => {
+            if (formModel && formModel.childs) {
+                Observable.from(formModel.childs)
+                    .flatMap(form => {
+                        if (form) {
+                            return Observable.fromPromise(this.closePage(form));
+                        } else {
+                            return Observable.of(true);
+                        }
+                    })
+                    .every((val: boolean) => val === true)
+                    .subscribe(res => {
+                        resolve(res);
+                    });
+            } else {
+                resolve(true);
+            }
+        });
     }
 
     setChildActiveState(pl: IFormModel, state: boolean) { //PurList
