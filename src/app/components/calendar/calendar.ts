@@ -27,7 +27,7 @@ export interface LocaleSettings {
 }
 
 @Component({
-    selector: 'jy-calendar',
+    selector: 'x-calendar',
     template: `
         <span [ngClass]="{'ui-calendar':true,'ui-calendar-w-btn':showIcon}" [ngStyle]="style" [class]="styleClass">
             <ng-template [ngIf]="!inline">

@@ -5,7 +5,7 @@ import { TabPanel } from './tabPanel';
 import { TabViewNav } from './tabViewNav';
 
 @Component({
-    selector: 'jy-tabView',
+    selector: 'x-tabView',
     templateUrl: './tabView.html',
 })
 export class TabView implements AfterContentInit, BlockableUI {

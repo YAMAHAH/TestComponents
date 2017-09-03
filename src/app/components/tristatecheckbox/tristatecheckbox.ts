@@ -9,7 +9,7 @@ export const TRISTATECHECKBOX_VALUE_ACCESSOR: any = {
 };
 
 @Component({
-    selector: 'jy-triStateCheckbox',
+    selector: 'x-triStateCheckbox',
     template: `
         <div class="ui-chkbox ui-tristatechkbox ui-widget">
             <div class="ui-helper-hidden-accessible">

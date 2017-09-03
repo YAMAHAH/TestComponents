@@ -12,7 +12,7 @@ export const CHIPS_VALUE_ACCESSOR: any = {
 };
 
 @Component({
-    selector: 'jy-chips',
+    selector: 'x-chips',
     templateUrl: './chips.html',
     providers: [DomHandler, CHIPS_VALUE_ACCESSOR]
 })

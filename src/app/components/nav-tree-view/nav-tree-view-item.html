@@ -1,5 +1,5 @@
 <ul class="item-wrap">
-    <li *ngFor="let node of root?.childs" [ngClass]="itemClass(node)">
+    <li *ngFor="let node of getChilds(root)" [ngClass]="itemClass(node)">
         <div class="item-border" style="display: flex;">
             <span style="display: flex;" [style.width.px]="node.level*16">
                 <span style="width:16px; flex: 0 0 16px;" [class.bbit-tree-elbow-line]="! identNode.isLast" *ngFor="let identNode of node.getParents()"></span>

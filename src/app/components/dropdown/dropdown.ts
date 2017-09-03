@@ -17,7 +17,7 @@ export const DROPDOWN_VALUE_ACCESSOR: any = {
 };
 
 @Component({
-    selector: 'jy-dropdown',
+    selector: 'x-dropdown',
     templateUrl: './dropdown.html',
     animations: [
         trigger('panelState', [

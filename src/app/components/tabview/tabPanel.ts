@@ -1,6 +1,6 @@
 import { Input, Component } from '@angular/core';
 @Component({
-    selector: 'jy-tabPanel',
+    selector: 'x-tabPanel',
     templateUrl: './tabPanel.html'
 })
 export class TabPanel {

@@ -9,11 +9,11 @@ import { TieredMenuSub } from './tieredMenuSub';
 
 
 @Component({
-    selector: 'jy-tieredMenu',
+    selector: 'x-tieredMenu',
     template: `
         <div [ngClass]="{'ui-tieredmenu ui-menu ui-widget ui-widget-content ui-corner-all ui-helper-clearfix':true,'ui-menu-dynamic ui-shadow':popup}" 
             [class]="styleClass" [ngStyle]="style">
-            <jy-tieredMenuSub [item]="model" root="root"></jy-tieredMenuSub>
+            <x-tieredMenuSub [item]="model" root="root"></x-tieredMenuSub>
         </div>
     `,
     providers: [DomHandler]

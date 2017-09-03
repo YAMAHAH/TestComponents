@@ -13,7 +13,7 @@ export class ColumnBodyComponent implements OnInit {
     //         <span [style.color]="car[col.field]">{{car[col.field]}}</span>
     //     </ng-template>
     col: any = { field: '' };
-    rowData: any ;
+    rowData: any;
     rowIndex: any;
     // @ViewChildren(PrimeTemplate) templates: QueryList<any>;
     constructor() { }

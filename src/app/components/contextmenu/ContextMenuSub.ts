@@ -4,7 +4,7 @@ import { MenuItem } from '../common/api';
 import { Router } from '@angular/router';
 import { ContextMenu } from './contextmenu';
 @Component({
-    selector: 'jy-contextMenuSub',
+    selector: 'x-contextMenuSub',
     templateUrl: './contextMenuSub.html',
     providers: [DomHandler]
 })

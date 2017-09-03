@@ -3,7 +3,7 @@ import { DomHandler } from '../../common/dom/domhandler';
 import { SharedModule } from '../../common/shared/shared-module';
 
 @Component({
-    selector: 'jy-overlayPanel',
+    selector: 'x-overlayPanel',
     template: `
         <div [ngClass]="'ui-overlaypanel ui-widget ui-widget-content ui-corner-all ui-shadow'" [ngStyle]="style" [class]="styleClass"
             [style.display]="visible ? 'block' : 'none'" (click)="onPanelClick()">

@@ -19,6 +19,6 @@
 
         <ng-container *jyComponentOutlet="col.filterComponent;context:{ 'col': col,'datatable':dt} "></ng-container>
 
-        <jy-dtCheckbox *ngIf="col.selectionMode=='multiple'" (onChange)="dt.toggleRowsWithCheckbox($event)" [checked]="dt.allSelected" [disabled]="dt.isEmpty()"></jy-dtCheckbox>
+        <x-dtCheckbox *ngIf="col.selectionMode=='multiple'" (onChange)="dt.toggleRowsWithCheckbox($event)" [checked]="dt.allSelected" [disabled]="dt.isEmpty()"></x-dtCheckbox>
     </th>
 </ng-template>

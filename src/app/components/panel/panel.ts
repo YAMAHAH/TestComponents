@@ -4,7 +4,7 @@ import { SharedModule } from '../common/shared'
 import { BlockableUI } from '../common/api';
 
 @Component({
-    selector: 'jy-panel',
+    selector: 'x-panel',
     templateUrl: './panel.html',
     animations: [
         trigger('panelContent', [

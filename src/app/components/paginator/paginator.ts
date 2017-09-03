@@ -2,7 +2,7 @@ import { NgModule, Component, ElementRef, Input, Output, SimpleChange, EventEmit
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'jy-paginator',
+    selector: 'x-paginator',
     template: `
         <div [class]="styleClass" [ngStyle]="style" [ngClass]="'ui-paginator ui-widget ui-widget-header ui-unselectable-text'">
             <a href="#" class="ui-paginator-first ui-paginator-element ui-state-default ui-corner-all"

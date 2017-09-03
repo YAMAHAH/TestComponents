@@ -30,7 +30,7 @@ export enum SideExpandControlTypeEnum {
 
 @Component({
     moduleId: module.id,
-    selector: 'jy-side-silder-menu',
+    selector: 'x-side-silder-menu',
     templateUrl: 'side-silder-menu.component.html',
     styleUrls: ['side-silder-menu.component.css']
 })

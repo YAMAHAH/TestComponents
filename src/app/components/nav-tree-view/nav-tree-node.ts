@@ -10,7 +10,8 @@ export class NavTreeNode {
     showExpandIon: boolean = true;
     childs: NavTreeNode[] = [];
     parent: NavTreeNode;
-    isGroup:boolean=false;
+    isGroup: boolean = false;
+    showNode: boolean = true;
     tag: any;
     constructor(public key: string,
         public name: string,
@@ -68,6 +69,8 @@ export class NavTreeNode {
         return parents.reverse();
     }
 
+    
+
     setParentCheckState(node: NavTreeNode) {
         let pnode = this.parent;
         while (pnode != null) {
@@ -102,5 +105,5 @@ export class NavTreeNode {
             this.expandTree(c, callback);
         });
     }
-    
+
 }

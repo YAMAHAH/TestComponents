@@ -23,23 +23,6 @@ import { IComponentFactoryContainer } from '../../basic/IComponentFactoryContain
 import { IFormModel } from '../../basic/IFormModel';
 import { isFunction } from '../../common/toasty/toasty.utils';
 
-
-// export interface PurList extends IFormModel {
-//     title: string;
-//     active: boolean;
-//     tag?: any;
-//     parent?: PurList;
-// }
-
-// export interface PurDetail extends IFormModel {
-//     // key?: string;
-//     //  title: string;
-//     //active: boolean;
-//     // parent?: purList;
-// }
-
-
-
 @Component({
     selector: 'x-pur-order',
     templateUrl: './pur-order.component.html',
@@ -50,6 +33,12 @@ export class PurOrderComponent implements OnInit, OnDestroy, IComponentFactoryCo
         if (godFather) {
             godFather.childs.push(this.formModel);
             this.formModel.godFather = godFather;
+            if (this.formModel.tag) {
+                //设置关联的结点在导航树不可见,关闭TAB时也要考虑这种情况
+                let nd = this.formModel.tag as NavTreeNode;
+                nd.showNode = false;
+                nd.getParents().forEach(val => val.showNode = false);
+            }
         }
         return this.formModel;
     }
@@ -68,7 +57,6 @@ export class PurOrderComponent implements OnInit, OnDestroy, IComponentFactoryCo
             title: '采购订单分组',
             active: true,
             componentFactoryRef: this,
-            // treeView: this.navTreeView,
             showType: ShowTypeEnum.showForm
         };
 
@@ -83,7 +71,7 @@ export class PurOrderComponent implements OnInit, OnDestroy, IComponentFactoryCo
         this.reducer();
 
     }
-    formModel: IFormModel;//comp formModel
+    formModel: IFormModel;
     taskId: any;
     childFormLists: IFormModel[] = [];
 
@@ -226,7 +214,7 @@ export class PurOrderComponent implements OnInit, OnDestroy, IComponentFactoryCo
         let title = UUID.uuid(8, 10).toString();
         let formGroupModel: IFormModel = {
             formType: FormTypeEnum.group,
-            title: title + 'group',
+            title: title + '默认组',
             active: false,
             childs: [],
             componentFactoryRef: this,
@@ -235,7 +223,7 @@ export class PurOrderComponent implements OnInit, OnDestroy, IComponentFactoryCo
             showType: extras && extras.showType || ShowTypeEnum.tab
         };
         // formGroup.showType = ShowTypeEnum.showForm;
-        let groupNode = new NavTreeNode(UUID.uuid(8, 10), title + 'group', '/skdd', 'sndwd', 0);
+        let groupNode = new NavTreeNode(UUID.uuid(8, 10), title + '默认组', '/skdd', 'sndwd', 0);
         groupNode.isGroup = true;
         groupNode.tag = formGroupModel;
         formGroupModel.tag = groupNode;
@@ -538,13 +526,17 @@ export class PurOrderComponent implements OnInit, OnDestroy, IComponentFactoryCo
         });
     }
     async closeChildPage(formModel: IFormModel) {
+        console.log(formModel.childs);
         return new Promise(resolve => {
             if (formModel && formModel.childs) {
                 Observable.from(formModel.childs)
                     .flatMap(form => {
                         if (form) {
                             return Observable.fromPromise(this.closePage(form));
-                        } else {
+                        } else if (form && form.tag && form.tag.modalRef && form.tag.modalRef.instance) {
+                            return Observable.fromPromise(form.tag.modalRef.instance.forceClose(null));
+                        }
+                        else {
                             return Observable.of(true);
                         }
                     })

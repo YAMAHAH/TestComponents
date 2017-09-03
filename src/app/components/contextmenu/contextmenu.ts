@@ -8,7 +8,7 @@ import { ContextMenuSub } from './ContextMenuSub';
 
 
 @Component({
-    selector: 'jy-contextMenu',
+    selector: 'x-contextMenu',
     templateUrl: './contextMenu.html',
     providers: [DomHandler]
 })

@@ -200,6 +200,17 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         }
         let taskGrp = this.getTaskGroup(parseKey);
         taskGrp.daemon = true;
+        //隐藏后设置当前活动TAB
+        this.getNextTab(taskGrp);
+    }
+
+    getNextTab(tabModel: TabModel) {
+        let idx = this.tabModels.findIndex(value => value == tabModel);
+        if (this.tabModels[idx - 1]) {
+            this.select(this.tabModels[idx - 1]);
+        } else if (this.tabModels[idx + 1]) {
+            this.select(this.tabModels[idx + 1]);
+        }
     }
     select(tab: TabModel) {
         if (!!!tab) return;
@@ -241,9 +252,12 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         if (this.existTab(tab.key)) {
 
             let curr = this.tabModels.find(t => t.key == tab.key);
-            if (!tab.daemon) { curr.daemon = false; }
+            if (!tab.daemon) {
+                curr.daemon = false;
+                this.layoutTabs();
+            }
             this.select(curr);
-            factoryRef = await this.appStore.getComponentFactoryRef(tab.key);
+            factoryRef = await this.appStore.CreateComponentFactory(tab.key);
             // formInstance = factoryRef.addNewPurList(tab);
             // let actionsBase = new ActionsBase(tab.key);
             // this.appStore.dispatch(actionsBase.addAction({ state: tab }));
@@ -254,7 +268,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
 
             this.changeDetectorRef.detectChanges();
             await this.routerService.navigateToOutlet(r, { taskId: tab.key }, this.activeRouter);
-            factoryRef = await this.appStore.getComponentFactoryRef(tab.key);
+            factoryRef = await this.appStore.CreateComponentFactory(tab.key);
             //  if (!tab.daemon) formInstance = factoryRef.addNewPurList(tab);
         }
         return factoryRef;
@@ -508,7 +522,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         let eventArgs = { sender: this, cancel: true, data: taskModal };
         let allowClose = await this.closeBeforeCheckFn(eventArgs);
         if (allowClose) {
-            let componentFactoryRef = await this.appStore.getComponentFactoryRef(taskModal.key);
+            let componentFactoryRef = await this.appStore.CreateComponentFactory(taskModal.key);
             if (componentFactoryRef) {
                 componentFactoryRef.closeAllForm({ target: taskModal.key, data: { sender: state$ } });
             } else {

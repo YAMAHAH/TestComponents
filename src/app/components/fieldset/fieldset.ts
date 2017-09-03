@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BlockableUI } from '../common/api';
 
 @Component({
-    selector: 'jy-fieldset',
+    selector: 'x-fieldset',
     templateUrl: './fieldset.html',
     animations: [
         trigger('fieldsetContent', [

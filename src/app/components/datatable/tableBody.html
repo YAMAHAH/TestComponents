@@ -35,8 +35,8 @@
                 <a href="#" *ngIf="col.expander" (click)="dt.toggleRow(rowData,$event)">
                     <span class="ui-row-toggler fa fa-fw ui-c" [ngClass]="{'fa-chevron-circle-down':dt.isRowExpanded(rowData), 'fa-chevron-circle-right': !dt.isRowExpanded(rowData)}"></span>
                 </a>
-                <jy-dtRadioButton *ngIf="col.selectionMode=='single'" (onClick)="dt.selectRowWithRadio($event, rowData)" [checked]="dt.isSelected(rowData)"></jy-dtRadioButton>
-                <jy-dtCheckbox *ngIf="col.selectionMode=='multiple'" (onChange)="dt.toggleRowWithCheckbox($event,rowData)" [checked]="dt.isSelected(rowData)"></jy-dtCheckbox>
+                <x-dtRadioButton *ngIf="col.selectionMode=='single'" (onClick)="dt.selectRowWithRadio($event, rowData)" [checked]="dt.isSelected(rowData)"></x-dtRadioButton>
+                <x-dtCheckbox *ngIf="col.selectionMode=='multiple'" (onChange)="dt.toggleRowWithCheckbox($event,rowData)" [checked]="dt.isSelected(rowData)"></x-dtCheckbox>
             </td>
         </ng-template>
     </tr>
@@ -51,7 +51,7 @@
 
     <tr *ngIf="dt.expandableRows && dt.isRowExpanded(rowData)">
         <td [attr.colspan]="dt.visibleColumns().length">
-            <jy-rowExpansionLoader [rowData]="rowData" [template]="dt.rowExpansionTemplate"></jy-rowExpansionLoader>
+            <x-rowExpansionLoader [rowData]="rowData" [template]="dt.rowExpansionTemplate"></x-rowExpansionLoader>
             <ng-container *jyComponentOutlet="rowExpansionComponent;context: { 'datatable':dt,'cols': columns,'rowData': rowData, 'rowIndex': rowIndex + dt.first}"></ng-container>
         </td>
     </tr>

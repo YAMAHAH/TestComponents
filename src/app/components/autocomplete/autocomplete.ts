@@ -16,7 +16,7 @@ export const AUTOCOMPLETE_VALUE_ACCESSOR: any = {
 };
 
 @Component({
-    selector: 'jy-autoComplete',
+    selector: 'x-autoComplete',
     templateUrl: './autocomplete.html',
     host: {
         '[class.ui-inputwrapper-filled]': 'filled',

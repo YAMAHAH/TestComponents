@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { DomHandler } from '../../common/dom/domhandler';
 
 @Component({
-    selector: 'jy-confirmDialog',
+    selector: 'x-confirmDialog',
     template: `
         <div [ngClass]="{'ui-dialog ui-confirmdialog ui-widget ui-widget-content ui-corner-all ui-shadow':true,'ui-dialog-rtl':rtl}" 
             [style.display]="visible ? 'block' : 'none'" [style.width.px]="width" [style.height.px]="height" (mousedown)="moveOnTop()" [@dialogState]="visible ? 'visible' : 'hidden'">

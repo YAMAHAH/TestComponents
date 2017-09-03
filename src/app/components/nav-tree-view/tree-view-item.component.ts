@@ -28,6 +28,12 @@ export class NavTreeViewItemComponent {
         this.itemCloseClick.emit(node);
     }
 
+    getChilds(root: NavTreeNode) {
+        if (root) {
+            return root.childs.filter(v => v.showNode == true);
+        }
+        return [];
+    }
     expand() {
         this.root.expanded = !this.root.expanded;
     }

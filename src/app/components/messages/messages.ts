@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Message } from '../common/api';
 
 @Component({
-    selector: 'jy-messages',
+    selector: 'x-messages',
     template: `
         <div *ngIf="hasMessages()" class="ui-messages ui-widget ui-corner-all" style="display:block"
                     [ngClass]="{'ui-messages-info':(value[0].severity === 'info'),

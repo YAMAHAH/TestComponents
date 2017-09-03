@@ -4,7 +4,7 @@ import { Message } from '../common/api';
 import { DomHandler } from '../../common/dom/domhandler';
 
 @Component({
-    selector: 'jy-growl',
+    selector: 'x-growl',
     template: `
         <div #container [ngClass]="'ui-growl ui-widget'" [style.zIndex]="zIndex" [ngStyle]="style" [class]="styleClass">
             <div #msgel *ngFor="let msg of value" class="ui-growl-item-container ui-state-highlight ui-corner-all ui-shadow" aria-live="polite"

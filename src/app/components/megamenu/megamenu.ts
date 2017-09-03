@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { DomHandler } from '../../common/dom/domhandler';
 
 @Component({
-    selector: 'jy-megaMenu',
+    selector: 'x-megaMenu',
     template: `
     `,
     providers: [DomHandler]

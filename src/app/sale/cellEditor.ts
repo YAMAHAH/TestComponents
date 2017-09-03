@@ -6,11 +6,11 @@ import { SelectItem } from '../components/common/api';
     moduleId: module.id,
     selector: 'cellEditor',
     template: `
-           <jy-dropdown [(ngModel)]="rowData[col.field]" [options]="brands" [autoWidth]="false" [style]="{'width':'100%'}" required="true"></jy-dropdown>
+           <x-dropdown [(ngModel)]="rowData[col.field]" [options]="brands" [autoWidth]="false" [style]="{'width':'100%'}" required="true"></x-dropdown>
     `
 })
 export class CellEditorComponent implements OnInit {
-    // <jy-dropdown [(ngModel)]="rowData[col.field]" [options]="brands" [autoWidth]="false" [style]="{'width':'100%'}" required="true"></jy-dropdown> <jy-calendar [(ngModel)]="rowData[col.field]"></jy-calendar>(keydown)="dt.onCellEditorKeydown($event, col, rowData, colIndex)" <input type="text" jyInputText [(ngModel)]="rowData[col.field]" required="true"  /> 'BMW', 'Fiat', 'Ford', 'Honda', 'Jaguar', 'Mercedes', 'Renault', 'Volvo', 'VW'
+    // <x-dropdown [(ngModel)]="rowData[col.field]" [options]="brands" [autoWidth]="false" [style]="{'width':'100%'}" required="true"></x-dropdown> <x-calendar [(ngModel)]="rowData[col.field]"></x-calendar>(keydown)="dt.onCellEditorKeydown($event, col, rowData, colIndex)" <input type="text" jyInputText [(ngModel)]="rowData[col.field]" required="true"  /> 'BMW', 'Fiat', 'Ford', 'Honda', 'Jaguar', 'Mercedes', 'Renault', 'Volvo', 'VW'
     brands: SelectItem[] = [
         { label: 'Audi', value: 'Audi' },
         { label: 'BMW', value: 'BMW' },

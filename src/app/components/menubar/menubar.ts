@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { DomHandler } from '../../common/dom/domhandler';
 
 @Component({
-    selector: 'jy-menubarSub',
+    selector: 'x-menubarSub',
     templateUrl: './menubarSub.html',
     providers: [DomHandler]
 })
@@ -82,7 +82,7 @@ export class MenubarSub {
 }
 
 @Component({
-    selector: 'jy-menubar',
+    selector: 'x-menubar',
     templateUrl: './menubar.html',
     providers: [DomHandler]
 })

@@ -35,6 +35,7 @@ import { Car } from '../Models/car/car';
 import { ColumnBodyComponent } from './columnBody';
 import { DateColumnBodyComponent } from './dateColumnBody';
 import { CellEditorComponent } from './cellEditor';
+import { NavTreeNode } from '../components/nav-tree-view/nav-tree-node';
 
 
 
@@ -50,6 +51,12 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
         if (godFather) {
             godFather.childs.push(this.formModel);
             this.formModel.godFather = godFather;
+            if(this.formModel.tag){
+                //设置关联的结点在导航树不可见,关闭TAB时也要考虑这种情况
+                let nd =  this.formModel.tag  as NavTreeNode;
+                nd.showNode = false;
+                nd.getParents().forEach(val=>val.showNode = false);
+            }
         }
         return this.formModel;
     }
@@ -95,7 +102,7 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
 
         this.reducer();
         this.formModel = {
-            showType: ShowTypeEnum.showForm,
+            showType: this.appStore.showType || ShowTypeEnum.showForm,
             title: "SaleOrder Group",
             active: true,
             componentFactoryRef: this,
@@ -374,19 +381,18 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
         //     path: 'purOrder'
         // };
         // this.appStore.dispatch(mainTabActions.createTabAction({ state: tab }));
-        this.appStore.getComponentFactoryRef(PurComponentFactoryType).then(factoryRef => {
-            if (factoryRef) {
-                this.group = factoryRef.createGroup();
-                let detail = factoryRef.createDetail(this.group, { showType: ShowTypeEnum.showFormModal });
-                let ins = factoryRef.getComponentRef(PurListComponent).instance;
-                ins.formModel.resolve = { data: '手工创建组件,传递参数,显示窗体' };
-                ins.context = { data: 'Context:手工创建组件,传递参数,显示窗体' };
-                // this.formModel.childs.push(ins.formModel);
-                // ins.formModel.godFather = this.formModel;
-                ins.setOtherParent(this.formModel);
-                ins.show().subscribe((res: any) => console.log(res));
-            }
-        });
+        let factoryRef = await this.appStore.CreateComponentFactory(PurComponentFactoryType);
+        if (factoryRef) {
+            this.group = factoryRef.createGroup();
+            let detail = factoryRef.createDetail(this.group, { showType: ShowTypeEnum.showFormModal });
+            let ins = factoryRef.getComponentRef(PurListComponent).instance;
+            ins.formModel.resolve = { data: '手工创建组件,传递参数,显示窗体' };
+            ins.context = { data: 'Context:手工创建组件,传递参数,显示窗体' };
+            //设置关联
+            ins.setOtherParent(this.formModel);
+            ins.show().subscribe((res: any) => console.log(res));
+        }
+
 
     }
     async close() {
@@ -407,7 +413,7 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
         //     let list = factoryRef.createList(group, { showType: ShowTypeEnum.showForm });
         //     this.group && factoryRef.createList(this.group, { showType: ShowTypeEnum.showForm });
         // }
-        let factoryRef = await this.appStore.getComponentFactoryRef(PurComponentFactoryType);
+        let factoryRef = await this.appStore.CreateComponentFactory(PurComponentFactoryType);
         if (factoryRef) {
             let compRef = factoryRef.getComponentRef(PurDetailComponent);
             let options = new FormOptions();
@@ -443,20 +449,6 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
             });
     }
 
-    // async checkCloseBeforeFn(event: any) {
-    //     let result = this.dialogService.confirmAsync({
-    //         title: '确认',
-    //         content: '当前数据已经修改，需要保存?',
-    //         yes: '是',
-    //         no: '否',
-    //         html: true,
-    //         modalPosition: ModalPosition.center,
-    //         backdrop: false,
-    //         modal: true
-    //     })
-    //     result.subscribe(res => console.log(res));
-    //     return Promise.resolve(true);
-    // }
     closeBeforeCheckFn: Function = async (event: any) => {
         return new Promise<any>(resolve => {
             let subscription = this.dialogService.confirmAsync({
@@ -506,8 +498,6 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
 
     formModel: IFormModel = { title: '销售订单', active: true, childs: [] };
     ngOnInit() {
-        // let appTabSetActions = new AppTaskBarActions;
-        // let saleformModel: IformModel = { title: '销售订单', active: true };
         this.formModel.closeAfterFn = this.closeAfterFn;
         this.formModel.elementRef = this.viewContainerRef.element.nativeElement;
         this.formModel.title = this.title;
@@ -518,11 +508,7 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
         if (this.formModel.showType === ShowTypeEnum.showFormModal) {
             this.appStore.taskManager.showModal(this.formModel);
         }
-        // this.appStore.taskManager.show(this.formModel);
-        // this.appStore.dispatch(appTabSetActions.showFormAction({
-        //     sender: appTabSetActions.key,
-        //     state: this.saleformModel
-        // }));
+
 
         this.carService.getCarsMedium().then(cars => {
 

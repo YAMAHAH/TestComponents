@@ -6,7 +6,7 @@
                 <span class="ui-menuitem-icon fa fa-fw" *ngIf="child.icon" [ngClass]="child.icon"></span>
                 <span class="ui-menuitem-text">{{child.label}}</span>
             </a>
-            <jy-tieredMenuSub class="ui-submenu" [item]="child" *ngIf="child.items"></jy-tieredMenuSub>
+            <x-tieredMenuSub class="ui-submenu" [item]="child" *ngIf="child.items"></x-tieredMenuSub>
         </li>
     </ng-template>
 </ul>

@@ -10,7 +10,7 @@ export interface accordionMenuItem {
 
 @Component({
     moduleId: module.id,
-    selector: 'jy-accordion-menu',
+    selector: 'x-accordion-menu',
     templateUrl: 'accordion-menu.component.html',
     styleUrls: ['accordion-menu.component.css']
 })

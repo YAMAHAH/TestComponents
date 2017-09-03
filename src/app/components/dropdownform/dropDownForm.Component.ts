@@ -4,7 +4,7 @@ import { OverlayPanel } from '../overlaypanel/overlaypanel';
 
 @Component({
     moduleId: module.id,
-    selector: 'jy-dropdownform',
+    selector: 'x-dropdownform',
     templateUrl: './dropDownForm.Component.html',
     styleUrls: ['./dropDownForm.Component.css']
 })

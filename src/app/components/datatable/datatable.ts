@@ -17,7 +17,7 @@ import { SharedModule } from '../../common/shared/shared-module';
 import { Type } from '@angular/core';
 
 @Component({
-    selector: 'jy-dtRadioButton',
+    selector: 'x-dtRadioButton',
     template: `
         <div class="ui-radiobutton ui-widget">
             <div class="ui-helper-hidden-accessible">
@@ -45,7 +45,7 @@ export class DTRadioButton {
 }
 
 @Component({
-    selector: 'jy-dtCheckbox',
+    selector: 'x-dtCheckbox',
     template: `
         <div class="ui-chkbox ui-widget">
             <div class="ui-helper-hidden-accessible">
@@ -77,7 +77,7 @@ export class DTCheckbox {
 }
 
 @Component({
-    selector: 'jy-rowExpansionLoader',
+    selector: 'x-rowExpansionLoader',
     template: ``
 })
 export class RowExpansionLoader {
@@ -327,7 +327,7 @@ export class ScrollableView implements AfterViewInit, AfterViewChecked, OnDestro
 }
 
 @Component({
-    selector: 'jy-dataTable',
+    selector: 'x-dataTable',
     templateUrl: './datatable.html',
     providers: [DomHandler, ObjectUtils]
 })

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { DomHandler } from '../../common/dom/domhandler';
 
 @Component({
-    selector: 'jy-menu',
+    selector: 'x-menu',
     templateUrl: './menu.html',
     providers: [DomHandler],
     host: { '(window:resize)': 'onResize($event)' }

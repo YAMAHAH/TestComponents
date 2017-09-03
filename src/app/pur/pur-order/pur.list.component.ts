@@ -28,6 +28,12 @@ export class PurListComponent implements OnInit, IComponentBase {
         if (godFather) {
             godFather.childs.push(this.formModel);
             this.formModel.godFather = godFather;
+            if (this.formModel.tag) {
+                //设置关联的结点在导航树不可见,关闭TAB时也要考虑这种情况
+                let nd = this.formModel.tag as NavTreeNode;
+                nd.showNode = false;
+                nd.getParents().forEach(val => val.showNode = false);
+            }
         }
         return this.formModel;
     }
@@ -85,7 +91,7 @@ export class PurListComponent implements OnInit, IComponentBase {
                 node.parent.addNode(nd);
             }
             if (this.formModel.componentRef) {
-                let factoryRef = await this.appStore.getComponentFactoryRef(PurComponentFactoryType);
+                let factoryRef = await this.appStore.CreateComponentFactory(PurComponentFactoryType);
                 if (factoryRef) {
                     detail.showType = ShowTypeEnum.tab;
                     let ins = factoryRef.getComponentRef(PurDetailComponent, detail).instance;

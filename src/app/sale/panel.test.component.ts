@@ -5,6 +5,7 @@ import { AppStoreService } from '../services/app.store.service';
 import { IFormModel } from '../basic/IFormModel';
 import { IComponentBase } from '../basic/IComponentBase';
 import { FormOptions } from '../components/form/FormOptions';
+import { NavTreeNode } from '../components/nav-tree-view/nav-tree-node';
 
 @Component({
     moduleId: module.id,
@@ -16,6 +17,12 @@ export class PanelTestComponent implements IComponentBase, OnInit, OnDestroy {
         if (godFather) {
             godFather.childs.push(this.formModel);
             this.formModel.godFather = godFather;
+            if(this.formModel.tag){
+                //设置关联的结点在导航树不可见,关闭TAB时也要考虑这种情况
+                let nd =  this.formModel.tag  as NavTreeNode;
+                nd.showNode = false;
+                nd.getParents().forEach(val=>val.showNode = false);
+            }
         }
         return this.formModel;
     }
