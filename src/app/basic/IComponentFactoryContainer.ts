@@ -4,7 +4,7 @@ import { IComponentBase } from './IComponentBase';
 import { Type, ComponentRef, ComponentFactoryResolver, ViewContainerRef } from '@angular/core';
 import { IAction } from '../Models/IAction';
 import { FormExtras } from './FormExtras';
-export interface IComponentFactoryContainer extends IComponentBase {
+export interface IComponentFactoryContainer {
     /**
      * 组的标题
      */
@@ -53,6 +53,10 @@ export interface IComponentFactoryContainer extends IComponentBase {
      * 关闭所有弹窗
      */
     closeAllForm(action: IAction): void;
+    /**
+    * 关闭页
+    */
+    closePage(formModel: IFormModel): Promise<any>;
     /**
      * 选择下一个可见弹窗
      */

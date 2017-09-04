@@ -257,10 +257,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
                 this.layoutTabs();
             }
             this.select(curr);
-            factoryRef = await this.appStore.CreateComponentFactory(tab.key);
-            // formInstance = factoryRef.addNewPurList(tab);
-            // let actionsBase = new ActionsBase(tab.key);
-            // this.appStore.dispatch(actionsBase.addAction({ state: tab }));
+            factoryRef = await this.appStore.GetOrCreateComponentFactory(tab.key);
         } else {
             this.addTab(tab);
             let r = {};
@@ -268,8 +265,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
 
             this.changeDetectorRef.detectChanges();
             await this.routerService.navigateToOutlet(r, { taskId: tab.key }, this.activeRouter);
-            factoryRef = await this.appStore.CreateComponentFactory(tab.key);
-            //  if (!tab.daemon) formInstance = factoryRef.addNewPurList(tab);
+            factoryRef = await this.appStore.GetOrCreateComponentFactory(tab.key);
         }
         return factoryRef;
     }
@@ -299,7 +295,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
                 Object.assign(options, modalOptions);
             }
             if (formModel.closeBeforeCheckFn) options.checkCloseBeforeFn = formModel.closeBeforeCheckFn;
-            if (formModel.closeAfterFn) options.closeCallBackFn = formModel.closeAfterFn;
+            if (formModel.closeAfterFn) options.closeAfterCallBackFn = formModel.closeAfterFn;
             if (formModel.componentRef) options.componentRef = formModel.componentRef;
             this.appStore.modalService.showForm(options).subscribe(result);
         }, 10);
@@ -325,7 +321,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
                 Object.assign(options, modalOptions);
             }
             if (formModel.closeBeforeCheckFn) options.checkCloseBeforeFn = formModel.closeBeforeCheckFn;
-            if (formModel.closeAfterFn) options.closeCallBackFn = formModel.closeAfterFn;
+            if (formModel.closeAfterFn) options.closeAfterCallBackFn = formModel.closeAfterFn;
             if (formModel.componentRef) options.componentRef = formModel.componentRef;
             return this.appStore.modalService.showForm(options).subscribe(result);
         }, 10);
@@ -506,23 +502,11 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
      */
     closeAfterFn: Function = () => { };
     async closeTaskChildForm(taskModal: TabModel) {
-        // let actionsBase = new ActionsBase(taskModal.key);
-        // return this.appStore.dispatch(actionsBase.closeTaskGroupAction({ state: taskModal }), true);
-
-        // return new Promise<BehaviorSubject<boolean>>(resolve => {
-        //     let result = this.appStore.getSubject({ target: taskModal.key, data: {} },
-        //         (action: IAction) => {
-        //             let 
-        //             this.appStore.getComponentFactoryRef(taskModal.key).closeAllForm(action);
-        //         });
-        //     result.callback();
-        //     resolve(result.state);
-        // });
         let state$ = new BehaviorSubject<any>(null);
         let eventArgs = { sender: this, cancel: true, data: taskModal };
         let allowClose = await this.closeBeforeCheckFn(eventArgs);
         if (allowClose) {
-            let componentFactoryRef = await this.appStore.CreateComponentFactory(taskModal.key);
+            let componentFactoryRef = await this.appStore.GetOrCreateComponentFactory(taskModal.key);
             if (componentFactoryRef) {
                 componentFactoryRef.closeAllForm({ target: taskModal.key, data: { sender: state$ } });
             } else {

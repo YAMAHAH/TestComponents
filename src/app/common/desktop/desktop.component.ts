@@ -81,7 +81,7 @@ export class DesktopComponent implements OnInit, AfterViewInit {
         if (navItem.key.length < 8) {
             navItem.key = UUID.uuid(10, 10).toString();
         }
-        let taskGrp :TabModel = {
+        let taskGrp: TabModel = {
             key: navItem.key,
             name: navItem.key,
             title: navItem.title,
@@ -94,16 +94,9 @@ export class DesktopComponent implements OnInit, AfterViewInit {
         };
         var result = await this.appStore.taskManager.createTaskGroup(taskGrp);
         result && result.createGroupList({
-            showType: this.appStore.showType === ShowTypeEnum.tab ? ShowTypeEnum.tab : ShowTypeEnum.showForm,
+            showType: this.appStore.showType || ShowTypeEnum.showForm,
             resolve: { data: 'resolve data' }
         });
-        //   .then(ref => {
-        //             ref.createGroupList({
-        //                 showType: this.appStore.showType === ShowTypeEnum.tab ? ShowTypeEnum.tab : ShowTypeEnum.showForm,
-        //                 resolve: { data: 'resolve data' }
-        //             });
-        //     });
-        //this.appStore.dispatch(mainTabActions.createTabAction({ state: taskGrp }));
     }
 
     get fCallback() {

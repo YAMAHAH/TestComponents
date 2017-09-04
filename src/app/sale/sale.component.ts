@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector } from '@angular/core';
 import { AppStoreService } from '../services/app.store.service';
 import { AppTaskBarActions } from '../actions/app-main-tab/app-main-tab-actions'
 import { ActionsBase, AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, SaleComponentFactoryType, PurComponentFactoryType } from '../actions/actions-base';
@@ -36,6 +36,7 @@ import { ColumnBodyComponent } from './columnBody';
 import { DateColumnBodyComponent } from './dateColumnBody';
 import { CellEditorComponent } from './cellEditor';
 import { NavTreeNode } from '../components/nav-tree-view/nav-tree-node';
+import { ComponentFactoryConatiner } from '../pur/pur-order/ComponentFactoryConatiner';
 
 
 
@@ -46,48 +47,30 @@ import { NavTreeNode } from '../components/nav-tree-view/nav-tree-node';
     styleUrls: ['sale.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFactoryContainer {
-    setOtherParent(godFather: IFormModel): IFormModel {
-        if (godFather) {
-            godFather.childs.push(this.formModel);
-            this.formModel.godFather = godFather;
-            if(this.formModel.tag){
-                //设置关联的结点在导航树不可见,关闭TAB时也要考虑这种情况
-                let nd =  this.formModel.tag  as NavTreeNode;
-                nd.showNode = false;
-                nd.getParents().forEach(val=>val.showNode = false);
-            }
-        }
-        return this.formModel;
-    }
+export class SaleComponent extends ComponentFactoryConatiner implements reducer, OnInit, OnDestroy {
+
 
     subject: ISubject;
     subjectActions: any;
-
-    createGroupDetail(formExtras?: FormExtras): IFormModel {
-        throw new Error('Method not implemented.');
-    }
-
 
     options = {
         buttons: [{
             //    action: () => this.modalService.closeAll()
         }]
     };
-    constructor(private appStore: AppStoreService,
+    constructor(
+        public injector: Injector,
         private loadScript: LoadScriptService,
         private dialogService: DialogService,
         private modalService: ModalService,
-        public componentFactoryResolver: ComponentFactoryResolver,
         private toastyService: ToastyService,
         private toastyConfig: ToastyConfig,
         private changeDetectorRef: ChangeDetectorRef,
         public viewContainerRef: ViewContainerRef,
         private dialogModalService: FormService,
-        private activeRouter: ActivatedRoute,
         private carService: CarService) {
 
-
+        super(injector);
         this.cars = [];
         this.cars.push({ label: 'Audi', value: 'Audi' });
         this.cars.push({ label: 'BMW', value: 'BMW' });
@@ -106,52 +89,28 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
             title: "SaleOrder Group",
             active: true,
             componentFactoryRef: this,
-            // treeView: this.navTreeView,
             childs: []
         };
+        // this.registerFactory(new SaleComponentFactoryType(this.formModel.key, this));
         this.activeRouter.queryParams
             .map(params => params['taskId'])
             .subscribe(param => {
                 if (this.formModel) {
-                    this.formModel.key = param;
+                    this.formModel.key = this.taskId = param;
                 }
+                this.componentFactoryDestroyFn = this.appStore.registerComponentFactoryRef(new SaleComponentFactoryType(this.formModel.key, this));
             }).unsubscribe();
-        this.componentFactoryDestroyFn = this.appStore.registerComponentFactoryRef(new SaleComponentFactoryType(this.formModel.key, this));
-
     }
-    componentFactoryDestroyFn: any;
     saleOrderActions = new SaleOrderActions();
     salOrderSubject: ISubject;
-    childFormLists: IFormModel[] = [];
-    childFormInstances: IFormModel[] = [];
-    navTreeView: NavTreeViewComponent;
-    @Input() title: string = "销售订单Container";
+
+    @Input() title: string = "销售订单";
     @Input() groupTitle: string = "销售订单分组";
-    modalResult: EventEmitter<any>;
-    context: any;
-    tag: any;
-    createGroupList(extras?: any): IFormModel {
-        return this.formModel;
-    }
-    removeFormModel(formModel: IFormModel): void { };
-    setCurrent(formModel: IFormModel): void { }
-    getComponentRef<T>(componentType: Type<T>, formModel?: IFormModel): ComponentRef<T> { return null; }
-    createGroup(): IFormModel {
-        return null;
-    }
-    createList(groupformModel: IFormModel): IFormModel {
-        return null;
-    }
-    createDetail(groupformModel: IFormModel): IFormModel {
-        return null;
-    }
-    selectNextVisibleForm(formModel: IFormModel): void { }
-    show(modalOptions?: FormOptions): any {
 
-    }
-    showModal(modalOptions?: FormOptions): any {
+    // createGroupList(extras?: any): IFormModel {
+    //     return this.formModel;
+    // }
 
-    }
     reducer() {
         this.salOrderSubject = this.appStore.select(this.saleOrderActions.key);
         this.salOrderSubject.subject.subscribe(act => {
@@ -188,28 +147,18 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
     closeAfterFn: Function = () => {
         // this.saleformModel = null;
         this.appStore.taskManager.closeTaskGroup(this.formModel.key);
-        this.formModel.childs = [];
+        //this.formModel.childs = [];
         // let taskGroupActions = new AppTaskBarActions();
         // this.appStore.dispatch(taskGroupActions.closeTaskGroupAction({ state: { key: this.saleOrderActions.key } }));
     };
-    async closeAllForm(action: IAction) {
-        // if (!this.saleformModel) {
-        //     if (action.data.sender) action.data.sender.next(true);
-        //     return;
-        // }
-        Observable.of(this.formModel).flatMap(form => {
-            if (form && form.modalRef) {
-                return Observable.fromPromise(form.modalRef.instance.forceClose(null));
-            } else {
-                return Observable.of(true);
-            }
-        }).every((val: boolean) => val === true).subscribe((res: boolean) => {
-            let result = { processFinish: true, result: res };
-            if (this.childFormInstances.length > 0) {
-                result.result = false;
-            }
-            if (action.data.sender) action.data.sender.next(result);
-        });
+    onItemClick(navNode: NavTreeNode) {
+        this.setCurrent(navNode.tag);
+    }
+
+    async onItemCloseClick(navNode: NavTreeNode) {
+        let formModel: IFormModel = navNode.tag;
+        //根据model关闭,关闭前检查,等待关闭前处理函数
+        await this.closePage(formModel);
     }
 
     alert() {
@@ -370,18 +319,7 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
     }
     group: IFormModel;
     async open() {
-        // let mainTabActions = new AppTaskBarActions();
-        // let tab = {
-        //     key: 'pur',
-        //     name: 'pur',
-        //     title: '采购订单',
-        //     favicon: '/assets/images/facebook-favicon.ico',
-        //     outlet: 'pur',
-        //     active: false,
-        //     path: 'purOrder'
-        // };
-        // this.appStore.dispatch(mainTabActions.createTabAction({ state: tab }));
-        let factoryRef = await this.appStore.CreateComponentFactory(PurComponentFactoryType);
+        let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);
         if (factoryRef) {
             this.group = factoryRef.createGroup();
             let detail = factoryRef.createDetail(this.group, { showType: ShowTypeEnum.showFormModal });
@@ -392,28 +330,9 @@ export class SaleComponent implements reducer, OnInit, OnDestroy, IComponentFact
             ins.setOtherParent(this.formModel);
             ins.show().subscribe((res: any) => console.log(res));
         }
-
-
     }
     async close() {
-        // let purOrderActions = new PurOrderActions();
-        // let tab = {
-        //     key: 'pur',
-        //     name: 'pur',
-        //     title: '采购订单',
-        //     favicon: '/assets/images/facebook-favicon.ico',
-        //     outlet: 'pur',
-        //     active: false,
-        //     path: 'purOrder'
-        // };
-        // this.appStore.dispatch(purOrderActions.removeAction({ state: tab }));
-        // let factoryRef = await this.appStore.getComponentFactoryRef(PurComponentFactoryType);
-        // if (factoryRef) {
-        //     let group = factoryRef.createGroup();
-        //     let list = factoryRef.createList(group, { showType: ShowTypeEnum.showForm });
-        //     this.group && factoryRef.createList(this.group, { showType: ShowTypeEnum.showForm });
-        // }
-        let factoryRef = await this.appStore.CreateComponentFactory(PurComponentFactoryType);
+        let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);
         if (factoryRef) {
             let compRef = factoryRef.getComponentRef(PurDetailComponent);
             let options = new FormOptions();

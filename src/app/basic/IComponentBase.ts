@@ -1,6 +1,7 @@
 import { EventEmitter } from '@angular/core';
 import { FormOptions } from '../components/form/FormOptions';
 import { IFormModel } from './IFormModel';
+import { IComponentFactoryType } from './IComponentFactoryType';
 export interface IComponentBase {
     /**
      * 组件的标题
@@ -22,6 +23,8 @@ export interface IComponentBase {
      * 显示模态弹窗
      */
     showModal(modalOptions?: FormOptions): any;
+
+    getComponentFactoryType(): IComponentFactoryType;
     /**
      *  关闭前检查函数
      */

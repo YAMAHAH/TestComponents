@@ -182,7 +182,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
         event.cancel = true;
         return resolve(event);
     });
-    @Input() closeCallBackFn: Function = null;
+    @Input() closeAfterCallBackFn: Function = null;
     @Input() componentRef: ComponentRef<any>;
     @Input() ngComponentOutlet: Type<any>;
 
@@ -408,7 +408,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             this.onAfterHide.emit(event);
             this.unbindMaskClickListener();
             this.modalResult.emit(this._selectResult);
-            if (isFunction(this.closeCallBackFn)) this.closeCallBackFn();
+            if (isFunction(this.closeAfterCallBackFn)) this.closeAfterCallBackFn();
         }
         if (isFunction(destroyFn)) destroyFn();
         processStatus = true;

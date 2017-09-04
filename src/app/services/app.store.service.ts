@@ -85,7 +85,7 @@ export class AppStoreService {
         this.componentFactories.delete(factoryComponentType.key);
     }
 
-    async CreateComponentFactory(factoryKey: string | Type<IComponentFactoryType>): Promise<IComponentFactoryContainer> {
+    async GetOrCreateComponentFactory(factoryKey: string | Type<IComponentFactoryType>): Promise<IComponentFactoryContainer> {
         let compFactoryType, refEntries, refValue;
         if (typeof factoryKey === 'string') {
             if (factoryKey && this.componentFactories.has(factoryKey)) {

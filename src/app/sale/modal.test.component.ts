@@ -25,7 +25,7 @@ export class ModalTestComponent implements Modal {
 
     async show() {
 
-        let factory = await this.appStore.CreateComponentFactory(SaleComponentFactoryType);
+        let factory = await this.appStore.GetOrCreateComponentFactory(SaleComponentFactoryType);
         this.modalService.showModal<string>({
             component: ModalTestComponent,
             componentFactoryResolver: factory.componentFactoryResolver,

@@ -26,6 +26,7 @@ import { UISharedModule } from '../common/shared/shared2';
 import { ColumnBodyComponent } from './columnBody';
 import { DateColumnBodyComponent } from './dateColumnBody';
 import { CellEditorComponent } from './cellEditor';
+import { NavTreeViewModule } from '../components/nav-tree-view/nav-tree-view.module';
 
 export const saleRouteConfig: Routes = [
     {
@@ -39,7 +40,7 @@ export const saleRouteConfig: Routes = [
         FormsModule,
         CommonModule,
         // ButtonModule,
-        XYZDialogModule,
+        XYZDialogModule, NavTreeViewModule,
         XYZUIModule,
         PopoverModule,
         PanelModule,

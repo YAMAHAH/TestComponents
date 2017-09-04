@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, OnDestroy, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, OnDestroy, EventEmitter, Injector } from '@angular/core';
 import { ToastyService } from '../common/toasty/toasty.service';
 import { PanelComponent } from '../common/panel/panel.component';
 import { AppStoreService } from '../services/app.store.service';
@@ -6,44 +6,27 @@ import { IFormModel } from '../basic/IFormModel';
 import { IComponentBase } from '../basic/IComponentBase';
 import { FormOptions } from '../components/form/FormOptions';
 import { NavTreeNode } from '../components/nav-tree-view/nav-tree-node';
+import { ComponentBase } from '../pur/pur-order/ComponentBase';
 
 @Component({
     moduleId: module.id,
     selector: 'panel-test',
     templateUrl: 'panel.test.component.html'
 })
-export class PanelTestComponent implements IComponentBase, OnInit, OnDestroy {
-    setOtherParent(godFather: IFormModel): IFormModel {
-        if (godFather) {
-            godFather.childs.push(this.formModel);
-            this.formModel.godFather = godFather;
-            if(this.formModel.tag){
-                //设置关联的结点在导航树不可见,关闭TAB时也要考虑这种情况
-                let nd =  this.formModel.tag  as NavTreeNode;
-                nd.showNode = false;
-                nd.getParents().forEach(val=>val.showNode = false);
-            }
-        }
-        return this.formModel;
-    }
+export class PanelTestComponent extends ComponentBase implements OnInit, OnDestroy {
 
-    formModel: IFormModel;
-    show(modalOptions?: FormOptions) {
-        return this.appStore.taskManager.show(this.formModel, modalOptions);
-    }
-    showModal(modalOptions?: FormOptions) {
-        return this.appStore.taskManager.showModal(this.formModel, modalOptions);
-    }
-    closeBeforeCheckFn: Function;
-    closeAfterFn: Function;
+
+    // show(modalOptions?: FormOptions) {
+    //     return this.appStore.taskManager.show(this.formModel, modalOptions);
+    // }
+    // showModal(modalOptions?: FormOptions) {
+    //     return this.appStore.taskManager.showModal(this.formModel, modalOptions);
+    // }
     @Input() title: string = "测试组件";
-    modalResult: EventEmitter<any>;
-    context: any;
-    tag: any;
 
     constructor(private toastyService: ToastyService,
-        private appStore: AppStoreService) {
-        // super();
+        protected injector: Injector) {
+        super(injector);
     }
 
     ngOnInit() {

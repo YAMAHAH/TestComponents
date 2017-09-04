@@ -31,7 +31,7 @@ export class FormOptions {
     rtl: boolean;
     closable: boolean = true;
     checkCloseBeforeFn: Function;
-    closeCallBackFn: Function;
+    closeAfterCallBackFn: Function;
     rootContainer: ViewContainerRef;
     injector: Injector;
     formModel: IFormModel;

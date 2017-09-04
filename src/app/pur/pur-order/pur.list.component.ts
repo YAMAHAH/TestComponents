@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, EventEmitter, Injector } from '@angular/core';
 // import { PurDetail, PurList } from './pur-order.component';
 
 import { UUID } from '../../untils/uuid';
@@ -17,40 +17,24 @@ import { NavTreeNode } from '../../components/nav-tree-view/nav-tree-node';
 import { ShowTypeEnum } from '../../basic/show-type-enum';
 import { FormOptions } from '../../components/form/FormOptions';
 import { PurOrderService } from './purOrderService';
+import { ComponentBase } from './ComponentBase';
 
 @Component({
     selector: 'x-pur-list',
     templateUrl: './pur.list.html',
     styles: [' .el-hide{display:none} .el-flex-show{ display:flex;flex:1 }']
 })
-export class PurListComponent implements OnInit, IComponentBase {
-    setOtherParent(godFather: IFormModel): IFormModel {
-        if (godFather) {
-            godFather.childs.push(this.formModel);
-            this.formModel.godFather = godFather;
-            if (this.formModel.tag) {
-                //设置关联的结点在导航树不可见,关闭TAB时也要考虑这种情况
-                let nd = this.formModel.tag as NavTreeNode;
-                nd.showNode = false;
-                nd.getParents().forEach(val => val.showNode = false);
-            }
-        }
-        return this.formModel;
-    }
+export class PurListComponent extends ComponentBase implements OnInit {
 
     @Input() title: string = "采购订单清单";
-    modalResult: EventEmitter<any>;
-    context: any;
-    tag: any;
 
 
     @Input() formModel: IFormModel; //PurList
 
-    constructor(private appStore: AppStoreService,
-        private elementRef: ElementRef,
+    constructor(protected injector: Injector,
         private dialogService: DialogService,
         private purOrderService: PurOrderService) {
-
+        super(injector);
     }
 
     getClass(detail: IFormModel) { //PurDetail
@@ -91,7 +75,7 @@ export class PurListComponent implements OnInit, IComponentBase {
                 node.parent.addNode(nd);
             }
             if (this.formModel.componentRef) {
-                let factoryRef = await this.appStore.CreateComponentFactory(PurComponentFactoryType);
+                let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);
                 if (factoryRef) {
                     detail.showType = ShowTypeEnum.tab;
                     let ins = factoryRef.getComponentRef(PurDetailComponent, detail).instance;
@@ -104,9 +88,6 @@ export class PurListComponent implements OnInit, IComponentBase {
 
         }
         //setcurrent
-
-        // let purOrderActions = new PurOrderActions();
-        // this.appStore.dispatch(purOrderActions.setCurrentAction({ state: detail }));
         this.formModel.componentFactoryRef.setCurrent(detail);
         this.createBill(item);
     }
@@ -136,11 +117,9 @@ export class PurListComponent implements OnInit, IComponentBase {
         if (node && node.parent) {
             node.parent.addNode(nd);
         }
-        // }
-        //setcurrent
+        // }        //setcurrent
         this.formModel.componentFactoryRef.setCurrent(detail);
-        // let purOrderActions = new PurOrderActions();
-        // this.appStore.dispatch(purOrderActions.setCurrentAction({ state: detail }));
+
     }
     purListData: any[] = [];
     closeBeforeCheckFn: Function = async (event: any) => {
@@ -164,7 +143,6 @@ export class PurListComponent implements OnInit, IComponentBase {
         });
 
     }
-    purOrderActions = new PurOrderActions();
     closeAfterFn: Function = () => {
         // let curnode = this.purList.tag as NavTreeNode;
         // this.purList.childs.forEach(form => form.modalRef.instance.close(null));
@@ -180,7 +158,7 @@ export class PurListComponent implements OnInit, IComponentBase {
         // this.appStore.dispatch(new RemovePurOrderAction(this.purOrderActions.key, { state: this.formModel }))
     };
 
-    show = (modalOptions?: FormOptions) => {
+    show(modalOptions?: FormOptions) {
         if (this.formModel) {
             this.formModel.title = this.title;
             this.formModel.elementRef = this.elementRef.nativeElement;
@@ -190,7 +168,7 @@ export class PurListComponent implements OnInit, IComponentBase {
         }
         return this.appStore.taskManager.show(this.formModel, modalOptions);
     }
-    showModal = (modalOptions?: FormOptions): any => {
+    showModal(modalOptions?: FormOptions): any {
         if (this.formModel) {
             this.formModel.title = this.title;
             this.formModel.elementRef = this.elementRef.nativeElement;
@@ -216,11 +194,7 @@ export class PurListComponent implements OnInit, IComponentBase {
             this.formModel.elementRef = this.elementRef.nativeElement;
             this.formModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.formModel.closeAfterFn = this.closeAfterFn;
-            // this.formModel.instance = this;
-            // this.appStore.dispatch(appTabSetActions.showFormAction({
-            //     sender: appTabSetActions.key,
-            //     state: this.formModel
-            // }));
+
             if (this.formModel.showType === ShowTypeEnum.showForm) {
                 this.appStore.taskManager.show(this.formModel);
             }
