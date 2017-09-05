@@ -14,7 +14,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
         throw new Error("Method not implemented.");
     }
     @Input() title: string;
-    formModel: IFormModel;
+    @Input() formModel: IFormModel;
     setOtherParent(godFather: IFormModel): IFormModel {
         if (godFather) {
             godFather.childs.push(this.formModel);
@@ -35,11 +35,36 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
     showModal(modalOptions?: FormOptions) {
         return this.appStore.taskManager.showModal(this.formModel, modalOptions);
     }
-    closeBeforeCheckFn: Function;
+
+    closeBeforeCheckFn: Function = async (event: any) => {
+        return new Promise<any>(resolve => {
+            return resolve(true);
+        });
+    }
     closeAfterFn: Function;
     modalResult: EventEmitter<any>;
     context: any;
     tag: any;
+
+    expandPageModel(root: IFormModel, callback: (comp: IFormModel) => void) {
+        callback(root);
+        root.childs.forEach(c => {
+            this.expandPageModel(c, callback);
+        });
+    }
+
+    searchDown(startComp: IFormModel, predicate: (comp: IFormModel) => boolean): IFormModel {
+        let result: IFormModel = null;
+        result = predicate(startComp) ? startComp : null || startComp.childs.filter(predicate)[0];
+        if (result) return result;
+        startComp.childs.forEach(element => {
+            element.childs.forEach(element => {
+                result = this.searchDown(element, predicate);
+                if (result) return result;
+            });
+        });
+        return result;
+    }
 
     ngOnInit() {
 
@@ -53,14 +78,15 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
     protected viewContainerRef: ViewContainerRef;
     protected componentFactoryResolver: ComponentFactoryResolver;
     protected activeRouter: ActivatedRoute;
-    protected changeDetectorRef: ChangeDetectorRef
+    protected changeDetectorRef: ChangeDetectorRef;
+
     constructor(protected injector: Injector) {
-        this.appStore = injector.get(AppStoreService);
-        this.elementRef = injector.get(ElementRef);
-        this.viewContainerRef = injector.get(ViewContainerRef);
-        this.componentFactoryResolver = injector.get(ComponentFactoryResolver);
-        this.activeRouter = injector.get(ActivatedRoute);
-        this.changeDetectorRef = injector.get(ChangeDetectorRef);
+        this.appStore = this.injector.get(AppStoreService);
+        this.elementRef = this.injector.get(ElementRef);
+        //this.viewContainerRef = injector.get(ViewContainerRef);
+        this.componentFactoryResolver = this.injector.get(ComponentFactoryResolver);
+        this.activeRouter = this.injector.get(ActivatedRoute);
+        this.changeDetectorRef = this.injector.get(ChangeDetectorRef);
     }
 }
 

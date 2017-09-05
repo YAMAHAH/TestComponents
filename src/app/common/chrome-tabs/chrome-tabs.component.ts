@@ -212,9 +212,16 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             this.select(this.tabModels[idx + 1]);
         }
     }
-    select(tab: TabModel) {
+    async select(tab: TabModel) {
         if (!!!tab) return;
         if (this.selected) this.selected.active = false;
+        //Tab页面切换时,隐藏非活动页面所有已打开的非最小化窗体,排除homeTab
+
+        let factoryRef = this.selected && await this.appStore.GetOrCreateComponentFactory(this.selected.key);
+        factoryRef && factoryRef.hidePageModels()
+        factoryRef = tab && await this.appStore.GetOrCreateComponentFactory(tab.key);
+        factoryRef && factoryRef.showPageModels();
+
         this.selected = tab;
         this.selected.active = true;
         this.emit('activeTabChange', { tab });

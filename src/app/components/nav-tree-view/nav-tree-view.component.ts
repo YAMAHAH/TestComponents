@@ -23,6 +23,7 @@ export class NavTreeViewComponent implements OnInit {
         this.setCurrent(navNode);
         this.itemClick.next(navNode);
         this.selectChanged.emit(navNode);
+        console.log(this.toList());
     }
 
     onItemCloseClick(navNode: NavTreeNode) {
@@ -40,6 +41,8 @@ export class NavTreeViewComponent implements OnInit {
     }
 
     setCurrent(node: NavTreeNode) {
+        if (node && !node.showNode) return;
+
         if (this.current) {
             this.current.selected = false;
         }

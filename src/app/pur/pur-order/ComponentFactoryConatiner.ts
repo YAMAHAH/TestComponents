@@ -21,14 +21,14 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     public viewContainerRef: ViewContainerRef;
     public componentFactoryResolver: ComponentFactoryResolver;
     groupTitle: string;
-    childFormLists: IFormModel[] = [];
-    childFormInstances: IFormModel[] = [];
+    principalPageModels: IFormModel[] = [];
+    dependentPageModels: IFormModel[] = [];
     @ViewChild(NavTreeViewComponent) navTreeView: NavTreeViewComponent;
     createGroup(formExtras?: FormExtras): IFormModel {
-        let len = this.childFormLists.length + 1;
+        let len = this.principalPageModels.length + 1;
         let formGroup: IFormModel = {
             formType: FormTypeEnum.group,
-            title: this.title + "-" + len.toString(10),
+            title: this.title + "分组-" + len.toString(10),
             active: false,
             childs: [],
             componentFactoryRef: this,
@@ -36,25 +36,29 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             resolve: this.appStore.handleResolve(formExtras && formExtras.resolve),
             showType: formExtras && formExtras.showType || this.appStore.showType
         };
-
-        let groupNode = new NavTreeNode(UUID.uuid(8, 10), this.title + "-" + len.toString(10), '/skdd', 'sndwd', 0);
+        this.formModel.childs.push(formGroup);
+        let groupNode = new NavTreeNode(UUID.uuid(8, 10), this.title + "分组-" + len.toString(10), '/skdd', 'sndwd', 0);
         groupNode.isGroup = true;
         groupNode.tag = formGroup;
+        if (formExtras && !!formExtras.visibleInNavTree)
+            groupNode.showNode = false;
+        else groupNode.showNode = true;
+
         formGroup.tag = groupNode;
 
         this.navTreeView.addNode(groupNode);
-        this.addFormList(formGroup);
+        this.addPrincipalPageModel(formGroup);
         this.setCurrent(formGroup);
         return formGroup;
     }
-    protected addFormList(formList: IFormModel) { //PurList
+    protected addPrincipalPageModel(formList: IFormModel) {
         if (formList) {
-            this.childFormLists.push(formList);
+            this.principalPageModels.push(formList);
         }
     }
     createList(groupFormModel: IFormModel, formExtras?: FormExtras): IFormModel {
-        let len = this.childFormLists.length + 1;
-        let purOrderList: IFormModel = { //PurList
+        let len = this.principalPageModels.length + 1;
+        let pageList: IFormModel = {
             formType: FormTypeEnum.list,
             title: this.title + "清单-" + len.toString(10),
             active: true,
@@ -66,14 +70,17 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         };
 
         let nd = new NavTreeNode(UUID.uuid(8, 10), this.title + "清单-" + len.toString(10), '/skdd', 'sndwd', 0);
-        nd.tag = purOrderList;
-        purOrderList.tag = nd;
+        nd.tag = pageList;
+        if (formExtras && !!formExtras.visibleInNavTree)
+            nd.showNode = false;
+        else nd.showNode = true;
+        pageList.tag = nd;
 
-        groupFormModel.tag.addNode(nd); //childs.push(nd);
-        groupFormModel.childs.push(purOrderList);
+        groupFormModel.tag.addNode(nd);
+        groupFormModel.childs.push(pageList);
 
-        this.setCurrent(purOrderList); //purOrderList
-        return purOrderList;
+        this.setCurrent(pageList);
+        return pageList;
     }
     createDetail(groupFormModel: IFormModel, formExtras?: FormExtras): IFormModel {
         let detail: IFormModel = {
@@ -94,6 +101,9 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         let ndKey = UUID.uuid(8, 10);
         let nd = new NavTreeNode(ndKey, ndKey, '/skdd', 'sndwd', 0);
         nd.tag = detail;
+        if (formExtras && !!formExtras.visibleInNavTree)
+            nd.showNode = false;
+        else nd.showNode = true;
         detail.tag = nd;
 
         let node = groupFormModel.tag as NavTreeNode;
@@ -119,11 +129,12 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         let idx = nodeLists.findIndex(nd => nd.tag == formModel);
         let detailIdx;
         if (idx > -1) {
-            if (nodeLists[idx - 1]) {
-                this.setCurrent(nodeLists[idx - 1].tag);
-            } else if (nodeLists[idx + 1]) {
-                this.setCurrent(nodeLists[idx + 1].tag);
-            }
+            // if (nodeLists[idx - 1]) {
+            //     this.setCurrent(nodeLists[idx - 1].tag);
+            // } else if (nodeLists[idx + 1]) {
+            //     this.setCurrent(nodeLists[idx + 1].tag);
+            // }
+            this.selectNextVisibleForm(formModel);
             let nd = nodeLists[idx];
             let curformParent: IFormModel = nd.tag.parent;
             if (curformParent) { //parent
@@ -135,12 +146,12 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                     }
                 }
             } else { //leaf
-                detailIdx = this.childFormLists.findIndex(pl => pl == nd.tag);
-                if (detailIdx > -1) this.childFormLists.splice(detailIdx, 1);
+                detailIdx = this.principalPageModels.findIndex(pl => pl == nd.tag);
+                if (detailIdx > -1) this.principalPageModels.splice(detailIdx, 1);
                 //
-                detailIdx = this.childFormInstances.findIndex(pl => pl == nd.tag);
+                detailIdx = this.dependentPageModels.findIndex(pl => pl == nd.tag);
                 if (detailIdx > -1) {
-                    let delItem = this.childFormInstances.splice(detailIdx, 1)[0];
+                    let delItem = this.dependentPageModels.splice(detailIdx, 1)[0];
                     if (delItem.componentRef) {
                         delItem.componentRef.destroy();
                     }
@@ -154,19 +165,19 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                     } else {
                         nd.parent = null;
                     }
-                    let nodeIdx = this.childFormLists.findIndex(pl => pl === nd.parent.tag);
-                    if (nodeIdx > -1) this.childFormLists.splice(nodeIdx, 1);
-                    nodeIdx = this.childFormInstances.findIndex(pl => pl === nd.parent.tag);
+                    let nodeIdx = this.principalPageModels.findIndex(pl => pl === nd.parent.tag);
+                    if (nodeIdx > -1) this.principalPageModels.splice(nodeIdx, 1);
+                    nodeIdx = this.dependentPageModels.findIndex(pl => pl === nd.parent.tag);
                     if (nodeIdx > -1) {
-                        let delItem2 = this.childFormInstances.splice(nodeIdx, 1)[0];
+                        let delItem2 = this.dependentPageModels.splice(nodeIdx, 1)[0];
                         if (delItem2.componentRef) {
                             delItem2.componentRef.destroy();
                         }
                     }
-                    if (this.childFormLists.length == 0 && this.childFormInstances.length == 0) {
+                    if (this.principalPageModels.length == 0 && this.dependentPageModels.length == 0) {
                         this.appStore.taskManager.closeTaskGroup(this.taskId);
                     }
-                    if (this.childFormLists.length == 0 && this.childFormInstances.length > 0) {
+                    if (this.principalPageModels.length == 0 && this.dependentPageModels.length > 0) {
                         this.appStore.taskManager.hideTaskGroup(this.taskId);
                     }
                 }
@@ -183,9 +194,15 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             this.navTreeView && this.navTreeView.setCurrent(null);
             return;
         }
-        if (this.current) {
-            this.current.active = false; //true
-        }
+        let dependModels: IFormModel[] = [];
+        this.expandPageModel({ childs: this.dependentPageModels, title: "", active: false }, (p) => {
+            if (p.formType != FormTypeEnum.group) dependModels.push(p);
+        });
+
+        if (dependModels.indexOf(formModel) < 0 && this.current) {
+            this.current.active = false;
+        } else if (this.current) this.current.active = true;
+
         formModel.active = true;
         this.current = formModel;
         if (this.current && this.current.modalRef) {
@@ -213,7 +230,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             }
         })).every((val: boolean) => val === true).distinctUntilChanged().subscribe((res: boolean) => {
             let result = { processFinish: true, result: res };
-            if (this.childFormInstances.length > 0) {
+            if (this.dependentPageModels.length > 0) {
                 result.result = false;
             }
             if (action.data.sender) action.data.sender.next(result);
@@ -270,6 +287,38 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             }
         });
     }
+
+    findPageModelRef() {
+        let foundedModels: IFormModel[] = [];
+        let dependModels: IFormModel[] = [];
+        this.expandPageModel({ childs: this.dependentPageModels, title: "", active: false }, (p) => {
+            if (p.formType != FormTypeEnum.group) dependModels.push(p);
+        })
+
+        this.expandPageModel(this.formModel, (pageModel => {
+            if (dependModels.indexOf(pageModel) < 0 &&
+                pageModel.godFather != null &&
+                pageModel.modalRef && pageModel.modalRef.instance &&
+                pageModel.modalRef.instance.modalWindowState != 1)
+                foundedModels.push(pageModel);
+        }));
+        return foundedModels;
+    }
+    hidePageModels() {
+        //获取所有模式窗体
+        let pageModels = this.findPageModelRef();
+        pageModels.forEach(m => {
+            m.modalRef.instance.visible = false;
+        });
+    }
+
+    showPageModels() {
+        let pageModels = this.findPageModelRef();
+        pageModels.forEach(m => {
+            m.modalRef.instance.visible = true;
+        });
+    }
+
     selectNextVisibleForm(formModel: IFormModel): void {
         let nodeLists = this.navTreeView.toList().filter((nd) => nd.isGroup == false && nd.level > -1);
         let idx = nodeLists.findIndex(nd => nd.tag == formModel);
@@ -312,7 +361,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         return componentRef;
     }
     private createDefaultPageModel(extras?: FormExtras) {
-        let len = this.childFormLists.length + 1;
+        let len = this.principalPageModels.length + 1;
         let title = UUID.uuid(8, 10).toString();
         let formGroupModel: IFormModel = {
             formType: FormTypeEnum.group,
@@ -324,13 +373,15 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             resolve: this.appStore.handleResolve(extras && extras.resolve) || {},
             showType: extras && extras.showType || ShowTypeEnum.tab
         };
+        this.formModel.childs.push(formGroupModel);
         // formGroup.showType = ShowTypeEnum.showForm;
         let groupNode = new NavTreeNode(UUID.uuid(8, 10), title + '默认组', '/skdd', 'sndwd', 0);
         groupNode.isGroup = true;
+        groupNode.showNode = false;
         groupNode.tag = formGroupModel;
         formGroupModel.tag = groupNode;
 
-        let formModelList: IFormModel = {
+        let pageList: IFormModel = {
             formType: FormTypeEnum.list,
             title: title,
             active: true,
@@ -343,15 +394,17 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         // purOrderList.showType = ShowTypeEnum.showForm;
 
         let nd = new NavTreeNode(UUID.uuid(8, 10), title, '/skdd', 'sndwd', 0);
-        nd.tag = formModelList;
-        formModelList.tag = nd;
+        nd.tag = pageList;
+        nd.showNode = false;
+        pageList.tag = nd;
 
         groupNode.addNode(nd);
-        formGroupModel.childs.push(formModelList);
+        formGroupModel.childs.push(pageList);
         this.navTreeView.addNode(groupNode);
-        this.childFormInstances.push(formGroupModel);
+        //添加依赖页面
+        this.dependentPageModels.push(formGroupModel);
         this.setCurrent(formGroupModel);
-        return formModelList;
+        return pageList;
     }
 
     ngOnDestroy(): void {
@@ -376,5 +429,31 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                 this.componentFactoryDestroyFn = this.appStore.registerComponentFactoryRef(componentFactoryType);
             }).unsubscribe();
     }
+
+    /**
+     * 导航树项目单击事件默认实现
+     * @param navNode 
+     */
+    onItemClick(navNode: NavTreeNode) {
+        this.setCurrent(navNode.tag);
+        console.log(this.findPageModelRef());
+    }
+    /**
+     * 
+     * @param navNode 导航树关闭按钮单击事件默认实现
+     */
+    async onItemCloseClick(navNode: NavTreeNode) {
+        let formModel: IFormModel = navNode.tag;
+        //根据model关闭,关闭前检查,等待关闭前处理函数
+        await this.closePage(formModel);
+    }
+
+    /**
+     * 组件关闭后回调函数默认实现
+     * 
+     */
+    closeAfterFn: Function = () => {
+        this.appStore.taskManager.closeTaskGroup(() => this.formModel.key);
+    };
 }
 

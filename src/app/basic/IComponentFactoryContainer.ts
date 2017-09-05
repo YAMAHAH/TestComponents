@@ -10,13 +10,13 @@ export interface IComponentFactoryContainer {
      */
     groupTitle: string;
     /**
-     * formModel决定组件
+     * 主体页面打开的列表
      */
-    childFormLists: IFormModel[];
+    principalPageModels: IFormModel[];
     /**
-     * 组件决定formModel
+     * 依赖页面打开的列表
      */
-    childFormInstances: IFormModel[];
+    dependentPageModels: IFormModel[];
     /**
      * 导航树
      */
@@ -65,7 +65,14 @@ export interface IComponentFactoryContainer {
      * 获取组件引用
      */
     getComponentRef<T extends IComponentBase>(componentType: Type<T>, formModel?: IFormModel): ComponentRef<T>;
-
+    /**
+     * 隐藏所有显示的窗口
+     */
+    hidePageModels(): void;
+    /**
+     * 显示所有隐藏的窗口
+     */
+    showPageModels(): void;
     viewContainerRef: ViewContainerRef;
     componentFactoryResolver: ComponentFactoryResolver
 }

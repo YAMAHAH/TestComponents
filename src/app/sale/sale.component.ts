@@ -47,7 +47,8 @@ import { ComponentFactoryConatiner } from '../pur/pur-order/ComponentFactoryCona
     styleUrls: ['sale.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SaleComponent extends ComponentFactoryConatiner implements reducer, OnInit, OnDestroy {
+export class SaleComponent extends ComponentFactoryConatiner
+    implements reducer, OnInit, OnDestroy {
 
 
     subject: ISubject;
@@ -59,18 +60,18 @@ export class SaleComponent extends ComponentFactoryConatiner implements reducer,
         }]
     };
     constructor(
-        public injector: Injector,
+        protected injector: Injector,
         private loadScript: LoadScriptService,
         private dialogService: DialogService,
         private modalService: ModalService,
         private toastyService: ToastyService,
         private toastyConfig: ToastyConfig,
-        private changeDetectorRef: ChangeDetectorRef,
         public viewContainerRef: ViewContainerRef,
         private dialogModalService: FormService,
         private carService: CarService) {
 
         super(injector);
+
         this.cars = [];
         this.cars.push({ label: 'Audi', value: 'Audi' });
         this.cars.push({ label: 'BMW', value: 'BMW' });
@@ -144,22 +145,6 @@ export class SaleComponent extends ComponentFactoryConatiner implements reducer,
         });
     }
 
-    closeAfterFn: Function = () => {
-        // this.saleformModel = null;
-        this.appStore.taskManager.closeTaskGroup(this.formModel.key);
-        //this.formModel.childs = [];
-        // let taskGroupActions = new AppTaskBarActions();
-        // this.appStore.dispatch(taskGroupActions.closeTaskGroupAction({ state: { key: this.saleOrderActions.key } }));
-    };
-    onItemClick(navNode: NavTreeNode) {
-        this.setCurrent(navNode.tag);
-    }
-
-    async onItemCloseClick(navNode: NavTreeNode) {
-        let formModel: IFormModel = navNode.tag;
-        //根据model关闭,关闭前检查,等待关闭前处理函数
-        await this.closePage(formModel);
-    }
 
     alert() {
         this.dialogService.alert({
@@ -321,8 +306,8 @@ export class SaleComponent extends ComponentFactoryConatiner implements reducer,
     async open() {
         let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);
         if (factoryRef) {
-            this.group = factoryRef.createGroup();
-            let detail = factoryRef.createDetail(this.group, { showType: ShowTypeEnum.showFormModal });
+            this.group = factoryRef.createGroup({ visibleInNavTree: false });
+            let detail = factoryRef.createDetail(this.group, { visibleInNavTree: false, showType: ShowTypeEnum.showFormModal });
             let ins = factoryRef.getComponentRef(PurListComponent).instance;
             ins.formModel.resolve = { data: '手工创建组件,传递参数,显示窗体' };
             ins.context = { data: 'Context:手工创建组件,传递参数,显示窗体' };
@@ -439,12 +424,6 @@ export class SaleComponent extends ComponentFactoryConatiner implements reducer,
             })
             this.changeDetectorRef.markForCheck();
         });
-    }
-
-    ngOnDestroy() {
-        if (this.componentFactoryDestroyFn) {
-            this.componentFactoryDestroyFn();
-        }
     }
 
 

@@ -20,24 +20,18 @@ export class PurDetailComponent extends ComponentBase implements OnInit {
     closeBeforeCheckFn: Function;
     @Input() title: string = "采购订单";
 
-    @Input() formModel: IFormModel;
-
     purOrder: any;
     constructor(protected injector: Injector) {
         super(injector);
     }
     ngOnInit() {
         this.purOrder = { pono: this.formModel.key, ptnno: "JL-" + UUID.uuid(8, 10) };
-        console.log(this.purOrder);
-        // this.formModel.instance = this;
-        // this.show();
         if (this.formModel.showType === ShowTypeEnum.showForm) {
             this.show();
         }
         if (this.formModel.showType === ShowTypeEnum.showFormModal) {
             this.showModal();
         }
-
     }
     autoDisappear = false;
     closed = false;

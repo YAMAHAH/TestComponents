@@ -25,19 +25,14 @@ import { ComponentBase } from './ComponentBase';
     styles: [' .el-hide{display:none} .el-flex-show{ display:flex;flex:1 }']
 })
 export class PurListComponent extends ComponentBase implements OnInit {
-
     @Input() title: string = "采购订单清单";
-
-
-    @Input() formModel: IFormModel; //PurList
-
     constructor(protected injector: Injector,
         private dialogService: DialogService,
         private purOrderService: PurOrderService) {
         super(injector);
     }
 
-    getClass(detail: IFormModel) { //PurDetail
+    getClass(detail: IFormModel) {
         return {
             "el-hide": !detail.active,
             "el-flex-show": detail.active
@@ -61,6 +56,7 @@ export class PurListComponent extends ComponentBase implements OnInit {
                 title: item.pono,
                 active: false,
                 tag: null,
+                childs: [],
                 componentFactoryRef: this.formModel.componentFactoryRef,
                 parent: this.formModel.parent,
                 resolve: this.appStore.handleResolve({ data: item })
@@ -85,7 +81,6 @@ export class PurListComponent extends ComponentBase implements OnInit {
                     ins.show().subscribe((res: any) => console.log(res));
                 }
             }
-
         }
         //setcurrent
         this.formModel.componentFactoryRef.setCurrent(detail);
@@ -93,18 +88,18 @@ export class PurListComponent extends ComponentBase implements OnInit {
     }
 
     createBill(item: any) {
-        let detail;
-
+        let detail: IFormModel;
         detail = {
             formType: FormTypeEnum.detail,
             key: UUID.uuid(8, 10),
             title: UUID.uuid(8, 10),
             active: false,
             tag: null,
+            childs: [],
             componentFactoryRef: this.formModel.componentFactoryRef,
             parent: this.formModel.parent,
             showType: this.appStore.showType || ShowTypeEnum.showForm,
-            resolve: this.appStore.handleResolve({ data: item })
+            resolve: this.appStore.handleResolve({ data: item }),
         };
         this.formModel.parent.childs.push(detail);
 
@@ -117,9 +112,7 @@ export class PurListComponent extends ComponentBase implements OnInit {
         if (node && node.parent) {
             node.parent.addNode(nd);
         }
-        // }        //setcurrent
         this.formModel.componentFactoryRef.setCurrent(detail);
-
     }
     purListData: any[] = [];
     closeBeforeCheckFn: Function = async (event: any) => {
@@ -144,18 +137,13 @@ export class PurListComponent extends ComponentBase implements OnInit {
 
     }
     closeAfterFn: Function = () => {
-        // let curnode = this.purList.tag as NavTreeNode;
-        // this.purList.childs.forEach(form => form.modalRef.instance.close(null));
         if (this.formModel && this.formModel.godFather) {
             let idx = this.formModel.godFather.childs.findIndex((value) => value === this.formModel);
             if (idx > -1) {
                 this.formModel.godFather.childs.splice(idx, 1);
             }
-
         }
         this.formModel.componentFactoryRef.removeFormModel(this.formModel);
-
-        // this.appStore.dispatch(new RemovePurOrderAction(this.purOrderActions.key, { state: this.formModel }))
     };
 
     show(modalOptions?: FormOptions) {
@@ -164,7 +152,6 @@ export class PurListComponent extends ComponentBase implements OnInit {
             this.formModel.elementRef = this.elementRef.nativeElement;
             this.formModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.formModel.closeAfterFn = this.closeAfterFn;
-            //  this.formModel.instance = this;
         }
         return this.appStore.taskManager.show(this.formModel, modalOptions);
     }
@@ -174,7 +161,6 @@ export class PurListComponent extends ComponentBase implements OnInit {
             this.formModel.elementRef = this.elementRef.nativeElement;
             this.formModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.formModel.closeAfterFn = this.closeAfterFn;
-            //  this.formModel.instance = this;
         }
         return this.appStore.taskManager.showModal(this.formModel, modalOptions);
     }
@@ -188,7 +174,6 @@ export class PurListComponent extends ComponentBase implements OnInit {
             { pono: "PO-16120004", title: "采购订单", active: false },
             { pono: "PO-16120005", title: "采购订单", active: false }
         ];
-        // let appTabSetActions = new AppTaskBarActions;
         if (this.formModel) {
             this.formModel.title = this.title;
             this.formModel.elementRef = this.elementRef.nativeElement;
