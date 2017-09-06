@@ -12,7 +12,16 @@ export class NavTreeNode {
     parent: NavTreeNode;
     isGroup: boolean = false;
     showNode: boolean = true;
+    /**
+     * 指示是否依赖引用结点
+     */
+    isDependRef: boolean = false;
+    /**附加对象 */
     tag: any;
+    /**
+     * 附加对象2
+     */
+    extras: any;
     constructor(public key: string,
         public name: string,
         public path: string,
@@ -69,7 +78,7 @@ export class NavTreeNode {
         return parents.reverse();
     }
 
-    
+
 
     setParentCheckState(node: NavTreeNode) {
         let pnode = this.parent;

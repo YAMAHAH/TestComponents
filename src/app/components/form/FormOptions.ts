@@ -1,5 +1,5 @@
 import { ViewContainerRef, Injector, Type, ComponentRef, EventEmitter } from '@angular/core';
-import { IFormModel } from '../../basic/IFormModel';
+import { IPageModel } from '../../basic/IFormModel';
 import { FormTitleAlignEnum } from './FormTitleAlignEnum';
 export class FormOptions {
     componentOutlets: Type<any>[] = [];//要创建的组件
@@ -34,6 +34,6 @@ export class FormOptions {
     closeAfterCallBackFn: Function;
     rootContainer: ViewContainerRef;
     injector: Injector;
-    formModel: IFormModel;
+    formModel: IPageModel;
 
 }

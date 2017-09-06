@@ -21,7 +21,7 @@ import { Modal } from '../common/modal/modal.model';
 import { ModalTestComponent } from './modal.test.component';
 import { PurDetailComponent } from '../pur/pur-order/pur.detail.component';
 import { reducer } from '../basic/IReducer';
-import { IFormModel } from '../basic/IFormModel';
+import { IPageModel } from '../basic/IFormModel';
 import { FormExtras } from '../basic/FormExtras';
 import { IComponentFactoryContainer } from '../basic/IComponentFactoryContainer';
 import { ShowTypeEnum } from '../basic/show-type-enum';
@@ -37,6 +37,7 @@ import { DateColumnBodyComponent } from './dateColumnBody';
 import { CellEditorComponent } from './cellEditor';
 import { NavTreeNode } from '../components/nav-tree-view/nav-tree-node';
 import { ComponentFactoryConatiner } from '../pur/pur-order/ComponentFactoryConatiner';
+import { FormTypeEnum } from '../basic/FormTypeEnum';
 
 
 
@@ -85,21 +86,23 @@ export class SaleComponent extends ComponentFactoryConatiner
         this.cars.push({ label: 'Volvo', value: 'Volvo' });
 
         this.reducer();
-        this.formModel = {
+        this.pageModel = {
             showType: this.appStore.showType || ShowTypeEnum.showForm,
             title: "SaleOrder Group",
             active: true,
             componentFactoryRef: this,
-            childs: []
+            childs: [],
+            formType: FormTypeEnum.container
         };
+        console.log(this.pageModel);
         // this.registerFactory(new SaleComponentFactoryType(this.formModel.key, this));
         this.activeRouter.queryParams
             .map(params => params['taskId'])
             .subscribe(param => {
-                if (this.formModel) {
-                    this.formModel.key = this.taskId = param;
+                if (this.pageModel) {
+                    this.pageModel.key = this.taskId = param;
                 }
-                this.componentFactoryDestroyFn = this.appStore.registerComponentFactoryRef(new SaleComponentFactoryType(this.formModel.key, this));
+                this.componentFactoryDestroyFn = this.appStore.registerComponentFactoryRef(new SaleComponentFactoryType(this.pageModel.key, this));
             }).unsubscribe();
     }
     saleOrderActions = new SaleOrderActions();
@@ -137,7 +140,7 @@ export class SaleComponent extends ComponentFactoryConatiner
                     }
                     break;
                 case act instanceof CloseTaskGroupAction:
-                    this.closeAllForm(act);
+                    this.closeAllPages(act);
                     break;
                 default:
                     break;
@@ -302,17 +305,18 @@ export class SaleComponent extends ComponentFactoryConatiner
     onActionClick(item: ActionItem) {
         console.log(`Action item ${item.id} clicked`, item);
     }
-    group: IFormModel;
+    group: IPageModel;
     async open() {
         let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);
         if (factoryRef) {
             this.group = factoryRef.createGroup({ visibleInNavTree: false });
             let detail = factoryRef.createDetail(this.group, { visibleInNavTree: false, showType: ShowTypeEnum.showFormModal });
             let ins = factoryRef.getComponentRef(PurListComponent).instance;
-            ins.formModel.resolve = { data: '手工创建组件,传递参数,显示窗体' };
+            ins.pageModel.resolve = { data: '手工创建组件,传递参数,显示窗体' };
             ins.context = { data: 'Context:手工创建组件,传递参数,显示窗体' };
             //设置关联
-            ins.setOtherParent(this.formModel);
+            let parentModel = this.current || this.pageModel;
+            ins.setOtherParent(parentModel);
             ins.show().subscribe((res: any) => console.log(res));
         }
     }
@@ -325,8 +329,9 @@ export class SaleComponent extends ComponentFactoryConatiner
             options.modal = false;
             if (compRef) {
                 let compIns = compRef.instance;
-                compIns.formModel.title = compIns.title;
-                compIns.setOtherParent(this.formModel);
+                compIns.pageModel.title = compIns.title;
+                let parentModel = this.current || this.pageModel;
+                compIns.setOtherParent(parentModel);
                 compIns.show(options).subscribe((res: any) => console.log(res));
             }
         }
@@ -400,17 +405,17 @@ export class SaleComponent extends ComponentFactoryConatiner
         }
     }
 
-    formModel: IFormModel = { title: '销售订单', active: true, childs: [] };
+    pageModel: IPageModel = { title: '销售订单', active: true, childs: [] };
     ngOnInit() {
-        this.formModel.closeAfterFn = this.closeAfterFn;
-        this.formModel.elementRef = this.viewContainerRef.element.nativeElement;
-        this.formModel.title = this.title;
+        this.pageModel.closeAfterFn = this.closeAfterFn;
+        this.pageModel.elementRef = this.viewContainerRef.element.nativeElement;
+        this.pageModel.title = this.title;
         // this.formModel.instance = this;
-        if (this.formModel.showType === ShowTypeEnum.showForm) {
-            this.appStore.taskManager.show(this.formModel);
+        if (this.pageModel.showType === ShowTypeEnum.showForm) {
+            this.appStore.taskManager.show(this.pageModel);
         }
-        if (this.formModel.showType === ShowTypeEnum.showFormModal) {
-            this.appStore.taskManager.showModal(this.formModel);
+        if (this.pageModel.showType === ShowTypeEnum.showFormModal) {
+            this.appStore.taskManager.showModal(this.pageModel);
         }
 
 

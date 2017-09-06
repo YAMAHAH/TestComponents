@@ -20,7 +20,7 @@ import { NavTreeViewComponent } from '../../components/nav-tree-view/nav-tree-vi
 import { NavTreeNode } from '../../components/nav-tree-view/nav-tree-node';
 import { FormStateEnum } from '../../components/form/FormStateEnum';
 import { IComponentFactoryContainer } from '../../basic/IComponentFactoryContainer';
-import { IFormModel } from '../../basic/IFormModel';
+import { IPageModel } from '../../basic/IFormModel';
 import { isFunction } from '../../common/toasty/toasty.utils';
 import { ComponentFactoryConatiner } from './ComponentFactoryConatiner';
 
@@ -37,35 +37,32 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
         public viewContainerRef: ViewContainerRef
     ) {
         super(injector);
-        this.formModel = {
+        this.pageModel = {
             title: '采购订单分组',
             active: true,
             componentFactoryRef: this,
             showType: ShowTypeEnum.showForm,
-            childs:[]
+            childs: [],
+            formType: FormTypeEnum.container
         };
         // this.registerFactory(new PurComponentFactoryType(this.formModel.key, this));
         this.activeRouter.queryParams
             .map(params => params['taskId'])
             .subscribe(param => {
-                if (this.formModel) {
-                    this.formModel.key = this.taskId = param;
+                if (this.pageModel) {
+                    this.pageModel.key = this.taskId = param;
                 }
-                this.componentFactoryDestroyFn = this.appStore.registerComponentFactoryRef(new PurComponentFactoryType(this.formModel.key, this));
+                this.componentFactoryDestroyFn = this.appStore.registerComponentFactoryRef(new PurComponentFactoryType(this.pageModel.key, this));
             }).unsubscribe();
         this.reducer();
-    }
-
-    getComponentFactoryType() {
-        return new PurComponentFactoryType(this.formModel.key, this)
     }
     get formGroups() {
         return this.principalPageModels;
     }
-    getDetails(grp: IFormModel) {
+    getDetails(grp: IPageModel) {
         return grp.childs.filter(child => child.formType === FormTypeEnum.detail);
     }
-    getLists(grp: IFormModel) {
+    getLists(grp: IPageModel) {
         return grp.childs.filter(child => child.formType === FormTypeEnum.list);
     }
 
@@ -73,8 +70,8 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
     ngOnInit() {
         super.ngOnInit();
         this.setupElStyle();
-        this.formModel.closeAfterFn = this.closeAfterFn;
-        this.formModel.elementRef = this.elementRef.nativeElement;
+        this.pageModel.closeAfterFn = this.closeAfterFn;
+        this.pageModel.elementRef = this.elementRef.nativeElement;
     }
 
     ngOnDestroy() {
@@ -91,7 +88,7 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
         styleUntils.setupStyleEl(this.elementRef.nativeElement, styleHtml);
     }
 
-    getClass(listModel: IFormModel) { //PurList
+    getClass(listModel: IPageModel) { //PurList
         if (!listModel) return {};
         return {
             "el-hide": !listModel.active,
@@ -99,7 +96,7 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
         };
     }
 
-    getDetailClass(detail: IFormModel) { //PurDetail
+    getDetailClass(detail: IPageModel) { //PurDetail
         if (!detail) return;
         return {
             "el-hide": !detail.active,
@@ -110,14 +107,14 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
     purOrder: ISubject;
     purOrderActions = new PurOrderActions();
     async reducer() {
-        this.purOrder = this.appStore.select(this.formModel.key);
+        this.purOrder = this.appStore.select(this.pageModel.key);
         this.purOrder.subject.subscribe(act => {
             switch (true) {
                 case act instanceof AddPurOrderAction:
                     this.addPrincipalPageModel(act.data.state);
                     break;
                 case act instanceof RemovePurOrderAction:
-                    this.removeFormModel(act.data.state);
+                    this.removePageModel(act.data.state);
                     break;
                 case act instanceof AddAction:
                     this.createGroupList(act.data.state);
@@ -134,7 +131,7 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
                     }
                     break;
                 case act instanceof CloseTaskGroupAction:
-                    this.closeAllForm(act);
+                    this.closeAllPages(act);
                     break;
                 default:
                     break;
@@ -144,7 +141,7 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
 
     deleteCurrent() {
         if (this.current) {
-            this.removeFormModel(this.current);
+            this.removePageModel(this.current);
         }
     }
 

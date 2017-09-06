@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, Input, OnDestroy, EventEmitter, Injector 
 import { ToastyService } from '../common/toasty/toasty.service';
 import { PanelComponent } from '../common/panel/panel.component';
 import { AppStoreService } from '../services/app.store.service';
-import { IFormModel } from '../basic/IFormModel';
+import { IPageModel } from '../basic/IFormModel';
 import { IComponentBase } from '../basic/IComponentBase';
 import { FormOptions } from '../components/form/FormOptions';
 import { NavTreeNode } from '../components/nav-tree-view/nav-tree-node';

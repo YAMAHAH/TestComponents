@@ -1,10 +1,10 @@
-import { IFormModel } from './IFormModel';
+import { IPageModel } from './IFormModel';
 import { NavTreeViewComponent } from '../components/nav-tree-view/nav-tree-view.component';
 import { IComponentBase } from './IComponentBase';
 import { Type, ComponentRef, ComponentFactoryResolver, ViewContainerRef } from '@angular/core';
 import { IAction } from '../Models/IAction';
 import { FormExtras } from './FormExtras';
-export interface IComponentFactoryContainer {
+export interface IComponentFactoryContainer extends IComponentBase {
     /**
      * 组的标题
      */
@@ -12,11 +12,11 @@ export interface IComponentFactoryContainer {
     /**
      * 主体页面打开的列表
      */
-    principalPageModels: IFormModel[];
+    principalPageModels: IPageModel[];
     /**
      * 依赖页面打开的列表
      */
-    dependentPageModels: IFormModel[];
+    dependentPageModels: IPageModel[];
     /**
      * 导航树
      */
@@ -24,47 +24,47 @@ export interface IComponentFactoryContainer {
     /**
      * 创建组
      */
-    createGroup(formExtras?: FormExtras): IFormModel;
+    createGroup(formExtras?: FormExtras): IPageModel;
     /**
      * 创建列表
      */
-    createList(groupFormModel: IFormModel, formExtras?: FormExtras): IFormModel;
+    createList(groupFormModel: IPageModel, formExtras?: FormExtras): IPageModel;
     /**
      * 创建明细
      */
-    createDetail(groupFormModel: IFormModel, formExtras?: FormExtras): IFormModel;
+    createDetail(groupPageModel: IPageModel, formExtras?: FormExtras): IPageModel;
     /**
      * 创建组和列表
      */
-    createGroupList(formExtras?: FormExtras): IFormModel;
+    createGroupList(formExtras?: FormExtras): IPageModel;
     /**
      * 创建一个组和明细
      */
-    createGroupDetail(formExtras?: FormExtras): IFormModel;
+    createGroupDetail(formExtras?: FormExtras): IPageModel;
     /**
      * 移除弹窗模型
      */
-    removeFormModel(formModel: IFormModel): void;
+    removePageModel(pageModel: IPageModel): void;
     /**
      * 设置活动项
      */
-    setCurrent(formModel: IFormModel): void;
+    setCurrent(pageModel: IPageModel): void;
     /**
      * 关闭所有弹窗
      */
-    closeAllForm(action: IAction): void;
+    closeAllPages(action: IAction): void;
     /**
     * 关闭页
     */
-    closePage(formModel: IFormModel): Promise<any>;
+    closePage(pageModel: IPageModel): Promise<any>;
     /**
-     * 选择下一个可见弹窗
+     * 选择下一个可见页面
      */
-    selectNextVisibleForm(formModel: IFormModel): void;
+    selectNextVisiblePage(pageModel: IPageModel): void;
     /**
      * 获取组件引用
      */
-    getComponentRef<T extends IComponentBase>(componentType: Type<T>, formModel?: IFormModel): ComponentRef<T>;
+    getComponentRef<T extends IComponentBase>(componentType: Type<T>, pageModel?: IPageModel): ComponentRef<T>;
     /**
      * 隐藏所有显示的窗口
      */
@@ -73,6 +73,4 @@ export interface IComponentFactoryContainer {
      * 显示所有隐藏的窗口
      */
     showPageModels(): void;
-    viewContainerRef: ViewContainerRef;
-    componentFactoryResolver: ComponentFactoryResolver
 }

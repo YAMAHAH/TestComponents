@@ -18,7 +18,7 @@ import { ModalOptions } from '../modal/modal-options.model';
 import { HostViewContainerDirective } from '../directives/host.view.container';
 import { FormService } from '../../components/form/FormService';
 import { FormOptions } from '../../components/form/FormOptions';
-import { IFormModel } from '../../basic/IFormModel';
+import { IPageModel } from '../../basic/IFormModel';
 import { SaleComponent } from '../../sale/sale.component';
 declare var Draggabilly: any;
 
@@ -284,7 +284,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             hideTabContent: !tabModel.active || !tabModel.showTabContent
         };
     }
-    showModal(formModel: IFormModel, modalOptions: FormOptions = null) {
+    showModal(formModel: IPageModel, modalOptions: FormOptions = null) {
         let result = new EventEmitter<any>();
         setTimeout(() => {
             let options: FormOptions = new FormOptions();
@@ -309,7 +309,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         return result;
     }
 
-    show(formModel: IFormModel, modalOptions: FormOptions = null) {
+    show(formModel: IPageModel, modalOptions: FormOptions = null) {
         // this.changeDetectorRef.detectChanges();
         let result = new EventEmitter<any>();
         setTimeout(() => {
@@ -515,7 +515,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         if (allowClose) {
             let componentFactoryRef = await this.appStore.GetOrCreateComponentFactory(taskModal.key);
             if (componentFactoryRef) {
-                componentFactoryRef.closeAllForm({ target: taskModal.key, data: { sender: state$ } });
+                componentFactoryRef.closeAllPages({ target: taskModal.key, data: { sender: state$ } });
             } else {
                 state$.next({ processFinish: true, result: true });
             }

@@ -1,6 +1,6 @@
 <ul>
-    <p>{{formModel?.title}}</p>
+    <p>{{pageModel?.title}}</p>
     <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
 </ul>
-<pre>{{formModel?.resolve | json}}</pre>
+<pre>{{pageModel?.resolve | json}}</pre>
 <pre>{{context | json}}</pre>

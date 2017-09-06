@@ -4,7 +4,8 @@ import { NavTreeViewComponent } from '../components/nav-tree-view/nav-tree-view.
 import { ShowTypeEnum } from './show-type-enum';
 import { IComponentFactoryContainer } from './IComponentFactoryContainer';
 import { Form } from '../components/form/form';
-export interface IFormModel {
+import { AppStoreService } from '../services/app.store.service';
+export interface IPageModel {
     /**
      * 主键
      */
@@ -20,15 +21,15 @@ export interface IFormModel {
     /** 
      * 父亲
      */
-    parent?: IFormModel;
+    parent?: IPageModel;
     /**
      * 干爹
      */
-    godFather?: IFormModel;
+    godFather?: IPageModel;
     /**
      * 儿子
      */
-    childs?: IFormModel[];
+    childs?: IPageModel[];
     /**
      * 层次
      */
@@ -37,6 +38,10 @@ export interface IFormModel {
      * 附加数据对象
      */
     tag?: any;
+    /**
+     * 附加对象2
+     */
+    extras?: any;
     /**
      * 元素引用
      */
@@ -62,6 +67,10 @@ export interface IFormModel {
      * 关闭后回调
      */
     closeAfterFn?: Function;
+    /**
+     * 全局管理
+     */
+    globalManager?: AppStoreService;
     /**
      * 页面类型
      */

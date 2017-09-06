@@ -3,7 +3,7 @@ import { UUID } from '../../untils/uuid';
 import { AppTaskBarActions } from '../../actions/app-main-tab/app-main-tab-actions';
 import { AppStoreService } from '../../services/app.store.service';
 import { PurOrderActions, RemovePurOrderAction } from '../../actions/pur/pur-order-actions';
-import { IFormModel } from '../../basic/IFormModel';
+import { IPageModel } from '../../basic/IFormModel';
 import { ShowTypeEnum } from '../../basic/show-type-enum';
 import { IComponentBase } from '../../basic/IComponentBase';
 import { FormOptions } from '../../components/form/FormOptions';
@@ -25,11 +25,11 @@ export class PurDetailComponent extends ComponentBase implements OnInit {
         super(injector);
     }
     ngOnInit() {
-        this.purOrder = { pono: this.formModel.key, ptnno: "JL-" + UUID.uuid(8, 10) };
-        if (this.formModel.showType === ShowTypeEnum.showForm) {
+        this.purOrder = { pono: this.pageModel.key, ptnno: "JL-" + UUID.uuid(8, 10) };
+        if (this.pageModel.showType === ShowTypeEnum.showForm) {
             this.show();
         }
-        if (this.formModel.showType === ShowTypeEnum.showFormModal) {
+        if (this.pageModel.showType === ShowTypeEnum.showFormModal) {
             this.showModal();
         }
     }
@@ -48,20 +48,20 @@ export class PurDetailComponent extends ComponentBase implements OnInit {
     purOrderActions = new PurOrderActions();
 
 
-    closeAfterFn: Function = () => {
-        this.formModel.componentFactoryRef.removeFormModel(this.formModel);
-    };
+    // closeAfterFn: Function = () => {
+    //     this.formModel.componentFactoryRef.removePageModel(this.formModel);
+    // };
     show(modalOptions?: FormOptions) {
-        this.formModel.title = this.title;
-        this.formModel.elementRef = this.elementRef.nativeElement;
-        this.formModel.closeAfterFn = this.closeAfterFn;
-        return this.appStore.taskManager.show(this.formModel, modalOptions);
+        this.pageModel.title = this.title;
+        this.pageModel.elementRef = this.elementRef.nativeElement;
+        this.pageModel.closeAfterFn = this.closeAfterFn;
+        return this.appStore.taskManager.show(this.pageModel, modalOptions);
     }
     showModal(modalOptions?: FormOptions) {
-        this.formModel.title = this.title;
-        this.formModel.elementRef = this.elementRef.nativeElement;
-        this.formModel.closeAfterFn = this.closeAfterFn;
-        return this.appStore.taskManager.showModal(this.formModel, modalOptions);
+        this.pageModel.title = this.title;
+        this.pageModel.elementRef = this.elementRef.nativeElement;
+        this.pageModel.closeAfterFn = this.closeAfterFn;
+        return this.appStore.taskManager.showModal(this.pageModel, modalOptions);
     }
     close() {
 

@@ -1,10 +1,10 @@
 
 /**
- * 页类型
+ * 页面类型
  */
 export enum FormTypeEnum {
     /**
-     * 容器
+     * 组
      */
     group = 1,
     /**
@@ -14,5 +14,9 @@ export enum FormTypeEnum {
     /**
      * 编辑页
      */
-    detail = 3
+    detail = 3,
+    /**
+     * 容器
+     */
+    container = 4
 }

@@ -12,11 +12,12 @@ import { Subscription } from 'rxjs/Subscription';
 import { ComponentRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { DomHandler } from '../../common/dom/domhandler';
-import { IFormModel } from '../../basic/IFormModel';
+import { IPageModel } from '../../basic/IFormModel';
 import { isFunction } from '../../untils/type';
 import { SizingPointEnum } from './SelectPointEnum';
 import { FormStateEnum } from './FormStateEnum';
 import { FormTitleAlignEnum } from './FormTitleAlignEnum';
+import { FormTypeEnum } from '../../basic/FormTypeEnum';
 
 @Component({
     selector: 'x-form',
@@ -351,7 +352,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
     async closeBeforeCheck(event: any) {
         return await this.checkCloseBeforeFn(event);
     }
-    @Input() formModel: IFormModel;
+    @Input() formModel: IPageModel;
     async close(event: any) {
         let processState = await this.hide(event);
         this._modalResult.emit(null);
@@ -409,6 +410,15 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             this.unbindMaskClickListener();
             this.modalResult.emit(this._selectResult);
             if (isFunction(this.closeAfterCallBackFn)) this.closeAfterCallBackFn();
+            if (this.formModel && this.formModel.componentFactoryRef) {
+                if (this.formModel.formType == FormTypeEnum.container)
+                    this.formModel.globalManager &&
+                        this.formModel.globalManager.taskManager &&
+                        this.formModel.globalManager.taskManager.closeTaskGroup(() => this.formModel.key);
+                else
+                    this.formModel.componentFactoryRef.removePageModel(this.formModel);
+            }
+
         }
         if (isFunction(destroyFn)) destroyFn();
         processStatus = true;
@@ -605,7 +615,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
         // }
         if (this.formModel && this.formModel.componentFactoryRef) {
             // if (this.formModel.parent.componentRef.current === this.formModel) {
-            this.formModel.componentFactoryRef.selectNextVisibleForm(this.formModel);
+            this.formModel.componentFactoryRef.selectNextVisiblePage(this.formModel);
             //}
         }
     }

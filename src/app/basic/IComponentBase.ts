@@ -1,7 +1,8 @@
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, ViewContainerRef, ComponentFactoryResolver, ChangeDetectorRef } from '@angular/core';
 import { FormOptions } from '../components/form/FormOptions';
-import { IFormModel } from './IFormModel';
+import { IPageModel } from './IFormModel';
 import { IComponentFactoryType } from './IComponentFactoryType';
+import { ActivatedRoute } from '@angular/router';
 export interface IComponentBase {
     /**
      * 组件的标题
@@ -10,11 +11,11 @@ export interface IComponentBase {
     /**
      * 弹窗的数据模型
      */
-    formModel: IFormModel;
+    pageModel: IPageModel;
     /**
      * 设置关联容器
      */
-    setOtherParent(godFather: IFormModel): IFormModel;
+    setOtherParent(godFather: IPageModel): IPageModel;
     /**
      * 显示弹窗
      */
@@ -45,5 +46,9 @@ export interface IComponentBase {
      * extral附加对象
      */
     tag: any;
+    viewContainerRef: ViewContainerRef;
+    componentFactoryResolver: ComponentFactoryResolver;
+    activeRouter: ActivatedRoute;
+    changeDetectorRef: ChangeDetectorRef;
 
 }
