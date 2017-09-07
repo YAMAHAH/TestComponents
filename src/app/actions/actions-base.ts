@@ -1,6 +1,7 @@
 import { ActionBase, IMessageData, IAction } from '../Models/IAction';
 import { IComponentFactoryType } from '../basic/IComponentFactoryType';
 import { IComponentFactoryContainer } from '../basic/IComponentFactoryContainer';
+import { IComponentType } from '../basic/IComponentType';
 
 
 
@@ -43,6 +44,8 @@ export abstract class ComponentFactoryType implements IComponentFactoryType {
     constructor(public key: string, public componentFactoryRef: IComponentFactoryContainer = null) {
     }
 }
+export abstract class ComponentTypeBase implements IComponentType {
+}
 
 export class PurComponentFactoryType extends ComponentFactoryType {
     constructor(public key: string = "pur", public componentFactoryRef: IComponentFactoryContainer = null) {
@@ -50,8 +53,17 @@ export class PurComponentFactoryType extends ComponentFactoryType {
     }
 }
 
+export class PurchaseListComponentType extends ComponentTypeBase {
+}
+
+export class PurchaseEditComponentType extends ComponentTypeBase {
+}
+
+export class PurchaseQueryComponentType extends ComponentTypeBase {
+}
 export class SaleComponentFactoryType extends ComponentFactoryType {
     constructor(public key: string = "sale", public componentFactoryRef: IComponentFactoryContainer = null) {
         super(key, componentFactoryRef);
     }
 }
+

@@ -3,7 +3,8 @@ import { NavTreeViewComponent } from '../components/nav-tree-view/nav-tree-view.
 import { IComponentBase } from './IComponentBase';
 import { Type, ComponentRef, ComponentFactoryResolver, ViewContainerRef } from '@angular/core';
 import { IAction } from '../Models/IAction';
-import { FormExtras } from './FormExtras';
+import { PageModelExtras } from './PageModelExtras';
+import { IComponentType } from './IComponentType';
 export interface IComponentFactoryContainer extends IComponentBase {
     /**
      * 组的标题
@@ -24,23 +25,23 @@ export interface IComponentFactoryContainer extends IComponentBase {
     /**
      * 创建组
      */
-    createGroup(formExtras?: FormExtras): IPageModel;
+    createGroup(pageModelExtras?: PageModelExtras): IPageModel;
     /**
      * 创建列表
      */
-    createList(groupFormModel: IPageModel, formExtras?: FormExtras): IPageModel;
+    createList(groupFormModel: IPageModel, pageModelExtras?: PageModelExtras): IPageModel;
     /**
      * 创建明细
      */
-    createDetail(groupPageModel: IPageModel, formExtras?: FormExtras): IPageModel;
+    createDetail(groupPageModel: IPageModel, pageModelExtras?: PageModelExtras): IPageModel;
     /**
      * 创建组和列表
      */
-    createGroupList(formExtras?: FormExtras): IPageModel;
+    createGroupList(pageModelExtras?: PageModelExtras): IPageModel;
     /**
      * 创建一个组和明细
      */
-    createGroupDetail(formExtras?: FormExtras): IPageModel;
+    createGroupDetail(pageModelExtras?: PageModelExtras): IPageModel;
     /**
      * 移除弹窗模型
      */
@@ -49,6 +50,10 @@ export interface IComponentFactoryContainer extends IComponentBase {
      * 设置活动项
      */
     setCurrent(pageModel: IPageModel): void;
+    /**
+     * 设置当前活动树结点
+     */
+    setCurrentTreeNode(formModel: IPageModel): void;
     /**
      * 关闭所有弹窗
      */
@@ -65,6 +70,34 @@ export interface IComponentFactoryContainer extends IComponentBase {
      * 获取组件引用
      */
     getComponentRef<T extends IComponentBase>(componentType: Type<T>, pageModel?: IPageModel): ComponentRef<T>;
+    /**
+     * 创建列表类型的组件
+     * 派生类必须实现
+     */
+    createListComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T>;
+    /**
+     * 创建编辑类型的组件
+     * 派生类必须实现
+     */
+    createEditComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T>;
+    /**
+     * 创建查询类型的组件
+     * 派生类必须实现
+     */
+    createQueryComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T>;
+    /**
+     *  创建容器类型的组件
+     * 派生类必须实现
+     */
+    createContainerComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T>;
+    /**
+     * 根据组件类型创建组件引用
+     */
+    createComponentRef<T extends IComponentBase>(componentType: Type<IComponentType>, pageModel?: IPageModel): ComponentRef<T>;
+    /**
+     * 根据组件类型决定创建组件的引用
+     */
+    componentReducer<T extends IComponentBase>(componentType: Type<IComponentType>, pageModel?: IPageModel): ComponentRef<T>;
     /**
      * 隐藏所有显示的窗口
      */

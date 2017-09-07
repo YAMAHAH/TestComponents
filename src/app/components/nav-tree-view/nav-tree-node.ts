@@ -19,7 +19,7 @@ export class NavTreeNode {
     /**附加对象 */
     tag: any;
     /**
-     * 附加对象2
+     * 附加对象2,暂时不用
      */
     extras: any;
     constructor(public key: string,

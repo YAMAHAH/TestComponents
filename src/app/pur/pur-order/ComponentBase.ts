@@ -41,10 +41,22 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
         return this.pageModel;
     }
     show(modalOptions?: FormOptions) {
+        if (this.pageModel) {
+            this.pageModel.title = this.title;
+            this.pageModel.elementRef = this.elementRef.nativeElement;
+            this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
+            this.pageModel.closeAfterFn = this.closeAfterFn;
+        }
         return this.appStore.taskManager.show(this.pageModel, modalOptions);
     }
 
     showModal(modalOptions?: FormOptions) {
+        if (this.pageModel) {
+            this.pageModel.title = this.title;
+            this.pageModel.elementRef = this.elementRef.nativeElement;
+            this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
+            this.pageModel.closeAfterFn = this.closeAfterFn;
+        }
         return this.appStore.taskManager.showModal(this.pageModel, modalOptions);
     }
 

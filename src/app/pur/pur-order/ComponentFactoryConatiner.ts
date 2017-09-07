@@ -4,7 +4,7 @@ import { IComponentFactoryContainer } from '../../basic/IComponentFactoryContain
 import { IComponentBase } from '../../basic/IComponentBase';
 import { IPageModel } from '../../basic/IFormModel';
 import { IAction } from '../../Models/IAction';
-import { FormExtras } from '../../basic/FormExtras';
+import { PageModelExtras } from '../../basic/PageModelExtras';
 import { NavTreeViewComponent } from '../../components/nav-tree-view/nav-tree-view.component';
 import { Base } from '../../common/base';
 import { FormTypeEnum } from '../../basic/FormTypeEnum';
@@ -15,6 +15,7 @@ import { FormStateEnum } from '../../components/form/FormStateEnum';
 import { Observable } from 'rxjs/Observable';
 import { isFunction } from "util";
 import { IComponentFactoryType } from '../../basic/IComponentFactoryType';
+import { IComponentType } from '../../basic/IComponentType';
 
 export abstract class ComponentFactoryConatiner extends ComponentBase
     implements OnInit, OnDestroy, IComponentFactoryContainer {
@@ -24,125 +25,171 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     principalPageModels: IPageModel[] = [];
     dependentPageModels: IPageModel[] = [];
     @ViewChild(NavTreeViewComponent) navTreeView: NavTreeViewComponent;
-    createGroup(formExtras?: FormExtras): IPageModel {
+    createGroup(pageModelExtras?: PageModelExtras): IPageModel {
         let len = this.principalPageModels.length + 1;
-        let formGroup: IPageModel = {
+        let groupPageModel: IPageModel = {
             formType: FormTypeEnum.group,
             title: this.title + "分组-" + len.toString(10),
             active: false,
             childs: [],
             componentFactoryRef: this,
             parent: this.pageModel,
-            resolve: this.appStore.handleResolve(formExtras && formExtras.resolve),
-            showType: formExtras && formExtras.showType || this.appStore.showType
+            resolve: this.appStore.handleResolve(pageModelExtras && pageModelExtras.resolve),
+            showType: pageModelExtras && pageModelExtras.showType || this.appStore.showType
         };
-        this.pageModel.childs.push(formGroup);
+        this.pageModel.childs.push(groupPageModel);
         let groupNode = new NavTreeNode(UUID.uuid(8, 10), this.title + "分组-" + len.toString(10), '/skdd', 'sndwd', 0);
         groupNode.isGroup = true;
-        groupNode.tag = formGroup;
-        if (formExtras && !!formExtras.visibleInNavTree)
+        groupNode.tag = groupPageModel;
+        if (pageModelExtras && pageModelExtras.hasOwnProperty('visibleInNavTree') && !pageModelExtras.visibleInNavTree)
             groupNode.showNode = false;
         else groupNode.showNode = true;
 
-        formGroup.tag = groupNode;
+        groupPageModel.tag = groupNode;
 
         this.navTreeView.addNode(groupNode);
-        this.addPrincipalPageModel(formGroup);
-        this.setCurrent(formGroup);
-        return formGroup;
+        if (pageModelExtras && !!pageModelExtras.godFather) {
+            this.addDependentPageModel(groupPageModel);//新增加内容,运行不正常
+        }
+        this.addPrincipalPageModel(groupPageModel);
+
+        this.setCurrent(groupPageModel);
+        return groupPageModel;
     }
-    protected addPrincipalPageModel(formList: IPageModel) {
-        if (formList) {
-            this.principalPageModels.push(formList);
+    protected addPrincipalPageModel(pageModel: IPageModel) {
+        if (pageModel) {
+            this.principalPageModels.push(pageModel);
         }
     }
-    createList(groupFormModel: IPageModel, formExtras?: FormExtras): IPageModel {
+    protected addDependentPageModel(pageModel: IPageModel) {
+        if (pageModel) {
+            this.dependentPageModels.push(pageModel);
+        }
+    }
+
+    createList(groupPageModel: IPageModel, pageModelExtras?: PageModelExtras): IPageModel {
         let len = this.principalPageModels.length + 1;
-        let pageList: IPageModel = {
+        let listPageModel: IPageModel = {
             formType: FormTypeEnum.list,
             title: this.title + "清单-" + len.toString(10),
             active: true,
-            parent: groupFormModel,
+            parent: groupPageModel,
             componentFactoryRef: this,
             childs: [],
-            resolve: this.appStore.handleResolve(formExtras && formExtras.resolve),
-            showType: formExtras && formExtras.showType || this.appStore.showType
+            resolve: this.appStore.handleResolve(pageModelExtras && pageModelExtras.resolve),
+            showType: pageModelExtras && pageModelExtras.showType || this.appStore.showType
         };
 
         let nd = new NavTreeNode(UUID.uuid(8, 10), this.title + "清单-" + len.toString(10), '/skdd', 'sndwd', 0);
-        nd.tag = pageList;
-        if (formExtras && !!formExtras.visibleInNavTree)
+        nd.tag = listPageModel;
+        if (pageModelExtras && pageModelExtras.hasOwnProperty('visibleInNavTree') && !pageModelExtras.visibleInNavTree)
             nd.showNode = false;
         else nd.showNode = true;
-        pageList.tag = nd;
+        listPageModel.tag = nd;
 
-        groupFormModel.tag.addNode(nd);
-        groupFormModel.childs.push(pageList);
-
-        this.setCurrent(pageList);
-        return pageList;
+        groupPageModel.tag.addNode(nd);
+        groupPageModel.childs.push(listPageModel);
+        if (pageModelExtras && pageModelExtras.godFather) {
+            this.setGodFather(listPageModel, pageModelExtras.godFather);
+        }
+        this.setCurrent(listPageModel);
+        return listPageModel;
     }
-    createDetail(groupFormModel: IPageModel, formExtras?: FormExtras): IPageModel {
-        let detail: IPageModel = {
+    createDetail(groupPageModel: IPageModel, pageModelExtras?: PageModelExtras): IPageModel {
+        let editPageModel: IPageModel = {
             formType: FormTypeEnum.detail,
             key: UUID.uuid(8, 10),
             title: UUID.uuid(8, 10),
             active: false,
             tag: null,
             componentFactoryRef: this,
-            parent: groupFormModel,
-            resolve: this.appStore.handleResolve(formExtras && formExtras.resolve),
-            showType: formExtras && formExtras.showType || this.appStore.showType,
+            parent: groupPageModel,
+            resolve: this.appStore.handleResolve(pageModelExtras && pageModelExtras.resolve),
+            showType: pageModelExtras && pageModelExtras.showType || this.appStore.showType,
             childs: []
         };
 
-        groupFormModel.childs.push(detail);
+        groupPageModel.childs.push(editPageModel);
 
         let ndKey = UUID.uuid(8, 10);
-        let nd = new NavTreeNode(ndKey, ndKey, '/skdd', 'sndwd', 0);
-        nd.tag = detail;
-        if (formExtras && !!formExtras.visibleInNavTree)
-            nd.showNode = false;
-        else nd.showNode = true;
-        detail.tag = nd;
+        let newNode = new NavTreeNode(ndKey, ndKey, '/skdd', 'sndwd', 0);
+        newNode.tag = editPageModel;
+        if (pageModelExtras && pageModelExtras.hasOwnProperty('visibleInNavTree') && !pageModelExtras.visibleInNavTree)
+            newNode.showNode = false;
+        else newNode.showNode = true;
+        editPageModel.tag = newNode;
 
-        let node = groupFormModel.tag as NavTreeNode;
-        if (node) {
-            node.addNode(nd);
+        let parentNode = groupPageModel.tag as NavTreeNode;
+        if (parentNode) {
+            parentNode.addNode(newNode);
         }
-        this.setCurrent(detail);
-        return detail;
+        if (pageModelExtras && pageModelExtras.godFather) {
+            this.setGodFather(editPageModel, pageModelExtras.godFather);
+        }
+        this.setCurrent(editPageModel);
+        return editPageModel;
     }
-    createGroupList(formExtras?: FormExtras): IPageModel {
-        let group = this.createGroup(formExtras);
-        return this.createList(group, formExtras);
+    /**
+     * 设置干爹
+     * @param child 
+     * @param godFather 
+     */
+    setGodFather(child: IPageModel, godFather: IPageModel): IPageModel {
+        if (godFather) {
+            godFather.childs.push(child);
+            child.godFather = godFather;
+            if (child.tag) {
+                //设置关联的结点在导航树不可见,关闭TAB时也要考虑这种情况
+                let nd = child.tag as NavTreeNode;
+                nd.showNode = false;
+                nd.getParents().forEach(val => val.showNode = false);
+            }
+            //创建依赖引用结点,添加到导航树中
+            let dependNode = new NavTreeNode(child.key, child.title, '/', '', 0);
+            dependNode.tag = child;
+            dependNode.isDependRef = true;
+
+            child.extras = dependNode;
+            let parentNode = godFather.tag as NavTreeNode;
+            if (parentNode) {
+                parentNode.addNode(dependNode);
+                godFather.componentFactoryRef.navTreeView.setCurrent(dependNode);
+                godFather.componentFactoryRef.changeDetectorRef.markForCheck();
+            }
+        }
+        return child;
     }
-    createGroupDetail(formExtras?: FormExtras): IPageModel {
-        let group = this.createGroup(formExtras);
-        return this.createDetail(group, formExtras);
+
+    createGroupList(pageModelExtras?: PageModelExtras): IPageModel {
+        let group = this.createGroup(pageModelExtras);
+        return this.createList(group, pageModelExtras);
+    }
+    createGroupDetail(pageModelExtras?: PageModelExtras): IPageModel {
+        let group = this.createGroup(pageModelExtras);
+        return this.createDetail(group, pageModelExtras);
     }
 
     protected taskId: any;
     /**
      * 移除儿子
      * 同时从干爹列表中移除
-     * @param formModel 
+     * @param pageModel 
      */
-    removePageModel(formModel: IPageModel): void {
-        if (!!!formModel) return;
-        let nodeLists = this.navTreeView.toList().filter((nd) => nd.isGroup == false);
-        let idx = nodeLists.findIndex(nd => nd.tag == formModel);
+    removePageModel(pageModel: IPageModel): void {
+        if (!!!pageModel) return;
+        let pageNodes = this.navTreeView.toList().filter((nd) => nd.isGroup == false);
+        let pageIdx = pageNodes.findIndex(nd => nd.tag == pageModel);
         let detailIdx;
-        if (idx > -1) {
-            this.selectNextVisiblePage(formModel);
+        if (pageIdx > -1) {
+            this.selectNextVisiblePage(pageModel);
             //如果有干爹,也要从干爹的列表中删除
-            this.removePageModelFromGodFather(formModel);
-            let nd = nodeLists[idx];
-            let curformParent: IPageModel = nd.tag.parent;
-            if (curformParent) { //parent如果有父结点则从父结点中删除
-                detailIdx = curformParent.childs.findIndex((mx: any) => mx == nd.tag);
+            this.removePageModelFromGodFather(pageModel);
+            let nd = pageNodes[pageIdx];
+            let curPageParent: IPageModel = nd.tag.parent;
+            if (curPageParent) { //parent如果有父结点则从父结点中删除
+                detailIdx = curPageParent.childs.findIndex((mx: any) => mx == nd.tag);
                 if (detailIdx > -1) {
-                    let delItem2 = curformParent.childs.splice(detailIdx, 1)[0];
+                    let delItem2 = curPageParent.childs.splice(detailIdx, 1)[0];
                     if (delItem2.componentRef) {
                         delItem2.componentRef.destroy();
                     }
@@ -189,16 +236,16 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
 
     /**
      * 干爹列表中移除干儿子
-     * @param formModel 
+     * @param pageModel 
      */
-    removePageModelFromGodFather(formModel: IPageModel) {
-        if (formModel && formModel.godFather) {
-            let idx = formModel.godFather.childs.findIndex((value) => value === formModel);
+    removePageModelFromGodFather(pageModel: IPageModel) {
+        if (pageModel && pageModel.godFather) {
+            let idx = pageModel.godFather.childs.findIndex((value) => value === pageModel);
             if (idx > -1) {
-                formModel.godFather.childs.splice(idx, 1);
+                pageModel.godFather.childs.splice(idx, 1);
             }
-            let godFatherNode: NavTreeNode = formModel.godFather.tag;
-            let nodeIdx = godFatherNode && godFatherNode.childs.findIndex(child => child === formModel.extras);
+            let godFatherNode: NavTreeNode = pageModel.godFather.tag;
+            let nodeIdx = godFatherNode && godFatherNode.childs.findIndex(child => child === pageModel.extras);
             if (nodeIdx > -1)
                 godFatherNode && godFatherNode.childs.splice(nodeIdx, 1);
         }
@@ -216,9 +263,10 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         let dependModels: IPageModel[] = this.getDependentPageModels();
         //不存在于实体列表中
         let notExistInDepends = dependModels.indexOf(pageModel) < 0;
-        if (notExistInDepends && this.current) {
+        if (notExistInDepends && this.current && !!!this.current.godFather && this.current.showType == ShowTypeEnum.tab) {
             this.current.active = false;
-        } else if (this.current) this.current.active = true;
+        } else if (this.current)
+            this.current.active = true;
 
         pageModel.active = true;
         this.current = pageModel;
@@ -238,9 +286,23 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                 godFather.componentFactoryRef.changeDetectorRef.markForCheck();
             }
         }
-
-
     }
+
+    setCurrentTreeNode(formModel: IPageModel) {
+        if (formModel) {
+            if (!!!formModel.godFather && formModel.componentFactoryRef) {
+                formModel.componentFactoryRef.navTreeView.setCurrent(formModel.tag);
+                formModel.componentFactoryRef.changeDetectorRef.markForCheck();
+            } else {
+                let godFather = formModel.godFather;
+                if (godFather && godFather.componentFactoryRef) {
+                    godFather.componentFactoryRef.navTreeView.setCurrent(formModel.extras);
+                    godFather.componentFactoryRef.changeDetectorRef.markForCheck();
+                }
+            }
+        }
+    }
+
     closeAllPages(action: IAction): void {
         let nodeLists = this.navTreeView.toList().filter((nd) => nd.isGroup == false && nd.level > -1 && !!!nd.tag.godFather);
         Observable.from(nodeLists).flatMap(form => {
@@ -265,37 +327,38 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         });
     }
 
-    closePage(formModel: IPageModel) {
+    closePage(pageModel: IPageModel) {
         //根据model关闭,关闭前检查,等待关闭前处理函数
         return new Promise(async resolve => {
-            let event = { cancel: true, sender: formModel };
-            if (formModel) {
+            let event = { cancel: true, sender: pageModel };
+            if (pageModel) {
                 let destroyFn;
-                if (formModel.closeBeforeCheckFn && isFunction(formModel.closeBeforeCheckFn)) {
-                    destroyFn = await formModel.closeBeforeCheckFn(event);
+                if (pageModel.closeBeforeCheckFn && isFunction(pageModel.closeBeforeCheckFn)) {
+                    destroyFn = await pageModel.closeBeforeCheckFn(event);
                 }
                 if (event.cancel) {
-                    await this.closeChildPage(formModel);
-                    if (formModel && formModel.modalRef && formModel.modalRef.instance)
-                        formModel.modalRef.instance.forceClose(null);
-                    if (isFunction(formModel.closeAfterFn)) formModel.closeAfterFn();
+                    await this.closeChildPage(pageModel);
+                    if (pageModel && pageModel.modalRef && pageModel.modalRef.instance)
+                        pageModel.modalRef.instance.forceClose(null);
+                    if (isFunction(pageModel.closeAfterFn)) pageModel.closeAfterFn();
                     //从窗口中操作
-                    formModel.componentFactoryRef.removePageModel(formModel);
+                    pageModel.componentFactoryRef.removePageModel(pageModel);
                 }
                 if (isFunction(destroyFn)) destroyFn();
             }
             resolve(event.cancel);
         });
     }
-    private async closeChildPage(formModel: IPageModel) {
+    private async closeChildPage(pageModel: IPageModel) {
         return new Promise(resolve => {
-            if (formModel && formModel.childs) {
-                Observable.from(formModel.childs)
-                    .flatMap(form => {
-                        if (form && form.modalRef && form.modalRef.instance) {
-                            return Observable.fromPromise(form.modalRef.instance.forceClose(null));
-                        } else if (form) {
-                            return Observable.fromPromise(this.closePage(form));
+            if (pageModel && pageModel.childs) {
+                let childPages = pageModel.childs.filter(page => !!!page.godFather);
+                Observable.from(childPages)
+                    .flatMap(page => {
+                        if (page && page.modalRef && page.modalRef.instance) {
+                            return Observable.fromPromise(page.modalRef.instance.forceClose(null));
+                        } else if (page) {
+                            return Observable.fromPromise(this.closePage(page));
                         }
                         else {
                             return Observable.of(true);
@@ -390,20 +453,24 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     }
     selectNextVisiblePage(pageModel: IPageModel): void {
         let pageNodes = this.navTreeView.toList().filter(nd => nd.isGroup == false && nd.level > -1);
-        let pageNodeIdx = pageNodes.findIndex(nd => nd.tag == pageModel || nd.extras == pageModel);
+        let pageNodeIdx = pageNodes.findIndex(nd => nd.tag == pageModel); //|| nd.extras == pageModel
         let notExistInDepends = this.getDependentPageModels().findIndex(val => val == pageModel) < 0;
         let pageNodeFilterFn = (nd: NavTreeNode) =>
             (nd.tag && !nd.tag.modalRef) ||
-            nd.tag.modalRef && nd.tag.modalRef.instance.modalWindowState !== FormStateEnum.Minimized ||
-            (nd.extras && !nd.extras.modalRef) ||
-            nd.extras.modalRef && nd.extras.modalRef.instance.modalWindowState !== FormStateEnum.Minimized;
+            nd.tag.modalRef && nd.tag.modalRef.instance.modalWindowState !== FormStateEnum.Minimized; // ||
+        // (nd.extras && !nd.extras.modalRef) ||
+        // nd.extras.modalRef && nd.extras.modalRef.instance.modalWindowState !== FormStateEnum.Minimized;
 
         if (pageNodeIdx > -1) {
             let last = pageNodes.slice(0, pageNodeIdx).filter(pageNodeFilterFn).pop();
             let first = pageNodes.slice(pageNodeIdx + 1).filter(pageNodeFilterFn).shift();
             let nextPage = last || first;
             if (nextPage && notExistInDepends) {
-                this.setCurrent(nextPage.tag || nextPage.extras);
+                this.setCurrent(nextPage.tag); //|| nextPage.extras
+                return;
+            }
+            if (!!!nextPage) { //nextPage = undefined时,表示已经没有可显示的页
+                this.setCurrent(null);
                 return;
             }
         }
@@ -413,6 +480,24 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             this.setCurrent(null);
     }
 
+    createListComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T> {
+        throw new Error("Method not implemented.");
+    }
+    createEditComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T> {
+        throw new Error("Method not implemented.");
+    }
+    createQueryComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T> {
+        throw new Error("Method not implemented.");
+    }
+    createContainerComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T> {
+        throw new Error("Method not implemented.");
+    }
+    createComponentRef<T extends IComponentBase>(componentType: Type<IComponentType>, pageModel?: IPageModel): ComponentRef<T> {
+        return this.componentReducer(componentType, pageModel) as any;
+    }
+    componentReducer<T extends IComponentBase>(componentType: Type<IComponentType>, pageModel?: IPageModel): ComponentRef<T> {
+        throw new Error("Method not implemented.");
+    }
     getComponentRef<T extends IComponentBase>(componentType: Type<T>, formModel?: IPageModel): ComponentRef<T> {
         const rootContainer = this.viewContainerRef ||
             this.appStore.taskManager.hostFactoryContainer.viewContainerRef;
@@ -429,35 +514,35 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         newFormModel.componentRef = componentRef;
         return componentRef;
     }
-    private createDefaultPageModel(extras?: FormExtras) {
+    private createDefaultPageModel(pageModelExtras?: PageModelExtras) {
         let len = this.principalPageModels.length + 1;
         let title = UUID.uuid(8, 10).toString();
-        let formGroupModel: IPageModel = {
+        let groupPageModel: IPageModel = {
             formType: FormTypeEnum.group,
             title: title + '默认组',
             active: false,
             childs: [],
             componentFactoryRef: this,
             parent: this.pageModel,
-            resolve: this.appStore.handleResolve(extras && extras.resolve) || {},
-            showType: extras && extras.showType || ShowTypeEnum.tab
+            resolve: this.appStore.handleResolve(pageModelExtras && pageModelExtras.resolve) || {},
+            showType: pageModelExtras && pageModelExtras.showType || ShowTypeEnum.tab
         };
-        this.pageModel.childs.push(formGroupModel);
+        this.pageModel.childs.push(groupPageModel);
         let groupNode = new NavTreeNode(UUID.uuid(8, 10), title + '默认组', '/skdd', 'sndwd', 0);
         groupNode.isGroup = true;
         groupNode.showNode = false;
-        groupNode.tag = formGroupModel;
-        formGroupModel.tag = groupNode;
+        groupNode.tag = groupPageModel;
+        groupPageModel.tag = groupNode;
 
         let pageList: IPageModel = {
             formType: FormTypeEnum.list,
             title: title,
             active: true,
-            parent: formGroupModel,
+            parent: groupPageModel,
             componentFactoryRef: this,
             childs: [],
-            resolve: this.appStore.handleResolve(extras && extras.resolve) || {},
-            showType: extras && extras.showType || ShowTypeEnum.tab
+            resolve: this.appStore.handleResolve(pageModelExtras && pageModelExtras.resolve) || {},
+            showType: pageModelExtras && pageModelExtras.showType || ShowTypeEnum.tab
         };
 
         let nd = new NavTreeNode(UUID.uuid(8, 10), title, '/skdd', 'sndwd', 0);
@@ -466,11 +551,11 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         pageList.tag = nd;
 
         groupNode.addNode(nd);
-        formGroupModel.childs.push(pageList);
+        groupPageModel.childs.push(pageList);
         this.navTreeView.addNode(groupNode);
         //添加依赖页面
-        this.dependentPageModels.push(formGroupModel);
-        this.setCurrent(formGroupModel);
+        this.addDependentPageModel(groupPageModel);
+        this.setCurrent(groupPageModel);
         return pageList;
     }
 
@@ -486,15 +571,18 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     constructor(protected injector: Injector) {
         super(injector);
     }
-    registerFactory(componentFactoryType: IComponentFactoryType) {
-        this.activeRouter.queryParams
-            .map(params => params['taskId'])
-            .subscribe(param => {
-                if (this.pageModel) {
-                    this.pageModel.key = this.taskId = param;
-                }
-                this.componentFactoryDestroyFn = this.appStore.registerComponentFactoryRef(componentFactoryType);
-            }).unsubscribe();
+    async registerFactory(componentFactoryType: IComponentFactoryType): Promise<void> {
+        return new Promise<void>(resolve => {
+            this.activeRouter.queryParams
+                .map(params => params['taskId'])
+                .subscribe(param => {
+                    if (this.pageModel) {
+                        this.pageModel.key = this.taskId = param;
+                    }
+                    this.componentFactoryDestroyFn = this.appStore.registerComponentFactoryRef(componentFactoryType);
+                }).unsubscribe();
+        });
+
     }
 
     /**

@@ -71,6 +71,7 @@ export class PurListComponent extends ComponentBase implements OnInit {
                 node.parent.addNode(nd);
             }
             if (this.pageModel.componentRef) {
+                debugger;
                 let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);
                 if (factoryRef) {
                     detail.showType = ShowTypeEnum.tab;

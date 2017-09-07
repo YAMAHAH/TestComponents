@@ -436,6 +436,8 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
     moveOnTop() {
         this.container.style.zIndex = String(++DomHandler.zindex);
         this.container.style.cursor = 'default';
+        if (this.formModel && this.formModel.componentFactoryRef)
+            this.formModel.componentFactoryRef.setCurrentTreeNode(this.formModel);
     }
 
     setupElStyles() {

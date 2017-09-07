@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector } from '@angular/core';
 import { AppStoreService } from '../services/app.store.service';
 import { AppTaskBarActions } from '../actions/app-main-tab/app-main-tab-actions'
-import { ActionsBase, AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, SaleComponentFactoryType, PurComponentFactoryType } from '../actions/actions-base';
+import { ActionsBase, AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, SaleComponentFactoryType, PurComponentFactoryType, PurchaseEditComponentType } from '../actions/actions-base';
 import { LoadScriptService } from '../services/load-script-service';
 import { DialogService } from '../common/dialog/dialog.service';
 import { ModalService } from '../common/modal/modal.service';
@@ -16,13 +16,11 @@ import { SaleOrderActions, AddSaleOrderAction, RemoveSaleOrderAction } from '../
 import { ISubject, IAction } from '../Models/IAction';
 import { PurOrderActions } from '../actions/pur/pur-order-actions';
 import { ActivatedRoute } from '@angular/router';
-import { PurListComponent } from '../pur/pur-order/pur.list.component';
 import { Modal } from '../common/modal/modal.model';
 import { ModalTestComponent } from './modal.test.component';
-import { PurDetailComponent } from '../pur/pur-order/pur.detail.component';
 import { reducer } from '../basic/IReducer';
 import { IPageModel } from '../basic/IFormModel';
-import { FormExtras } from '../basic/FormExtras';
+import { PageModelExtras } from '../basic/PageModelExtras';
 import { IComponentFactoryContainer } from '../basic/IComponentFactoryContainer';
 import { ShowTypeEnum } from '../basic/show-type-enum';
 import { NavTreeViewComponent } from '../components/nav-tree-view/nav-tree-view.component';
@@ -95,7 +93,7 @@ export class SaleComponent extends ComponentFactoryConatiner
             formType: FormTypeEnum.container
         };
         console.log(this.pageModel);
-        // this.registerFactory(new SaleComponentFactoryType(this.formModel.key, this));
+        // this.registerFactory(new SaleComponentFactoryType(this.pageModel.key, this));
         this.activeRouter.queryParams
             .map(params => params['taskId'])
             .subscribe(param => {
@@ -309,28 +307,37 @@ export class SaleComponent extends ComponentFactoryConatiner
     async open() {
         let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);
         if (factoryRef) {
-            this.group = factoryRef.createGroup({ visibleInNavTree: false });
-            let detail = factoryRef.createDetail(this.group, { visibleInNavTree: false, showType: ShowTypeEnum.showFormModal });
-            let ins = factoryRef.getComponentRef(PurListComponent).instance;
-            ins.pageModel.resolve = { data: '手工创建组件,传递参数,显示窗体' };
-            ins.context = { data: 'Context:手工创建组件,传递参数,显示窗体' };
+            let listRef = factoryRef.createListComponent();
+
+            this.group = factoryRef.createGroup({
+                visibleInNavTree: false,
+                godFather: this.pageModel.childs[0]
+            });
+            let detail = factoryRef.createDetail(this.group, {
+                visibleInNavTree: false,
+                showType: ShowTypeEnum.showForm,
+                godFather: this.pageModel.childs[0]
+            });
+            let listInstance = listRef.instance; //factoryRef.getComponentRef(PurListComponent).instance;
+            listInstance.pageModel.resolve = { data: '手工创建组件,传递参数,显示窗体' };
+            listInstance.context = { data: 'Context:手工创建组件,传递参数,显示窗体' };
             //设置关联
-            let parentModel = this.current || this.pageModel;
-            ins.setOtherParent(parentModel);
-            ins.show().subscribe((res: any) => console.log(res));
+            let parentModel = this.pageModel.childs[0];
+            listInstance.setOtherParent(parentModel);
+            listInstance.show().subscribe((res: any) => console.log(res));
         }
     }
     async close() {
         let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);
         if (factoryRef) {
-            let compRef = factoryRef.getComponentRef(PurDetailComponent);
+            let compRef = factoryRef.createComponentRef(PurchaseEditComponentType); //getComponentRef(PurDetailComponent);
             let options = new FormOptions();
             options.resolve = { data: '代码创建组件数据传递' };
             options.modal = false;
             if (compRef) {
                 let compIns = compRef.instance;
                 compIns.pageModel.title = compIns.title;
-                let parentModel = this.current || this.pageModel;
+                let parentModel = this.pageModel.childs[0];
                 compIns.setOtherParent(parentModel);
                 compIns.show(options).subscribe((res: any) => console.log(res));
             }

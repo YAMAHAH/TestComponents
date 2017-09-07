@@ -6,13 +6,13 @@ import { AppTaskBarActions } from '../../actions/app-main-tab/app-main-tab-actio
 import { styleUntils } from '../../untils/style';
 import { ISubject, IAction } from '../../Models/IAction';
 import { PurOrderActions, AddPurOrderAction, RemovePurOrderAction } from '../../actions/pur/pur-order-actions';
-import { AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, PurComponentFactoryType } from '../../actions/actions-base';
+import { AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, PurComponentFactoryType, PurchaseListComponentType, PurchaseEditComponentType } from '../../actions/actions-base';
 import { UUID } from '../../untils/uuid';
 import { purList } from '../../static-news.1/pur.component';
 import { TabModel } from '../../common/chrome-tabs/chrome-tabs.component';
 import { ActivatedRoute } from '@angular/router';
 import { IComponentBase } from '../../basic/IComponentBase';
-import { FormExtras } from '../../basic/FormExtras';
+import { PageModelExtras } from '../../basic/PageModelExtras';
 import { FormTypeEnum } from '../../basic/FormTypeEnum';
 import { ShowTypeEnum } from '../../basic/show-type-enum';
 import { FormOptions } from '../../components/form/FormOptions';
@@ -23,6 +23,9 @@ import { IComponentFactoryContainer } from '../../basic/IComponentFactoryContain
 import { IPageModel } from '../../basic/IFormModel';
 import { isFunction } from '../../common/toasty/toasty.utils';
 import { ComponentFactoryConatiner } from './ComponentFactoryConatiner';
+import { PurListComponent } from './pur.list.component';
+import { PurDetailComponent } from './pur.detail.component';
+import { IComponentType } from '../../basic/IComponentType';
 
 @Component({
     selector: 'x-pur-order',
@@ -102,6 +105,31 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
             "el-hide": !detail.active,
             "el-flex-show": detail.active
         }
+    }
+
+    createListComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T> {
+        return this.getComponentRef(PurListComponent, pageModel) as any;
+    }
+    createEditComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T> {
+        return this.getComponentRef(PurDetailComponent, pageModel) as any;
+    }
+    createQueryComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T> {
+        throw new Error("Method not implemented.");
+    }
+    createContainerComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T> {
+        throw new Error("Method not implemented.");
+    }
+    componentReducer<T extends IComponentBase>(componentType: Type<IComponentType>, pageModel?: IPageModel): ComponentRef<T> {
+        let compType = new componentType();
+        switch (true) {
+            case compType instanceof PurchaseListComponentType:
+                return this.getComponentRef(PurListComponent, pageModel) as any;
+            case compType instanceof PurchaseEditComponentType:
+                return this.getComponentRef(PurDetailComponent, pageModel) as any;
+            default:
+                break;
+        }
+        return null;
     }
 
     purOrder: ISubject;
