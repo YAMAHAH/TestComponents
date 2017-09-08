@@ -102,7 +102,13 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
 
     }
     protected appStore: AppStoreService;
+    /**
+     * 组件的host元素引用,必须在派生类注入才有效
+     */
     protected elementRef: ElementRef;
+    /**
+     * 组件的HOST视图引用,必须在派生类注入才有效
+     */
     public viewContainerRef: ViewContainerRef;
     public componentFactoryResolver: ComponentFactoryResolver;
     public activeRouter: ActivatedRoute;
@@ -111,7 +117,6 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
     constructor(protected injector: Injector) {
         this.appStore = this.injector.get(AppStoreService);
         this.elementRef = this.injector.get(ElementRef);
-        //this.viewContainerRef = injector.get(ViewContainerRef);
         this.componentFactoryResolver = this.injector.get(ComponentFactoryResolver);
         this.activeRouter = this.injector.get(ActivatedRoute);
         this.changeDetectorRef = this.injector.get(ChangeDetectorRef);

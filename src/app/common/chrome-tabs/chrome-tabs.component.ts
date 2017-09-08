@@ -199,17 +199,19 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             parseKey = parseKey();
         }
         let taskGrp = this.getTaskGroup(parseKey);
+        this.getNextVisibleTab(taskGrp);
         taskGrp.daemon = true;
         //隐藏后设置当前活动TAB
-        this.getNextTab(taskGrp);
     }
 
-    getNextTab(tabModel: TabModel) {
-        let idx = this.tabModels.findIndex(value => value == tabModel);
-        if (this.tabModels[idx - 1]) {
-            this.select(this.tabModels[idx - 1]);
-        } else if (this.tabModels[idx + 1]) {
-            this.select(this.tabModels[idx + 1]);
+    getNextVisibleTab(tabModel: TabModel) {
+        let enabledModels = this.tabHeaders;
+        if (this.tabHeaders.length > 1) enabledModels = this.tabHeaders.filter(tab => tab != this.homeTab);
+        let idx = enabledModels.findIndex(value => value == tabModel);
+        if (enabledModels[idx - 1]) {
+            this.select(enabledModels[idx - 1]);
+        } else if (enabledModels[idx + 1]) {
+            this.select(enabledModels[idx + 1]);
         }
     }
     async select(tab: TabModel) {
@@ -284,52 +286,52 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             hideTabContent: !tabModel.active || !tabModel.showTabContent
         };
     }
-    showModal(formModel: IPageModel, modalOptions: FormOptions = null) {
+    showModal(pageModel: IPageModel, modalOptions: FormOptions = null) {
         let result = new EventEmitter<any>();
         setTimeout(() => {
             let options: FormOptions = new FormOptions();
             options.responsive = false;
             options.width = 500;
-            options.header = formModel.title;
+            options.header = pageModel.title;
             options.modal = true;
             options.visible = true;
             // options.resolve = { target: '1358', playload: 'transmport context data' }
-            options.append = formModel.elementRef;
+            options.append = pageModel.elementRef;
             options.rootContainer = this.viewContainerRef;
             options.injector = this.viewContainerRef.parentInjector;
-            options.formModel = formModel;
+            options.formModel = pageModel;
             if (modalOptions) {
                 Object.assign(options, modalOptions);
             }
-            if (formModel.closeBeforeCheckFn) options.checkCloseBeforeFn = formModel.closeBeforeCheckFn;
-            if (formModel.closeAfterFn) options.closeAfterCallBackFn = formModel.closeAfterFn;
-            if (formModel.componentRef) options.componentRef = formModel.componentRef;
+            if (pageModel.closeBeforeCheckFn) options.checkCloseBeforeFn = pageModel.closeBeforeCheckFn;
+            if (pageModel.closeAfterFn) options.closeAfterCallBackFn = pageModel.closeAfterFn;
+            if (pageModel.componentRef) options.componentRef = pageModel.componentRef;
             this.appStore.modalService.showForm(options).subscribe(result);
         }, 10);
         return result;
     }
 
-    show(formModel: IPageModel, modalOptions: FormOptions = null) {
+    show(pageModel: IPageModel, modalOptions: FormOptions = null) {
         // this.changeDetectorRef.detectChanges();
         let result = new EventEmitter<any>();
         setTimeout(() => {
             let options: FormOptions = new FormOptions();
             options.responsive = false;
             options.width = 500;
-            options.header = formModel.title;
+            options.header = pageModel.title;
             options.modal = false;
             options.visible = true;
             // options.resolve = { target: '1358', playload: 'transmport context data' }
-            options.append = formModel.elementRef;
+            options.append = pageModel.elementRef;
             options.rootContainer = this.viewContainerRef;
             options.injector = this.viewContainerRef.parentInjector;
-            options.formModel = formModel;
+            options.formModel = pageModel;
             if (modalOptions) {
                 Object.assign(options, modalOptions);
             }
-            if (formModel.closeBeforeCheckFn) options.checkCloseBeforeFn = formModel.closeBeforeCheckFn;
-            if (formModel.closeAfterFn) options.closeAfterCallBackFn = formModel.closeAfterFn;
-            if (formModel.componentRef) options.componentRef = formModel.componentRef;
+            if (pageModel.closeBeforeCheckFn) options.checkCloseBeforeFn = pageModel.closeBeforeCheckFn;
+            if (pageModel.closeAfterFn) options.closeAfterCallBackFn = pageModel.closeAfterFn;
+            if (pageModel.componentRef) options.componentRef = pageModel.componentRef;
             return this.appStore.modalService.showForm(options).subscribe(result);
         }, 10);
         return result;
@@ -524,41 +526,44 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
     }
 
     taskClosing: Map<string, string> = new Map<string, string>();
-    async removeTab(tabEl: TabModel) {
-
-        if (!!!tabEl) return;
-        if (tabEl.key == 'main') return;
-        if (this.taskClosing.has(tabEl.key)) {
+    async removeTab(tabModel: TabModel) {
+        console.log(tabModel);
+        if (!!!tabModel) return;
+        if (tabModel.key == 'main') return;
+        if (this.taskClosing.has(tabModel.key)) {
             return;
         }
-        this.taskClosing.set(tabEl.key, tabEl.key);
-        let result = await this.closeTaskChildForm(tabEl);
+        this.taskClosing.set(tabModel.key, tabModel.key);
+        let result = await this.closeTaskChildForm(tabModel);
         result.subscribe((res: { processFinish: boolean; result: boolean }) => {
             if (res && res.processFinish) {
                 if (res.result) {
-                    let idx = this.tabModels.findIndex(value => value == tabEl);
+                    let enabledModels = this.tabHeaders;
+                    if (this.tabHeaders.length > 2) enabledModels = this.tabHeaders.filter(tab => tab != this.homeTab);
+                    let idx = enabledModels.findIndex(value => value == tabModel); //this.tabModels
                     if (idx > -1) {
-                        if (this.tabModels[idx - 1]) {
-                            this.select(this.tabModels[idx - 1]);
-                        } else if (this.tabModels[idx + 1]) {
-                            this.select(this.tabModels[idx + 1]);
+                        if (enabledModels[idx - 1]) {
+                            this.select(enabledModels[idx - 1]);
+                        } else if (enabledModels[idx + 1]) {
+                            this.select(enabledModels[idx + 1]);
                         }
-                        let removeTabModel = this.tabModels.splice(idx, 1);
+                        let tabIndex = this.tabModels.findIndex(value => value == tabModel)
+                        let removeTabModel = this.tabModels.splice(tabIndex, 1);
 
                         let r = {};
-                        r[tabEl.outlet] = null;
+                        r[tabModel.outlet] = null;
                         this.routerService.navigateToOutlet(r, null, this.activeRouter);
                         this.emit('tabRemove', { removeTabModel });
                         setTimeout(() => {
                             this.layoutTabs();
                             this.setupDraggabilly();
-                            this.taskClosing.delete(tabEl.key);
+                            this.taskClosing.delete(tabModel.key);
                             result.unsubscribe();
                             result = null;
                         }, 10);
                     }
                 } else {
-                    this.taskClosing.delete(tabEl.key);
+                    this.taskClosing.delete(tabModel.key);
                     result.unsubscribe();
                     result = null;
                 }

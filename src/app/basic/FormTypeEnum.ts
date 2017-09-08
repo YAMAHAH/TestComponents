@@ -18,5 +18,9 @@ export enum FormTypeEnum {
     /**
      * 容器
      */
-    container = 4
+    container = 4,
+    /**
+     * 页面容器
+     */
+    pageViewer = 5
 }

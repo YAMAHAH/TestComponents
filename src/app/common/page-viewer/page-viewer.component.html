@@ -1,0 +1,7 @@
+<div #content class="ui-dialog-content ui-widget-content" [style.height.px]="contentHeight" [style.display]="visible ? 'block' : 'none'">
+    <ng-container *ngFor="let comp of componentOutlets">
+        <ng-container *jyComponentOutlet="comp;context: compctx"></ng-container>
+    </ng-container>
+    <ng-template *xyzHostContainer="pageModel && pageModel.componentRef? pageModel.componentRef :componentRef;context:compctx"></ng-template>
+    <ng-content></ng-content>
+</div>

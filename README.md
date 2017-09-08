@@ -16,4 +16,14 @@
 2.单据布局组件,分为左右上下中,可以自由控制显示或隐藏
 
 3.创建一个指令,支持页面和模态互换
-4.
+
+
+4.model支持添加
+
+  4.1.直接指定组件方式:componentOutlets,传递数据上下文
+  
+  4.2.指定组件引用:componentRef,传递数据上下文
+  
+  4.3.已渲染的组件引用,并且组件已注入elementRef,把elementRef.nativeElement添加到Modal的append中
+
+

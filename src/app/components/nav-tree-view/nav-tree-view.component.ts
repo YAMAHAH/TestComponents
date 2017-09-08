@@ -74,6 +74,15 @@ export class NavTreeViewComponent implements OnInit {
         this.expandTree(this.root, (nd) => treeList.push(nd));
         return treeList;
     }
+
+    getChildNodes(root: NavTreeNode) {
+        let childNodes: Array<NavTreeNode> = new Array<NavTreeNode>();
+        this.expandTree(root, (nd) => {
+            if (nd != root) childNodes.push(nd);
+        });
+        return childNodes;
+    }
+
     expandTree(node: NavTreeNode, callback: (node: NavTreeNode) => void, exitFilterFn = (nd: NavTreeNode) => false) {
         callback(node);
         node.childs.forEach(c => {

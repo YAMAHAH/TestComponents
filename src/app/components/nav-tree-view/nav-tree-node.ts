@@ -108,6 +108,13 @@ export class NavTreeNode {
         this.expandTree(this, (nd) => treeList.push(nd));
         return treeList;
     }
+    getChildNodes() {
+        let childNodes: Array<NavTreeNode> = new Array<NavTreeNode>();
+        this.expandTree(this, (nd) => {
+            if (nd != this) childNodes.push(nd);
+        });
+        return childNodes;
+    }
     expandTree(node: NavTreeNode, callback: (node: NavTreeNode) => void) {
         callback(node);
         node.childs.forEach(c => {

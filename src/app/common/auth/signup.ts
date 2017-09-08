@@ -39,7 +39,7 @@ export class Signup implements OnInit {
         let options: FormOptions = new FormOptions();
         options.responsive = true;
         options.width = 365;
-         options.height = 395;
+        options.height = 395;
         options.header = this.title;
         options.modal = true;
         options.resizable = false;

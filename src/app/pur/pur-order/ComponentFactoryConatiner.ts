@@ -170,74 +170,32 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     }
 
     protected taskId: any;
-    /**
-     * 移除儿子
-     * 同时从干爹列表中移除
-     * @param pageModel 
-     */
-    removePageModel(pageModel: IPageModel): void {
-        if (!!!pageModel) return;
-        let pageNodes = this.navTreeView.toList().filter((nd) => nd.isGroup == false);
-        let pageIdx = pageNodes.findIndex(nd => nd.tag == pageModel);
-        let detailIdx;
-        if (pageIdx > -1) {
-            this.selectNextVisiblePage(pageModel);
-            //如果有干爹,也要从干爹的列表中删除
-            this.removePageModelFromGodFather(pageModel);
-            let nd = pageNodes[pageIdx];
-            let curPageParent: IPageModel = nd.tag.parent;
-            if (curPageParent) { //parent如果有父结点则从父结点中删除
-                detailIdx = curPageParent.childs.findIndex((mx: any) => mx == nd.tag);
-                if (detailIdx > -1) {
-                    let delItem2 = curPageParent.childs.splice(detailIdx, 1)[0];
-                    if (delItem2.componentRef) {
-                        delItem2.componentRef.destroy();
-                    }
-                }
-            } else { //leaf没有父结点,直接删除
-                detailIdx = this.principalPageModels.findIndex(pl => pl == nd.tag);
-                if (detailIdx > -1) this.principalPageModels.splice(detailIdx, 1);
-                //
-                detailIdx = this.dependentPageModels.findIndex(pl => pl == nd.tag);
-                if (detailIdx > -1) {
-                    let delItem = this.dependentPageModels.splice(detailIdx, 1)[0];
-                    if (delItem.componentRef) {
-                        delItem.componentRef.destroy();
-                    }
-                }
-            }
-            if (nd.parent && nd.level > -1) { //tree
-                nd.parent.childs.splice(nd.parent.childs.findIndex(child => child == nd), 1);
-                if (nd.parent && nd.parent.isGroup && nd.parent.childs.length == 0) {
-                    if (nd.parent.parent) {
-                        nd.parent.parent.childs.splice(nd.parent.parent.childs.findIndex(child => child === nd.parent), 1);
-                    } else {
-                        nd.parent = null;
-                    }
-                    let nodeIdx = this.principalPageModels.findIndex(pl => pl === nd.parent.tag);
-                    if (nodeIdx > -1) this.principalPageModels.splice(nodeIdx, 1);
-                    nodeIdx = this.dependentPageModels.findIndex(pl => pl === nd.parent.tag);
-                    if (nodeIdx > -1) {
-                        let delItem2 = this.dependentPageModels.splice(nodeIdx, 1)[0];
-                        if (delItem2.componentRef) {
-                            delItem2.componentRef.destroy();
-                        }
-                    }
-                    if (this.principalPageModels.length == 0 && this.dependentPageModels.length == 0) {
-                        this.appStore.taskManager.closeTaskGroup(this.taskId);
-                    }
-                    if (this.principalPageModels.length == 0 && this.dependentPageModels.length > 0) {
-                        this.appStore.taskManager.hideTaskGroup(this.taskId);
-                    }
-                }
+    selectNextVisiblePage(pageModel: IPageModel): void {
+        let pageNodes = this.navTreeView.toList().filter(nd => nd.isGroup == false && nd.level > -1 && nd.showNode);
+        let pageNodeIdx = pageNodes.findIndex(nd => nd.tag == pageModel);
+        let notExistInDepends = this.getDependentPageModels().findIndex(val => val == pageModel) < 0;
+        let pageNodeFilterFn = (nd: NavTreeNode) =>
+            (nd.tag && !nd.tag.modalRef) ||
+            nd.tag.modalRef && nd.tag.modalRef.instance.modalWindowState !== FormStateEnum.Minimized;
+
+        if (pageNodeIdx > -1 && pageNodes.length > 1) {
+            let last = pageNodes.slice(0, pageNodeIdx).filter(pageNodeFilterFn).pop();
+            let first = pageNodes.slice(pageNodeIdx + 1).filter(pageNodeFilterFn).shift();
+            let nextPage = last || first;
+            if (nextPage && notExistInDepends) {
+                this.setCurrent(nextPage.tag);
+                return;
             }
         }
+        if (pageModel && pageModel.godFather && pageModel.godFather.componentFactoryRef != this) {
+            pageModel.godFather.componentFactoryRef.selectNextVisiblePage(pageModel);
+        } else
+            this.setCurrent(null);
     }
-
     /**
-     * 干爹列表中移除干儿子
-     * @param pageModel 
-     */
+         * 干爹列表中移除干儿子
+         * @param pageModel 
+         */
     removePageModelFromGodFather(pageModel: IPageModel) {
         if (pageModel && pageModel.godFather) {
             let idx = pageModel.godFather.childs.findIndex((value) => value === pageModel);
@@ -250,6 +208,73 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                 godFatherNode && godFatherNode.childs.splice(nodeIdx, 1);
         }
     }
+    /**
+     * 移除儿子
+     * 同时从干爹列表中移除
+     * @param pageModel 
+     */
+    removePageModel(pageModel: IPageModel): void {
+        if (!!!pageModel) return;
+        let pageNodes = this.navTreeView.toList().filter((nd) => nd.isGroup == false);
+        let curPageIdx = pageNodes.findIndex(nd => nd.tag == pageModel);
+        let pageModelIdx;
+        if (curPageIdx > -1) {
+            //如果有干爹,也要从干爹的列表中删除
+            this.selectNextVisiblePage(pageModel);
+            this.removePageModelFromGodFather(pageModel);
+            let curPageNode = pageNodes[curPageIdx];
+            let curPageParent: IPageModel = curPageNode.tag.parent;
+            if (curPageParent && curPageParent.formType != FormTypeEnum.container) { //有父结点且不是容器类型则从父结点中删除
+                pageModelIdx = curPageParent.childs.findIndex(pageModel => pageModel == curPageNode.tag);
+                if (pageModelIdx > -1) {
+                    let deletedModel = curPageParent.childs.splice(pageModelIdx, 1)[0];
+                    if (deletedModel.componentRef) {
+                        deletedModel.componentRef.destroy();
+                    }
+                }
+            } else { //没有父结点且父结点不是容器类型,直接删除
+                pageModelIdx = this.principalPageModels.findIndex(pageModel => pageModel == curPageNode.tag);
+                if (pageModelIdx > -1) this.principalPageModels.splice(pageModelIdx, 1);
+                //
+                pageModelIdx = this.dependentPageModels.findIndex(dependPage => dependPage == curPageNode.tag);
+                if (pageModelIdx > -1) {
+                    let deletedDependModel = this.dependentPageModels.splice(pageModelIdx, 1)[0];
+                    if (deletedDependModel.componentRef) {
+                        deletedDependModel.componentRef.destroy();
+                    }
+                }
+            }
+            if (curPageNode.parent && curPageNode.level > -1) { //tree //删除分组结点
+                curPageNode.parent.childs.splice(curPageNode.parent.childs.findIndex(child => child == curPageNode), 1);
+                if (curPageNode.parent && curPageNode.parent.isGroup && curPageNode.parent.childs.length == 0) {
+                    if (curPageNode.parent.parent) {
+                        curPageNode.parent.parent.childs.splice(curPageNode.parent.parent.childs.findIndex(child => child === curPageNode.parent), 1);
+                    } else {
+                        curPageNode.parent = null;
+                    }
+
+                    let pageNodeIdx = this.principalPageModels.findIndex(principalModel => principalModel === curPageNode.parent.tag);
+                    if (pageNodeIdx > -1) this.principalPageModels.splice(pageNodeIdx, 1);
+
+                    pageNodeIdx = this.dependentPageModels.findIndex(pageModel => pageModel === curPageNode.parent.tag);
+                    if (pageNodeIdx > -1) {
+                        let deletedDependModel = this.dependentPageModels.splice(pageNodeIdx, 1)[0];
+                        if (deletedDependModel.componentRef) {
+                            deletedDependModel.componentRef.destroy();
+                        }
+                    }
+                    if (this.principalPageModels.length == 0 && this.dependentPageModels.length == 0) {
+                        this.appStore.taskManager.closeTaskGroup(this.taskId);
+                    }
+                    if (this.principalPageModels.every(model => model.tag.showNode == false) && this.dependentPageModels.length > 0) {
+                        this.appStore.taskManager.hideTaskGroup(this.taskId);
+                    }
+                }
+            }
+        }
+    }
+
+
     current: IPageModel;
     setCurrent(pageModel: IPageModel): void {
         //如果是组,直接返回
@@ -304,49 +329,70 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     }
 
     closeAllPages(action: IAction): void {
-        let nodeLists = this.navTreeView.toList().filter((nd) => nd.isGroup == false && nd.level > -1 && !!!nd.tag.godFather);
-        Observable.from(nodeLists).flatMap(form => {
-            if (form && form.tag && form.tag.modalRef && form.tag.modalRef.instance) {
-                return Observable.fromPromise(form.tag.modalRef.instance.forceClose(null));
+        let nodeLists = this.navTreeView
+            .toList()
+            .filter((nd) => nd.isGroup == false && nd.level > -1 && nd.showNode)
+            .reverse();
+        console.log(nodeLists);
+        Observable.from(nodeLists).flatMap(pageNode => {
+            if (pageNode && pageNode.tag && pageNode.tag.modalRef && pageNode.tag.modalRef.instance) {
+                return Observable.fromPromise(pageNode.tag.modalRef.instance.forceClose(null));
             }
             else {
-                return Observable.fromPromise(this.closePage(form.tag));
+                return Observable.fromPromise(this.closePage(pageNode.tag));
             }
-        }).concat(Observable.of(this.pageModel).flatMap(form => {
-            if (form && form.modalRef && form.modalRef.instance) {
-                return Observable.fromPromise(form.modalRef.instance.forceClose(null));
+        }).concat(Observable.of(this.pageModel).flatMap(pageNode => {
+            if (pageNode && pageNode.modalRef && pageNode.modalRef.instance) {
+                return Observable.fromPromise(pageNode.modalRef.instance.forceClose(null));
             } else {
-                return Observable.fromPromise(this.closePage(form));
+                return Observable.of(true); //
             }
-        })).every((val: boolean) => val === true).distinctUntilChanged().subscribe((res: boolean) => {
-            let result = { processFinish: true, result: res };
-            if (this.dependentPageModels.length > 0) {
-                result.result = false;
-            }
-            if (action.data.sender) action.data.sender.next(result);
-        });
+        })).every((val: boolean) => val === true)
+            .distinctUntilChanged()
+            .subscribe((res: boolean) => {
+                let result = { processFinish: true, result: res };
+                if (this.dependentPageModels.length > 0) {
+                    result.result = false;
+                }
+                if (action.data.sender) action.data.sender.next(result);
+            });
     }
 
     closePage(pageModel: IPageModel) {
         //根据model关闭,关闭前检查,等待关闭前处理函数
         return new Promise(async resolve => {
-            let event = { cancel: true, sender: pageModel };
+            let rootNode: NavTreeNode = pageModel.extras || pageModel.tag;
+            let childNodes = rootNode && rootNode.getChildNodes()
+                .filter((nd) => nd.isGroup == false && !!nd.tag && nd.level > -1 && nd.showNode)
+                .reverse() || [];
+            let pageModels = childNodes.map(c => <IPageModel>c.tag).concat(pageModel);
+            console.log(pageModels);
+            Observable.from(pageModels)
+                .flatMap(page => {
+                    return Observable.fromPromise(this.closePageHandler(page));
+                }).every(val => val === true)
+                .subscribe(res => resolve(res));
+        });
+    }
+
+    closePageHandler(pageModel: IPageModel) {
+        return new Promise<boolean>(async resolve => {
             if (pageModel) {
+                let event = { cancel: true, sender: pageModel };
                 let destroyFn;
                 if (pageModel.closeBeforeCheckFn && isFunction(pageModel.closeBeforeCheckFn)) {
                     destroyFn = await pageModel.closeBeforeCheckFn(event);
                 }
                 if (event.cancel) {
-                    await this.closeChildPage(pageModel);
                     if (pageModel && pageModel.modalRef && pageModel.modalRef.instance)
                         pageModel.modalRef.instance.forceClose(null);
+
                     if (isFunction(pageModel.closeAfterFn)) pageModel.closeAfterFn();
-                    //从窗口中操作
                     pageModel.componentFactoryRef.removePageModel(pageModel);
                 }
                 if (isFunction(destroyFn)) destroyFn();
+                resolve(event.cancel);
             }
-            resolve(event.cancel);
         });
     }
     private async closeChildPage(pageModel: IPageModel) {
@@ -450,34 +496,6 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         //     pageModel.godFather.componentFactoryRef.selectNextVisiblePage(pageModel);
         // } else
         //     this.setCurrent(null);
-    }
-    selectNextVisiblePage(pageModel: IPageModel): void {
-        let pageNodes = this.navTreeView.toList().filter(nd => nd.isGroup == false && nd.level > -1);
-        let pageNodeIdx = pageNodes.findIndex(nd => nd.tag == pageModel); //|| nd.extras == pageModel
-        let notExistInDepends = this.getDependentPageModels().findIndex(val => val == pageModel) < 0;
-        let pageNodeFilterFn = (nd: NavTreeNode) =>
-            (nd.tag && !nd.tag.modalRef) ||
-            nd.tag.modalRef && nd.tag.modalRef.instance.modalWindowState !== FormStateEnum.Minimized; // ||
-        // (nd.extras && !nd.extras.modalRef) ||
-        // nd.extras.modalRef && nd.extras.modalRef.instance.modalWindowState !== FormStateEnum.Minimized;
-
-        if (pageNodeIdx > -1) {
-            let last = pageNodes.slice(0, pageNodeIdx).filter(pageNodeFilterFn).pop();
-            let first = pageNodes.slice(pageNodeIdx + 1).filter(pageNodeFilterFn).shift();
-            let nextPage = last || first;
-            if (nextPage && notExistInDepends) {
-                this.setCurrent(nextPage.tag); //|| nextPage.extras
-                return;
-            }
-            if (!!!nextPage) { //nextPage = undefined时,表示已经没有可显示的页
-                this.setCurrent(null);
-                return;
-            }
-        }
-        if (pageModel && pageModel.godFather) {
-            pageModel.godFather.componentFactoryRef.selectNextVisiblePage(pageModel);
-        } else
-            this.setCurrent(null);
     }
 
     createListComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T> {
