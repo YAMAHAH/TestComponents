@@ -1,20 +1,25 @@
 import { Component, Input, ElementRef, ViewChild, ComponentRef, Type, EventEmitter, AfterViewInit, OnDestroy, Renderer2, Output, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
 import { IPageModel } from '../../basic/IFormModel';
-import { DomHandler } from "@common/dom/domhandler";
 import { FormTypeEnum } from '../../basic/FormTypeEnum';
+import { styleUntils } from '../../untils/style';
 
 @Component({
     moduleId: module.id,
-    selector: 'page-viewer',
-    templateUrl: 'page-viewer.component.html',
-    styleUrls: ['page-viewer.component.scss']
+    host: {
+        '[class.el-hide]': '!visible',
+        '[class.el-flex-show]': 'visible'
+    },
+    selector: 'x-page-viewer',
+    templateUrl: 'page-viewer.html',
+    styleUrls: ['page-viewer.css']
 })
-export class PageViewerComponent implements AfterViewInit, AfterViewChecked, OnChanges, OnDestroy {
+export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, OnDestroy {
     @Input() pageModel: IPageModel;
 
     @Input() contentHeight: any;
 
     @Input() append: ElementRef;
+    @Input() appendTo: ElementRef | string;
     appendParentNode: HTMLElement;
 
     @ViewChild('content') contentElementRef: ElementRef;
@@ -49,7 +54,7 @@ export class PageViewerComponent implements AfterViewInit, AfterViewChecked, OnC
     shown: boolean;
     _visible: boolean;
     @Input() get visible(): boolean {
-        return this._visible;
+        return this._visible && this.pageModel && this.pageModel.active || this._visible && !!this.pageModel;
     }
 
     set visible(val: boolean) {
@@ -61,10 +66,11 @@ export class PageViewerComponent implements AfterViewInit, AfterViewChecked, OnC
         }
     }
 
-    constructor(protected renderer: Renderer2, public domHandler: DomHandler) {
-
-    }
+    constructor(private elementRef: ElementRef,
+        protected renderer: Renderer2) { }
     ngAfterViewInit() {
+        //设置host样式
+        this.setHostElementStyle();
         this._modalResult.subscribe((result: any) => {
             this._selectResult = result;
             if (result) this.hide(null);
@@ -72,6 +78,15 @@ export class PageViewerComponent implements AfterViewInit, AfterViewChecked, OnC
         if (!!!this.componentRef && (!!!this.pageModel || this.pageModel && !!!this.pageModel.componentRef) && this.append) {
             this.appendParentNode = this.append.nativeElement.parentNode;
             this.renderer.appendChild(this.contentElementRef.nativeElement, this.append.nativeElement);
+        }
+        if (this.appendTo) {
+            if (typeof (this.appendTo) === 'string') {
+                if (this.appendTo === 'body')
+                    document.body.appendChild(this.elementRef.nativeElement);
+                else
+                    this.renderer.appendChild(this.appendTo, this.elementRef.nativeElement);
+            } else
+                this.renderer.appendChild(this.appendTo.nativeElement, this.elementRef.nativeElement);
         }
     }
     ngAfterViewChecked() {
@@ -85,8 +100,54 @@ export class PageViewerComponent implements AfterViewInit, AfterViewChecked, OnC
 
     }
 
-    close() {
+    styleClearFn: any;
+    setHostElementStyle() {
+        let elStyle = ` 
+        x-page-viewer {
+            display: flex;
+            flex: 1 0 auto;
+        }
+        .el-hide {
+            display:none;
+        } 
+        .el-flex-show { 
+            display:flex;flex:1 0 100%;
+        }
+        `;
+        this.styleClearFn = styleUntils.setElementStyle(this.elementRef.nativeElement, elStyle);
+    }
 
+    close() {
+        let a = [
+            { sheng: "32", shi: "321", qu: "3211" },
+            { sheng: "32", shi: "3212", qu: "3212" },
+            { sheng: "33", shi: "331", qu: "3311" },
+            { sheng: "33", shi: "332", qu: "3312" }
+        ];
+        let treeMaps = new Map<string, ITreeNode>();
+        let allCities: ITreeNode[] = [];
+        let sheng, shi, qu;
+        a.forEach(v => {
+            sheng = treeMaps.get(v.sheng);
+            if (!treeMaps.has(v.sheng)) {
+                sheng = new ITreeNode(v.sheng, v.sheng, 0);
+                treeMaps[sheng.id] = sheng;
+                allCities.push(sheng);
+            }
+            shi = treeMaps.get(v.shi);
+            if (!treeMaps.has(v.sheng)) {
+                shi = new ITreeNode(v.shi, v.shi, 1);
+                treeMaps[shi.id] = shi;
+                sheng.childrens.push(shi);
+            }
+            qu = treeMaps.get(v.qu);
+            if (!treeMaps.has(v.qu)) {
+                qu = new ITreeNode(v.qu, v.qu, 2);
+                treeMaps[qu.id] = qu;
+                shi.childrens.push(qu);
+            }
+        });
+        return allCities;
     }
     show(): void {
         //完成检查后的逻辑处理
@@ -124,8 +185,23 @@ export class PageViewerComponent implements AfterViewInit, AfterViewChecked, OnC
             }
             this.append.nativeElement.visible = true;
         }
+        if (this.appendTo) {
+            if (typeof (this.appendTo) === 'string') {
+                if (this.appendTo === 'body')
+                    document.body.removeChild(this.elementRef.nativeElement);
+                else
+                    this.renderer.removeChild(this.appendTo, this.elementRef.nativeElement);
+            } else
+                this.renderer.removeChild(this.appendTo.nativeElement, this.elementRef.nativeElement);
+        }
     }
 
 
 
+}
+export class ITreeNode {
+    constructor(public id: string, public name: string, public level: number) {
+
+    }
+    childrens: ITreeNode[] = [];
 }

@@ -5,6 +5,7 @@ import { Type, ComponentRef, ComponentFactoryResolver, ViewContainerRef } from '
 import { IAction } from '../Models/IAction';
 import { PageModelExtras } from './PageModelExtras';
 import { IComponentType } from './IComponentType';
+import { HostViewContainerDirective } from '../common/directives/host.view.container';
 export interface IComponentFactoryContainer extends IComponentBase {
     /**
      * 组的标题
@@ -22,6 +23,10 @@ export interface IComponentFactoryContainer extends IComponentBase {
      * 导航树
      */
     navTreeView: NavTreeViewComponent;
+    /**
+     * 页面查看器渲染入口
+     */
+    pageViewerLocation: HostViewContainerDirective;
     /**
      * 创建组
      */

@@ -6,6 +6,7 @@
             <!--<div style="display:flex;flex-direction: column; height:100%;">-->
             <x-pur-detail *ngFor="let item of getDetails(grp)" [pageModel]="item" [ngClass]="getDetailClass(item)" style="flex-direction: column; margin: 5px; background-color:#f2f2f2"></x-pur-detail>
             <!--</div>-->
+            <ng-template xyzHostContainer></ng-template>
         </ng-container>
         <!--<div style="display: none">
             <ng-template host-container></ng-template>

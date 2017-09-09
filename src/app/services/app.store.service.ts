@@ -10,6 +10,7 @@ import { IComponentFactoryType } from '../basic/IComponentFactoryType';
 import { IComponentFactoryContainer } from '../basic/IComponentFactoryContainer';
 import { FormService } from '../components/form/FormService';
 import { DesktopItem } from '../Models/desktop-Item';
+import { PageViewerService } from '../common/page-viewer/page-viewer.service';
 
 @Injectable()
 export class AppStoreService {
@@ -58,7 +59,9 @@ export class AppStoreService {
 
     public blockUIEvent: EventEmitter<any>;
 
-    constructor(public modalService: FormService) {
+    constructor(public modalService: FormService,
+        public pageViewerService: PageViewerService
+    ) {
         this.blockUIEvent = new EventEmitter();
         this._appStore = new Subject<IAction>();
     }

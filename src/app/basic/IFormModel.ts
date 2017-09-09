@@ -5,6 +5,7 @@ import { ShowTypeEnum } from './show-type-enum';
 import { IComponentFactoryContainer } from './IComponentFactoryContainer';
 import { Form } from '../components/form/form';
 import { AppStoreService } from '../services/app.store.service';
+import { PageViewer } from '../common/page-viewer/page-viewer';
 export interface IPageModel {
     /**
      * 主键
@@ -51,6 +52,10 @@ export interface IPageModel {
      * 弹窗实例引用
      */
     modalRef?: ComponentRef<Form>;
+    /**
+     * 页面查看器引用
+     */
+    pageVierwerRef?: ComponentRef<PageViewer>;
     /**
      * 组件工厂引用
      */

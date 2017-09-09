@@ -3,6 +3,7 @@ import { FormOptions } from '../components/form/FormOptions';
 import { IPageModel } from './IFormModel';
 import { IComponentFactoryType } from './IComponentFactoryType';
 import { ActivatedRoute } from '@angular/router';
+import { PageViewerOptions } from '../common/page-viewer/page-viewer.options';
 export interface IComponentBase {
     /**
      * 组件的标题
@@ -24,6 +25,8 @@ export interface IComponentBase {
      * 显示模态弹窗
      */
     showModal(modalOptions?: FormOptions): any;
+
+    showPage(pageViewerOptions?: PageViewerOptions): any;
 
     getComponentFactoryType(): IComponentFactoryType;
     /**

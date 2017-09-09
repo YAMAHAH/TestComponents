@@ -299,7 +299,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
         .dialog-position-custom {
           ${this.posCss}
         }`;
-        return styleUntils.setupStyleEl(this.container, styleHtml);
+        return styleUntils.setElementStyle(this.container, styleHtml);
     }
     center() {
         let elementWidth = this.domHandler.getOuterWidth(this.container);
@@ -446,7 +446,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
           -webkit-user-select:none;
           user-select:none;
         }`;
-        return styleUntils.setupStyleEl(document.body, styleHtml);
+        return styleUntils.setElementStyle(document.body, styleHtml);
     }
 
     delCustomStyleFn: () => void;

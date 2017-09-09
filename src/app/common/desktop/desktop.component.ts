@@ -111,6 +111,6 @@ export class DesktopComponent implements OnInit, AfterViewInit {
                 flex:1 0 100%;
             }
         `;
-        styleUntils.setupStyleEl(this.elementRef.nativeElement as Element, styleHTML);
+        styleUntils.setElementStyle(this.elementRef.nativeElement as Element, styleHTML);
     }
 }

@@ -1,13 +1,13 @@
 
 export class styleUntils {
-    static setupStyleEl(el: any, style: string) {
-        let animationStyleEl: HTMLStyleElement = document.createElement('style');
+    static setElementStyle(el: any, style: string) {
+        let styleEl: HTMLStyleElement = document.createElement('style');
         let styleHTML = style;
-        animationStyleEl.innerHTML = styleHTML;
+        styleEl.innerHTML = styleHTML;
         if (el) {
-            el.appendChild(animationStyleEl);
+            el.appendChild(styleEl);
         }
-        return () => el.removeChild(animationStyleEl);
+        return () => el.removeChild(styleEl);
     }
 
     static allowUserSelect(allowSelect: boolean = false) {
@@ -23,6 +23,6 @@ export class styleUntils {
           user-select:text;
         }`;
         }
-        return styleUntils.setupStyleEl(document.body, styleHtml);
+        return styleUntils.setElementStyle(document.body, styleHtml);
     }
 }

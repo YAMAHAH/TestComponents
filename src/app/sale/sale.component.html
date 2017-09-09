@@ -1,6 +1,8 @@
 <div style="display:flex;flex:1 0 100%;height: 100%">
     <x-nav-tree-view (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)"></x-nav-tree-view>
+    <div xyzHostContainer></div>
     <div style="display:flex;flex:1;flex-direction: column; width:100%">
+
         <div>
             <button (click)="open()">OpenPurOrder</button>
             <button (click)="close()">OpenPurList</button>

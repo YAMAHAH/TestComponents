@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ElementRef, EventEmitter, Injector } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, EventEmitter, Injector, AfterContentInit } from '@angular/core';
 import { UUID } from '../../untils/uuid';
 import { AppTaskBarActions } from '../../actions/app-main-tab/app-main-tab-actions';
 import { AppStoreService } from '../../services/app.store.service';
@@ -9,13 +9,21 @@ import { IComponentBase } from '../../basic/IComponentBase';
 import { FormOptions } from '../../components/form/FormOptions';
 import { NavTreeNode } from '../../components/nav-tree-view/nav-tree-node';
 import { ComponentBase } from './ComponentBase';
+import { styleUntils } from '../../untils/style';
 
 
 @Component({
     selector: 'x-pur-detail',
+    host: {
+        '[class.el-hide]': '!pageModel?.active && !!!pageModel?.modalRef',
+        '[class.el-flex-show]': 'pageModel?.active && !!!pageModel?.modalRef'
+    },
     templateUrl: './pur.detail.html'
 })
-export class PurDetailComponent extends ComponentBase implements OnInit {
+export class PurDetailComponent extends ComponentBase implements OnInit, AfterContentInit {
+    ngAfterContentInit(): void {
+        this.setHostElementStyle();
+    }
 
     closeBeforeCheckFn: Function;
     @Input() title: string = "采购订单";
@@ -25,6 +33,7 @@ export class PurDetailComponent extends ComponentBase implements OnInit {
         super(injector);
     }
     ngOnInit() {
+
         this.purOrder = { pono: this.pageModel.key, ptnno: "JL-" + UUID.uuid(8, 10) };
         if (this.pageModel.showType === ShowTypeEnum.showForm) {
             this.show();
@@ -62,6 +71,21 @@ export class PurDetailComponent extends ComponentBase implements OnInit {
         this.pageModel.elementRef = this.elementRef.nativeElement;
         this.pageModel.closeAfterFn = this.closeAfterFn;
         return this.appStore.taskManager.showModal(this.pageModel, modalOptions);
+    }
+    setHostElementStyle() {
+        let elStyle = ` 
+        x-page-viewer {
+            display: flex;
+            flex: 1 0 auto;
+        }
+        .el-hide {
+            display:none;
+        } 
+        .el-flex-show { 
+            display:flex;flex:1 0 100%;
+        }
+        `;
+        styleUntils.setElementStyle(this.elementRef.nativeElement, elStyle);
     }
     close() {
 

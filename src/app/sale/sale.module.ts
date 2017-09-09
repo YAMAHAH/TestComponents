@@ -27,6 +27,7 @@ import { ColumnBodyComponent } from './columnBody';
 import { DateColumnBodyComponent } from './dateColumnBody';
 import { CellEditorComponent } from './cellEditor';
 import { NavTreeViewModule } from '../components/nav-tree-view/nav-tree-view.module';
+import { SharedModule } from '../common/shared/shared-module';
 
 export const saleRouteConfig: Routes = [
     {
@@ -38,8 +39,7 @@ export const saleRouteConfig: Routes = [
     imports: [
         RouterModule.forChild(saleRouteConfig),
         FormsModule,
-        CommonModule,
-        // ButtonModule,
+        CommonModule, SharedModule,
         XYZDialogModule, NavTreeViewModule,
         XYZUIModule,
         PopoverModule,

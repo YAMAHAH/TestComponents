@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector } from '@angular/core';
 import { AppStoreService } from '../services/app.store.service';
 import { AppTaskBarActions } from '../actions/app-main-tab/app-main-tab-actions'
-import { ActionsBase, AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, SaleComponentFactoryType, PurComponentFactoryType, PurchaseEditComponentType } from '../actions/actions-base';
+import { ActionsBase, AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, SaleComponentFactoryType, PurComponentFactoryType, PurchaseEditComponentType, PurchaseListComponentType } from '../actions/actions-base';
 import { LoadScriptService } from '../services/load-script-service';
 import { DialogService } from '../common/dialog/dialog.service';
 import { ModalService } from '../common/modal/modal.service';
@@ -36,6 +36,8 @@ import { CellEditorComponent } from './cellEditor';
 import { NavTreeNode } from '../components/nav-tree-view/nav-tree-node';
 import { ComponentFactoryConatiner } from '../pur/pur-order/ComponentFactoryConatiner';
 import { FormTypeEnum } from '../basic/FormTypeEnum';
+import { PageViewerOptions } from '../common/page-viewer/page-viewer.options';
+import { HostViewContainerDirective } from '../common/directives/host.view.container';
 
 
 
@@ -259,6 +261,7 @@ export class SaleComponent extends ComponentFactoryConatiner
 
     @ViewChild('xpanel', { read: PanelComponent }) xxPanel: PanelComponent;
     @ViewChild('appendToModal') appendToModal: ElementRef;
+    @ViewChild(HostViewContainerDirective) pageViewerLocation: HostViewContainerDirective;
     clickMe(panel: PanelComponent) {
         // console.log(this.xxPanel);
     }
@@ -340,6 +343,19 @@ export class SaleComponent extends ComponentFactoryConatiner
                 let parentModel = this.pageModel.childs[0];
                 compIns.setOtherParent(parentModel);
                 compIns.show(options).subscribe((res: any) => console.log(res));
+            }
+        }
+        if (factoryRef) {
+            let compRef = factoryRef.createComponentRef(PurchaseListComponentType); //getComponentRef(PurDetailComponent);
+            let options = new PageViewerOptions();
+            options.resolve = { data: '代码创建组件数据传递' };
+            options.appendTo = this.pageViewerLocation && this.pageViewerLocation.viewContainerRef.element || this.viewContainerRef.element;
+            if (compRef) {
+                let compIns = compRef.instance;
+                compIns.pageModel.title = compIns.title;
+                let parentModel = this.pageModel.childs[0];
+                compIns.setOtherParent(parentModel);
+                compIns.showPage(options).subscribe((res: any) => console.log(res));
             }
         }
     }

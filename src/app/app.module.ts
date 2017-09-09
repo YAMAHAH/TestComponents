@@ -14,6 +14,7 @@ import { XYZUIModule } from './common/rebirth-ui.module';
 import { ToastyModule } from './common/toasty/index';
 import { WebFormModule } from './components/form/FormModule';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PageViewerModule } from './common/page-viewer/page-viewer.module';
 
 @NgModule({
   imports: [
@@ -24,7 +25,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     PageLoadingModule.forRoot(),
     XYZUIModule.forRoot(),
     ToastyModule.forRoot(),
-    WebFormModule.forRoot()
+    WebFormModule.forRoot(),
+    PageViewerModule.forRoot()
   ],
   declarations: [AppComponent, PCLayoutComponent],
   bootstrap: [AppComponent],

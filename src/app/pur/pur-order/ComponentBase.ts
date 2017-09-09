@@ -8,6 +8,7 @@ import { ActivatedRoute } from '@angular/router';
 import { isFunction } from '../../common/toasty/toasty.utils';
 import { Observable } from 'rxjs/Observable';
 import { IComponentFactoryType } from '../../basic/IComponentFactoryType';
+import { PageViewerOptions } from '../../common/page-viewer/page-viewer.options';
 
 export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase {
     getComponentFactoryType(): IComponentFactoryType {
@@ -60,6 +61,15 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
         return this.appStore.taskManager.showModal(this.pageModel, modalOptions);
     }
 
+    showPage(pageViewerOptions?: PageViewerOptions) {
+        if (this.pageModel) {
+            this.pageModel.title = this.title;
+            this.pageModel.elementRef = this.elementRef.nativeElement;
+            this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
+            this.pageModel.closeAfterFn = this.closeAfterFn;
+        }
+        return this.appStore.taskManager.showPage(this.pageModel, pageViewerOptions);
+    }
     closeBeforeCheckFn: Function = async (event: any) => {
         return new Promise<any>(resolve => {
             return resolve(true);

@@ -60,7 +60,7 @@ export class ToastyComponent implements OnInit {
         .toasty-position-custom {
           ${this.posCss}
         }`;
-    return styleUntils.setupStyleEl(this.elementRef.nativeElement, styleHtml);
+    return styleUntils.setElementStyle(this.elementRef.nativeElement, styleHtml);
   }
   get position(): string {
     return this._position;

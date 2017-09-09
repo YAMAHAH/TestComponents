@@ -26,6 +26,7 @@ import { ComponentFactoryConatiner } from './ComponentFactoryConatiner';
 import { PurListComponent } from './pur.list.component';
 import { PurDetailComponent } from './pur.detail.component';
 import { IComponentType } from '../../basic/IComponentType';
+import { HostViewContainerDirective } from '../../common/directives/host.view.container';
 
 @Component({
     selector: 'x-pur-order',
@@ -88,7 +89,7 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
             display: flex;
             flex: 1 0 auto;
         }`;
-        styleUntils.setupStyleEl(this.elementRef.nativeElement, styleHtml);
+        styleUntils.setElementStyle(this.elementRef.nativeElement, styleHtml);
     }
 
     getClass(listModel: IPageModel) { //PurList

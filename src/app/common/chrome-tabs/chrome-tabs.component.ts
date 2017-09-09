@@ -20,6 +20,7 @@ import { FormService } from '../../components/form/FormService';
 import { FormOptions } from '../../components/form/FormOptions';
 import { IPageModel } from '../../basic/IFormModel';
 import { SaleComponent } from '../../sale/sale.component';
+import { PageViewerOptions } from '../page-viewer/page-viewer.options';
 declare var Draggabilly: any;
 
 export interface TabModel {
@@ -285,6 +286,31 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             showTabContent: (tabModel.active && tabModel.showTabContent),
             hideTabContent: !tabModel.active || !tabModel.showTabContent
         };
+    }
+
+    showPage(pageModel: IPageModel, pageViewerOptions: PageViewerOptions = null) {
+        let result = new EventEmitter<any>();
+        setTimeout(() => {
+            let options: PageViewerOptions = new PageViewerOptions();
+            options.responsive = false;
+            options.width = 500;
+            options.header = pageModel.title;
+            options.visible = true;
+            // options.resolve = { target: '1358', playload: 'transmport context data' }
+            options.append = pageModel.elementRef;
+            // options.appendTo= pageModel
+            options.rootContainer = this.viewContainerRef;
+            options.injector = this.viewContainerRef.parentInjector;
+            options.pageModel = pageModel;
+            if (pageViewerOptions) {
+                Object.assign(options, pageViewerOptions);
+            }
+            if (pageModel.closeBeforeCheckFn) options.checkCloseBeforeFn = pageModel.closeBeforeCheckFn;
+            if (pageModel.closeAfterFn) options.closeAfterCallBackFn = pageModel.closeAfterFn;
+            if (pageModel.componentRef) options.componentRef = pageModel.componentRef;
+            this.appStore.pageViewerService.showPage(options).subscribe(result);
+        }, 10);
+        return result;
     }
     showModal(pageModel: IPageModel, modalOptions: FormOptions = null) {
         let result = new EventEmitter<any>();

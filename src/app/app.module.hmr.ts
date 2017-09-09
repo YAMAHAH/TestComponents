@@ -14,16 +14,20 @@ import { XYZUIModule } from './common/rebirth-ui.module';
 import { ToastyModule } from './common/toasty/index';
 import { WebFormModule } from './components/form/FormModule';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PageViewerModule } from './common/page-viewer/page-viewer.module';
 
 @NgModule({
   imports: [
-    BrowserModule,BrowserAnimationsModule,
+    BrowserModule, BrowserAnimationsModule,
     HttpModule,
     PageLoadingModule.forRoot(),
     LayoutModule,
     StaticNewsModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
-    XYZUIModule.forRoot(), ToastyModule.forRoot(), WebFormModule.forRoot()
+    XYZUIModule.forRoot(),
+    ToastyModule.forRoot(),
+    WebFormModule.forRoot(),
+    PageViewerModule.forRoot()
   ],
   declarations: [AppComponent, PCLayoutComponent],
   providers: [...appRootProviders]

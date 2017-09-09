@@ -1,23 +1,31 @@
 // Angular Imports
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 
 // This Module's Components
-import { PageViewerComponent } from './page-viewer.component';
+import { PageViewer } from './page-viewer';
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../shared/shared-module';
+import { PageViewerService } from './page-viewer.service';
 
 
 @NgModule({
     imports: [
-        CommonModule, SharedModule
+        CommonModule,
+        SharedModule
     ],
     declarations: [
-        PageViewerComponent,
+        PageViewer,
     ],
     exports: [
-        PageViewerComponent,
-    ]
+        PageViewer,
+    ],
+    entryComponents: [PageViewer]
 })
 export class PageViewerModule {
-
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: PageViewerModule,
+            providers: [PageViewerService]
+        };
+    }
 }

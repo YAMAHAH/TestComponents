@@ -16,11 +16,13 @@ import { Observable } from 'rxjs/Observable';
 import { isFunction } from "util";
 import { IComponentFactoryType } from '../../basic/IComponentFactoryType';
 import { IComponentType } from '../../basic/IComponentType';
+import { HostViewContainerDirective } from '../../common/directives/host.view.container';
 
 export abstract class ComponentFactoryConatiner extends ComponentBase
     implements OnInit, OnDestroy, IComponentFactoryContainer {
     public viewContainerRef: ViewContainerRef;
     public componentFactoryResolver: ComponentFactoryResolver;
+    @ViewChild(HostViewContainerDirective) pageViewerLocation: HostViewContainerDirective;
     groupTitle: string;
     principalPageModels: IPageModel[] = [];
     dependentPageModels: IPageModel[] = [];
@@ -290,7 +292,11 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         let notExistInDepends = dependModels.indexOf(pageModel) < 0;
         if (notExistInDepends && this.current && !!!this.current.godFather && this.current.showType == ShowTypeEnum.tab) {
             this.current.active = false;
-        } else if (this.current)
+        } else if (this.current && this.current.pageVierwerRef) {
+            this.current.active = false;
+            this.current.pageVierwerRef.instance.visible = false;
+        }
+        else if (this.current)
             this.current.active = true;
 
         pageModel.active = true;
@@ -300,6 +306,10 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             this.current.modalRef.instance.visible = true;
             this.current.modalRef.instance.restore(null);
         }
+        if (this.current && this.current.pageVierwerRef) {
+            this.current.pageVierwerRef.instance.visible = true;
+        }
+
 
         if (notExistInDepends && !!!pageModel.godFather) {
             this.navTreeView.setCurrent(pageModel.tag);
