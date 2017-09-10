@@ -3,6 +3,8 @@ import { IPageModel } from '../../basic/IFormModel';
 import { FormTypeEnum } from '../../basic/FormTypeEnum';
 import { styleUntils } from '../../untils/style';
 
+// '[style.display]': 'flex',
+// '[style.flex]': "'1 0 auto'" 
 @Component({
     moduleId: module.id,
     host: {
@@ -59,7 +61,7 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
 
     set visible(val: boolean) {
         this._visible = val;
-
+        let aa: HTMLElement;
         if (this._visible) {
             this.onBeforeShow.emit({});
             this.shown = true;
@@ -104,14 +106,16 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
     setHostElementStyle() {
         let elStyle = ` 
         x-page-viewer {
-            display: flex;
-            flex: 1 0 auto;
+            display:flex;
+            flex:1;
+            flex-direction: column;
+            width:100%
         }
         .el-hide {
             display:none;
         } 
         .el-flex-show { 
-            display:flex;flex:1 0 100%;
+            display:flex;
         }
         `;
         this.styleClearFn = styleUntils.setElementStyle(this.elementRef.nativeElement, elStyle);

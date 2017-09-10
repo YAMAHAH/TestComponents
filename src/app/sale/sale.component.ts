@@ -38,12 +38,13 @@ import { ComponentFactoryConatiner } from '../pur/pur-order/ComponentFactoryCona
 import { FormTypeEnum } from '../basic/FormTypeEnum';
 import { PageViewerOptions } from '../common/page-viewer/page-viewer.options';
 import { HostViewContainerDirective } from '../common/directives/host.view.container';
+import { styleUntils } from '../untils/style';
 
 
 
 @Component({
     moduleId: module.id,
-    selector: 'sale',
+    selector: 'x-sale',
     templateUrl: 'sale.component.html',
     styleUrls: ['sale.component.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -330,6 +331,7 @@ export class SaleComponent extends ComponentFactoryConatiner
             listInstance.show().subscribe((res: any) => console.log(res));
         }
     }
+    // @ViewChild('pageViewLocation', { read: ViewContainerRef }) pageViewLocation: ViewContainerRef
     async close() {
         let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);
         if (factoryRef) {
@@ -346,18 +348,27 @@ export class SaleComponent extends ComponentFactoryConatiner
             }
         }
         if (factoryRef) {
-            let compRef = factoryRef.createComponentRef(PurchaseListComponentType); //getComponentRef(PurDetailComponent);
+            let compRef = factoryRef.createComponentRef(PurchaseListComponentType);
             let options = new PageViewerOptions();
             options.resolve = { data: '代码创建组件数据传递' };
-            options.appendTo = this.pageViewerLocation && this.pageViewerLocation.viewContainerRef.element || this.viewContainerRef.element;
+            options.rootContainer = this.pageViewerLocation.viewContainerRef;
+           // options.appendTo = this.pageViewerLocation && this.pageViewerLocation.viewContainerRef.element || this.viewContainerRef.element;
             if (compRef) {
                 let compIns = compRef.instance;
                 compIns.pageModel.title = compIns.title;
                 let parentModel = this.pageModel.childs[0];
                 compIns.setOtherParent(parentModel);
                 compIns.showPage(options).subscribe((res: any) => console.log(res));
+                this.changeDetectorRef.markForCheck();
             }
         }
+    }
+    getClass(pageModel: IPageModel) { //PurList
+        if (!pageModel) return {};
+        return {
+            "el-hide": !pageModel.active,
+            "el-flex-show": pageModel.active
+        };
     }
     display: boolean;
     showDialog() {
@@ -430,6 +441,8 @@ export class SaleComponent extends ComponentFactoryConatiner
 
     pageModel: IPageModel = { title: '销售订单', active: true, childs: [] };
     ngOnInit() {
+
+        this.setHostElementStyle();
         this.pageModel.closeAfterFn = this.closeAfterFn;
         this.pageModel.elementRef = this.viewContainerRef.element.nativeElement;
         this.pageModel.title = this.title;
@@ -453,7 +466,24 @@ export class SaleComponent extends ComponentFactoryConatiner
             this.changeDetectorRef.markForCheck();
         });
     }
-
+    styleClearFn: any;
+    setHostElementStyle() {
+        let elStyle = ` 
+        x-sale {
+            display:flex;
+            flex:1;
+            flex-direction: column;
+            width:100%
+        }
+        .el-hide {
+            display:none;
+        } 
+        .el-flex-show { 
+            display:flex;
+        }
+        `;
+        this.styleClearFn = styleUntils.setElementStyle(this.elementRef.nativeElement, elStyle);
+    }
 
     selectedCar: string = 'BMW';
     cars: SelectItem[];

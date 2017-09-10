@@ -1,4 +1,4 @@
-<div #content [style.height.px]="contentHeight" [style.display]="visible ? 'block' : 'none'">
+<div #content style="display:flex;flex-direction: column;height: 100%; margin: 5px;" [style.height.px]="contentHeight" [style.display]="visible ? 'block' : 'none'">
     <ng-container *ngFor="let comp of componentOutlets">
         <ng-container *jyComponentOutlet="comp;context: compctx"></ng-container>
     </ng-container>
