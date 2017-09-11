@@ -30,8 +30,13 @@ import { HostViewContainerDirective } from '../../common/directives/host.view.co
 
 @Component({
     selector: 'x-pur-order',
+    host: {
+        '[class.flex-column-container-item]': 'true',
+        '[class.el-hide]': '!visible',
+        '[class.el-flex-show]': 'visible',
+    },
     templateUrl: './pur-order.component.html',
-    styles: ['.el-hide{display:none;} .el-flex-show{ display:flex;flex:1 0 100%;}']
+    styles: []
 })
 export class PurOrderComponent extends ComponentFactoryConatiner implements OnInit, OnDestroy {
     @Input() title: string = "采购订单";
@@ -73,7 +78,7 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
 
     ngOnInit() {
         super.ngOnInit();
-        this.setupElStyle();
+        // this.setupElStyle();
         this.pageModel.closeAfterFn = this.closeAfterFn;
         this.pageModel.elementRef = this.elementRef.nativeElement;
     }

@@ -21,8 +21,13 @@ import { ComponentBase } from './ComponentBase';
 
 @Component({
     selector: 'x-pur-list',
+    host: {
+        '[class.flex-column-container-item]': 'true',
+        '[class.el-hide]': '!visible',
+        '[class.el-flex-show]': 'visible',
+    },
     templateUrl: './pur.list.html',
-    styles: [' .el-hide{display:none} .el-flex-show{ display:flex;flex:1 }']
+    styles: []
 })
 export class PurListComponent extends ComponentBase implements OnInit {
     @Input() title: string = "采购订单清单";

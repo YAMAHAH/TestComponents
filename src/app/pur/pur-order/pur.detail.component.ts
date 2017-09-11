@@ -15,14 +15,15 @@ import { styleUntils } from '../../untils/style';
 @Component({
     selector: 'x-pur-detail',
     host: {
-        '[class.el-hide]': '!pageModel?.active && !!!pageModel?.modalRef',
-        '[class.el-flex-show]': 'pageModel?.active && !!!pageModel?.modalRef'
+        '[class.flex-column-container-item]': 'true',
+        '[class.el-hide]': '!visible && !!!pageModel?.modelRef',
+        '[class.el-flex-show]': 'visible && !!pageModel?.modelRef'
     },
     templateUrl: './pur.detail.html'
 })
 export class PurDetailComponent extends ComponentBase implements OnInit, AfterContentInit {
     ngAfterContentInit(): void {
-        this.setHostElementStyle();
+        // this.setHostElementStyle();
     }
 
     closeBeforeCheckFn: Function;

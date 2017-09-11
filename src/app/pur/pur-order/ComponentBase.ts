@@ -11,6 +11,19 @@ import { IComponentFactoryType } from '../../basic/IComponentFactoryType';
 import { PageViewerOptions } from '../../common/page-viewer/page-viewer.options';
 
 export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase {
+    _visible: boolean = true;
+    @Input() get visible(): boolean {
+        return this._visible && this.pageModel && this.pageModel.active || this._visible && !!!this.pageModel;
+    }
+
+    set visible(val: boolean) {
+        this._visible = val;
+        if (val)
+            this.elementRef.nativeElement.style.display = "flex";
+        else
+            this.elementRef.nativeElement.style.display = "none";
+    }
+    enable: boolean;
     getComponentFactoryType(): IComponentFactoryType {
         throw new Error("Method not implemented.");
     }

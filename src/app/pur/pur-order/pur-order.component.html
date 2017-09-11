@@ -1,34 +1,10 @@
-<div style="display:flex;flex:1 0 100%;height: 100%">
+<div class="flex-row-container-item">
     <x-nav-tree-view (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)"></x-nav-tree-view>
-    <div style="display:flex;flex:1;flex-direction: column; width:100%">
+    <div class="flex-column-container-item11">
         <ng-container *ngFor="let grp of formGroups">
-            <x-pur-list *ngFor="let list of getLists(grp)" [pageModel]="list" [ngClass]="getClass(list)" style="flex-direction: column;height: 100%; margin: 5px; background-color: #f2f2f2"></x-pur-list>
-            <!--<div style="display:flex;flex-direction: column; height:100%;">-->
-            <x-pur-detail *ngFor="let item of getDetails(grp)" [pageModel]="item" [ngClass]="getDetailClass(item)" style="flex-direction: column; margin: 5px; background-color:#f2f2f2"></x-pur-detail>
-            <!--</div>-->
+            <x-pur-list *ngFor="let list of getLists(grp)" [pageModel]="list"></x-pur-list>
+            <x-pur-detail *ngFor="let item of getDetails(grp)" [pageModel]="item"></x-pur-detail>
         </ng-container>
         <ng-template xyzHostContainer></ng-template>
-        <!--<div style="display: none">
-            <ng-template host-container></ng-template>
-        </div>-->
     </div>
 </div>
-
-
-
-<!-- 
-<div style="display:flex;flex:1 0 100%;height: 100%">
-    <x-nav-tree-view></x-nav-tree-view>
-    <x-container style="display:flex;flex:1;flex-direction: column; width:100%">
-        <x-page-viewer style="display:flex;flex-direction: column;height: 100%; margin: 5px; background-color: #f2f2f2"> 名称:111 占用父容器的所有宽度 与名称为222的元素是按列显示排列
-            <x-content style="display:flex; flex-direction: column;height: 100%; margin: 5px; background-color: #f2f2f2"> 占用父容器的所有宽度
-                <x-pur-list style="flex-direction: column; margin: 5px; background-color:#f2f2f2"></x-pur-list> 占用父容器的所有宽度
-            </x-content>
-        </x-page-viewer>
-        <x-page-viewer style="display:flex;flex-direction: column;height: 100%; margin: 5px; background-color: #f2f2f2"> 名称:222 占用父容器的所有宽度
-            <x-content style="display:flex;flex-direction: column;height: 100%; margin: 5px; background-color: #f2f2f2"> 占用父容器的所有宽度
-                <x-pur-edit style="flex-direction: column; margin: 5px; background-color:#f2f2f2"></x-pur-edit> 占用父容器的所有宽度
-            </x-content>
-        </x-page-viewer>
-    </x-container>
-</div> -->

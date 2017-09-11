@@ -1,0 +1,97 @@
+.flex-column-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0.5rem;
+    background-color: #f2f2f2;
+}
+
+.flex-column-container-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 100%;
+    width: 100%;
+    height: 100%;
+    margin: 0.5rem;
+    max-width: 100%;
+    background-color: #f2f2f2;
+}
+
+.flex-column-container-item11 {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    margin: 0.5rem;
+}
+
+.flex-column-item {
+    flex: 1 0 100%;
+    width: 100%;
+    margin: 0.5rem;
+}
+
+.flex-row-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 0.5rem;
+    background-color: #f2f2f2;
+}
+
+
+/* flex default 0 1 auto  none : 0 0 auto auto:1 1 auto */
+
+.flex-row-container-item {
+    display: flex;
+    flex-direction: row;
+    flex: 1 0 100%;
+    width: 100%;
+    height: 100%;
+    margin: 0.5rem;
+    background-color: #f2f2f2;
+}
+
+.flex-row-item-default {
+    flex: 0 1 auto;
+}
+
+.flex-row-item {
+    flex: 1 0 100%;
+    height: 100%;
+    margin: 0.5rem;
+    background-color: #f2f2f2;
+}
+
+.flex-row-item- {
+    flex: 1 0 100%;
+    height: 100%;
+    margin: 0.5rem;
+    background-color: #f2f2f2;
+}
+
+.el-hide {
+    display: none;
+}
+
+.el-flex-show {
+    display: flex;
+    flex: 1 0 100%;
+}
+
+.box {
+    position: relative;
+    box-sizing: border-box;
+    min-height: 1rem;
+    margin-bottom: 0;
+    background: #007FFF;
+    border: 1px solid #FFF;
+    border-radius: 2px;
+    overflow: hidden;
+    text-align: center;
+    color: #fff
+}
+
+.full-height {
+    height: 100vh
+}

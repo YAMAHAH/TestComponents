@@ -46,6 +46,14 @@ export interface IComponentBase {
      */
     context: any;
     /**
+     * 可视
+     */
+    visible: boolean;
+    /**
+     * 可用
+     */
+    enable: boolean;
+    /**
      * extral附加对象
      */
     tag: any;

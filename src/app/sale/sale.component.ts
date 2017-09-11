@@ -352,7 +352,7 @@ export class SaleComponent extends ComponentFactoryConatiner
             let options = new PageViewerOptions();
             options.resolve = { data: '代码创建组件数据传递' };
             options.rootContainer = this.pageViewerLocation.viewContainerRef;
-           // options.appendTo = this.pageViewerLocation && this.pageViewerLocation.viewContainerRef.element || this.viewContainerRef.element;
+            // options.appendTo = this.pageViewerLocation && this.pageViewerLocation.viewContainerRef.element || this.viewContainerRef.element;
             if (compRef) {
                 let compIns = compRef.instance;
                 compIns.pageModel.title = compIns.title;
@@ -442,7 +442,7 @@ export class SaleComponent extends ComponentFactoryConatiner
     pageModel: IPageModel = { title: '销售订单', active: true, childs: [] };
     ngOnInit() {
 
-        this.setHostElementStyle();
+        // this.setHostElementStyle();
         this.pageModel.closeAfterFn = this.closeAfterFn;
         this.pageModel.elementRef = this.viewContainerRef.element.nativeElement;
         this.pageModel.title = this.title;

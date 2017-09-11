@@ -63,19 +63,24 @@ export interface TabModel {
 }
 let instanceId = 0;
 
+//   
 @Component({
     moduleId: module.id,
     selector: 'x-chrome-tabs',
     templateUrl: 'chrome-tabs.component.html',
-    styleUrls: ['chrome-tabs.component.css',
+    styleUrls: [
+        'common.css',
+        'chrome-tabs.component.css',
         'primeng/resources/primeng.min.css',
         'primeng/resources/themes/omega/theme.css',
         'font-awesome-4.7.0/css/font-awesome.min.css',
         'bootstrap/css/bootstrap.min.css',
         'chrome-themes.css',
+        'flexboxgrid/flexboxgrid.css',
         './toasty/style-default.css',
         './toasty/style-bootstrap.css',
-        './toasty/style-material.css'],
+        './toasty/style-material.css'
+    ],
     encapsulation: ViewEncapsulation.Native
 })
 export class ChromeTabsComponent implements OnInit, AfterViewInit {

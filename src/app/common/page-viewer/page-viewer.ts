@@ -9,7 +9,8 @@ import { styleUntils } from '../../untils/style';
     moduleId: module.id,
     host: {
         '[class.el-hide]': '!visible',
-        '[class.el-flex-show]': 'visible'
+        '[class.el-flex-show]': 'visible',
+        '[class.flex-column-container-item]': 'true'
     },
     selector: 'x-page-viewer',
     templateUrl: 'page-viewer.html',
@@ -61,7 +62,6 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
 
     set visible(val: boolean) {
         this._visible = val;
-        let aa: HTMLElement;
         if (this._visible) {
             this.onBeforeShow.emit({});
             this.shown = true;
@@ -72,7 +72,7 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
         protected renderer: Renderer2) { }
     ngAfterViewInit() {
         //设置host样式
-        this.setHostElementStyle();
+        // this.setHostElementStyle();
         this._modalResult.subscribe((result: any) => {
             this._selectResult = result;
             if (result) this.hide(null);
@@ -110,12 +110,6 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
             flex:1;
             flex-direction: column;
             width:100%
-        }
-        .el-hide {
-            display:none;
-        } 
-        .el-flex-show { 
-            display:flex;
         }
         `;
         this.styleClearFn = styleUntils.setElementStyle(this.elementRef.nativeElement, elStyle);
