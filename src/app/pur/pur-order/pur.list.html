@@ -4,34 +4,31 @@
 </ul>
 <pre>{{pageModel?.resolve | json}}</pre>
 <pre>{{context | json}}</pre>
-<div class="flex-flex-container" style="height:500px">
-    <div class="row col col-xs" style=" margin: 0px; width: 100%; height: 100%;">
-        <div #header class="row" style=" margin:0px;flex: none; height: 60px;line-height: 60px;background-color:blue">
+<div class="col-row col-xs" style=" margin: 0rem;padding: 0rem; width: 100%; height: 100%;">
+    <div #header class="row-col" style=" margin:0px;flex: none; height: 5rem;line-height: 5rem;background-color:blue">
 
-        </div>
-        <div #center class="row col-xs" style="margin: 0px;padding:0px;">
+    </div>
+    <div #center class="row-col col-xs" style="margin:0px;padding:0px;">
 
-            <div #left class="row" style="margin:0px;flex: 1 0 20rem; width: 20rem;padding: 0px; border-right: #3747a0 3px solid;
-            min-width: 0px;max-width: 255px;background-color:green">
-                <div class="col-xs" style="padding:0px;flex:1 1 100%;">
-                    <div class="box">auto</div>
-                </div>
-            </div>
-
-            <div #main class="row" style="margin:0px; flex-grow: 1; background-color: #f2f2f2;min-width: 300px;">
-                <div class="col-xs" style="padding:0px;flex:1 1 100%;">
-                    <div class="box">auto</div>
-                </div>
-            </div>
-
-            <div #right class="row" style="margin:0px;flex: 0 0 20rem;padding:0px; width: 20rem;min-width:0rem;max-width:20rem;background-color:black">
-                <div class="col-xs" style="padding:0px;flex:1 1 100%;">
-                    <div class="box">auto</div>
-                </div>
+        <div #left class="row-col" style="margin:0px;flex: 0 0 20rem; width: 20rem;min-width:0rem;max-width:20rem;padding: 0px; border-right: #3747a0 3px solid;
+            min-width: 0px;max-width: 20rem;background-color:green">
+            <div class="col-xs" style="padding:0px;flex:1 1 100%;">
+                <div class="box">auto</div>
             </div>
         </div>
 
-        <div #footer class="row" style="margin:0px;flex: none; height: 60px;line-height: 60px;background-color:#327aa4"></div>
+        <div #main class="row-col" style="margin:0rem;padding:0rem; flex-grow: 1; background-color: #f2f2f2;min-width: 30rem;">
+            <div class="col-xs" style="padding:0rem;flex:1 1 100%;">
+                <div class="box">auto</div>
+            </div>
+        </div>
+
+        <div #right class="row-col" style="margin:0px;flex: 0 0 20rem;padding:0rem; width: 20rem;min-width:0rem;max-width:20rem;background-color:black">
+            <div class="col-xs" style="padding:0rem;flex:1 1 100%;">
+                <div class="box">auto</div>
+            </div>
+        </div>
     </div>
 
+    <div #footer class="row-col" style="margin:0rem;padding:0rem;flex: none; height: 5rem;line-height: 5rem;background-color:#327aa4"></div>
 </div>
