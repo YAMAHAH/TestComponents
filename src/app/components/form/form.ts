@@ -17,7 +17,7 @@ import { isFunction } from '../../untils/type';
 import { SizingPointEnum } from './SelectPointEnum';
 import { FormStateEnum } from './FormStateEnum';
 import { FormTitleAlignEnum } from './FormTitleAlignEnum';
-import { FormTypeEnum } from '../../basic/FormTypeEnum';
+import { PageTypeEnum } from '../../basic/PageTypeEnum';
 
 @Component({
     selector: 'x-form',
@@ -187,6 +187,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
     @Input() componentRef: ComponentRef<any>;
     @Input() ngComponentOutlet: Type<any>;
 
+    @Input() isForceAppend: boolean = false;
     compctx = () => {
         let self = this;
         return {
@@ -194,6 +195,10 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             modalResult: this._modalResult,
             get context() { return self.context; }
         };
+    }
+
+    get enablePredicate() {
+        return (value: any, index: number) => !!!this.isForceAppend;
     }
     show() {
         if (!this.positionInitialized) {
@@ -411,7 +416,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             this.modalResult.emit(this._selectResult);
             if (isFunction(this.closeAfterCallBackFn)) this.closeAfterCallBackFn();
             if (this.formModel && this.formModel.componentFactoryRef) {
-                if (this.formModel.formType == FormTypeEnum.container)
+                if (this.formModel.formType == PageTypeEnum.container)
                     this.formModel.globalManager &&
                         this.formModel.globalManager.taskManager &&
                         this.formModel.globalManager.taskManager.closeTaskGroup(() => this.formModel.key);
@@ -425,6 +430,22 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
         this.forceFn = null;
         return processStatus;
     }
+    /**
+ * 恢复引用父结点的内容,并隐藏本页的隐藏
+ */
+    restoreParentContent() {
+        if (this.append) {
+            if (this.appendParent) {
+                this.appendParent.appendChild(this.append.nativeElement);
+            }
+            this.append.nativeElement.visible = true;
+        }
+        this.visible = false;
+    }
+    /**
+    * 销毁函数,自动生成
+    */
+    dispose: () => void;
 
     unbindMaskClickListener() {
         if (this.maskClickListener) {

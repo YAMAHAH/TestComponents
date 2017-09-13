@@ -1,5 +1,5 @@
 import { ComponentRef } from '@angular/core';
-import { FormTypeEnum } from './FormTypeEnum';
+import { PageTypeEnum } from './PageTypeEnum';
 import { NavTreeViewComponent } from '../components/nav-tree-view/nav-tree-view.component';
 import { ShowTypeEnum } from './show-type-enum';
 import { IComponentFactoryContainer } from './IComponentFactoryContainer';
@@ -27,6 +27,7 @@ export interface IPageModel {
      * 干爹
      */
     godFather?: IPageModel;
+    views?: { current: any; pageViewerRef: any; modelRef: any; tabViewRef: any; }
     /**
      * 儿子
      */
@@ -46,7 +47,7 @@ export interface IPageModel {
     /**
      * 元素引用
      */
-    elementRef?: any;
+    elementRef?: HTMLElement;
     elementComponentRef?: any;
     /**
      * 弹窗实例引用
@@ -79,7 +80,7 @@ export interface IPageModel {
     /**
      * 页面类型
      */
-    formType?: FormTypeEnum;
+    formType?: PageTypeEnum;
     /**
      * 页面显示类型
      */

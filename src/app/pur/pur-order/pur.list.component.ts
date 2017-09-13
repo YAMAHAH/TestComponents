@@ -12,7 +12,7 @@ import { ModalPosition } from '../../common/modal/modal.position.enum';
 import { PurDetailComponent } from './pur.detail.component';
 import { IComponentBase } from '../../basic/IComponentBase';
 import { IPageModel } from '../../basic/IFormModel';
-import { FormTypeEnum } from '../../basic/FormTypeEnum';
+import { PageTypeEnum } from '../../basic/PageTypeEnum';
 import { NavTreeNode } from '../../components/nav-tree-view/nav-tree-node';
 import { ShowTypeEnum } from '../../basic/show-type-enum';
 import { FormOptions } from '../../components/form/FormOptions';
@@ -55,7 +55,7 @@ export class PurListComponent extends ComponentBase implements OnInit {
         } else {
             //create node
             detail = {
-                formType: FormTypeEnum.detail,
+                formType: PageTypeEnum.detail,
                 showType: this.appStore.showType || ShowTypeEnum.showForm,
                 key: item.pono,
                 title: item.pono,
@@ -96,7 +96,7 @@ export class PurListComponent extends ComponentBase implements OnInit {
     createBill(item: any) {
         let detail: IPageModel;
         detail = {
-            formType: FormTypeEnum.detail,
+            formType: PageTypeEnum.detail,
             key: UUID.uuid(8, 10),
             title: UUID.uuid(8, 10),
             active: false,

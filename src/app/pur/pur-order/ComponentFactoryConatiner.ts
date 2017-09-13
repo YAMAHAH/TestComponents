@@ -7,7 +7,7 @@ import { IAction } from '../../Models/IAction';
 import { PageModelExtras } from '../../basic/PageModelExtras';
 import { NavTreeViewComponent } from '../../components/nav-tree-view/nav-tree-view.component';
 import { Base } from '../../common/base';
-import { FormTypeEnum } from '../../basic/FormTypeEnum';
+import { PageTypeEnum } from '../../basic/PageTypeEnum';
 import { NavTreeNode } from '../../components/nav-tree-view/nav-tree-node';
 import { UUID } from '../../untils/uuid';
 import { ShowTypeEnum } from '../../basic/show-type-enum';
@@ -17,6 +17,8 @@ import { isFunction } from "util";
 import { IComponentFactoryType } from '../../basic/IComponentFactoryType';
 import { IComponentType } from '../../basic/IComponentType';
 import { HostViewContainerDirective } from '../../common/directives/host.view.container';
+import { FormOptions } from '../../components/form/FormOptions';
+import { PageViewerOptions } from '../../common/page-viewer/page-viewer.options';
 
 export abstract class ComponentFactoryConatiner extends ComponentBase
     implements OnInit, OnDestroy, IComponentFactoryContainer {
@@ -30,7 +32,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     createGroup(pageModelExtras?: PageModelExtras): IPageModel {
         let len = this.principalPageModels.length + 1;
         let groupPageModel: IPageModel = {
-            formType: FormTypeEnum.group,
+            formType: PageTypeEnum.group,
             title: this.title + "分组-" + len.toString(10),
             active: false,
             childs: [],
@@ -72,7 +74,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     createList(groupPageModel: IPageModel, pageModelExtras?: PageModelExtras): IPageModel {
         let len = this.principalPageModels.length + 1;
         let listPageModel: IPageModel = {
-            formType: FormTypeEnum.list,
+            formType: PageTypeEnum.list,
             title: this.title + "清单-" + len.toString(10),
             active: true,
             parent: groupPageModel,
@@ -99,7 +101,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     }
     createDetail(groupPageModel: IPageModel, pageModelExtras?: PageModelExtras): IPageModel {
         let editPageModel: IPageModel = {
-            formType: FormTypeEnum.detail,
+            formType: PageTypeEnum.detail,
             key: UUID.uuid(8, 10),
             title: UUID.uuid(8, 10),
             active: false,
@@ -226,7 +228,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             this.removePageModelFromGodFather(pageModel);
             let curPageNode = pageNodes[curPageIdx];
             let curPageParent: IPageModel = curPageNode.tag.parent;
-            if (curPageParent && curPageParent.formType != FormTypeEnum.container) { //有父结点且不是容器类型则从父结点中删除
+            if (curPageParent && curPageParent.formType != PageTypeEnum.container) { //有父结点且不是容器类型则从父结点中删除
                 pageModelIdx = curPageParent.childs.findIndex(pageModel => pageModel == curPageNode.tag);
                 if (pageModelIdx > -1) {
                     let deletedModel = curPageParent.childs.splice(pageModelIdx, 1)[0];
@@ -280,8 +282,8 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     current: IPageModel;
     setCurrent(pageModel: IPageModel): void {
         //如果是组,直接返回
-        if (pageModel && pageModel.formType == FormTypeEnum.group) return;
-        if (!pageModel) {
+        if (pageModel && pageModel.formType == PageTypeEnum.group) return;
+        if (!!!pageModel) {
             this.current = null;
             this.navTreeView && this.navTreeView.setCurrent(null);
             return;
@@ -292,7 +294,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         let notExistInDepends = dependModels.indexOf(pageModel) < 0;
         if (notExistInDepends && this.current && !!!this.current.godFather && this.current.showType == ShowTypeEnum.tab) {
             this.current.active = false;
-        } else if (this.current && this.current.pageVierwerRef) {
+        } else if (notExistInDepends && this.current && this.current.pageVierwerRef) {
             this.current.active = false;
             this.current.pageVierwerRef.instance.visible = false;
         }
@@ -301,13 +303,25 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
 
         pageModel.active = true;
         this.current = pageModel;
-        if (this.current && this.current.modalRef) {
-            this.current.modalRef.instance.moveOnTop();
-            this.current.modalRef.instance.visible = true;
-            this.current.modalRef.instance.restore(null);
-        }
-        if (this.current && this.current.pageVierwerRef) {
-            this.current.pageVierwerRef.instance.visible = true;
+        //先考虑子视图,再考虑子视图
+        if (this.current.views && this.current.views.current) {
+            if (this.current.views.current === this.current.views.modelRef) {
+                this.current.modalRef.instance.moveOnTop();
+                this.current.modalRef.instance.visible = true;
+                this.current.modalRef.instance.restore(null);
+            }
+            if (this.current.views.current === this.current.views.pageViewerRef) {
+                this.current.pageVierwerRef.instance.visible = true;
+            }
+        } else {
+            if (this.current && this.current.modalRef) {
+                this.current.modalRef.instance.moveOnTop();
+                this.current.modalRef.instance.visible = true;
+                this.current.modalRef.instance.restore(null);
+            }
+            if (this.current && this.current.pageVierwerRef) {
+                this.current.pageVierwerRef.instance.visible = true;
+            }
         }
 
 
@@ -430,13 +444,100 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         });
     }
 
+    switchToPageViewer(pageModel: IPageModel) {
+        //tab->pageViewer
+        //pageForm->pageViewer
+        if (!!!pageModel) return;
+        if (pageModel && pageModel.showType === ShowTypeEnum.pageViewer) return;
+
+        if (pageModel && pageModel.views.pageViewerRef) {
+            pageModel.views.current = pageModel.views.pageViewerRef;
+            pageModel.views.pageViewerRef.instance.visible = true;
+        } else {
+            //新增显示
+            let options = new PageViewerOptions();
+            options.rootContainer = this.pageViewerLocation.viewContainerRef;
+            //强制追加处理isForceAppend
+            options.isForceAppend = true;
+            options.append = pageModel.elementRef;
+
+            //以pageViewer显示
+            this.appStore.taskManager
+                .showPage(pageModel, options)
+                .subscribe((res: any) => console.log(res));
+        }
+        //隐藏pageForm 
+        if (pageModel.views.modelRef) pageModel.views.modelRef.instance.visible = false;
+        //隐藏pageForm
+        if (pageModel.modalRef) pageModel.modalRef.instance.visible = false;
+        //隐藏TAB
+        this.changeDetectorRef.detectChanges();
+
+        setTimeout(() => {
+            this.setCurrent(pageModel);
+        }, 10);
+    }
+    switchToPageForm(pageModel: IPageModel) {
+        //tab->pageForm
+        //pageviewer->pageForm
+        if (!!!pageModel) return;
+        if (pageModel && pageModel.showType === ShowTypeEnum.showForm) return;
+
+        if (pageModel && pageModel.views.modelRef) {
+            pageModel.views.current = pageModel.views.modelRef;
+            pageModel.views.modelRef.instance.visible = true;
+        } else {
+            //新增显示
+            let options = new FormOptions();
+            options.rootContainer = this.pageViewerLocation.viewContainerRef;
+            //强制追加处理isForceAppend
+            options.isForceAppend = true;
+            options.append = pageModel.elementRef;
+
+            //以pageViewer显示
+            this.appStore.taskManager
+                .show(pageModel, options)
+                .subscribe((res: any) => console.log(res));
+        }
+        //隐藏pageForm 
+        if (pageModel.views.pageViewerRef) pageModel.views.pageViewerRef.instance.visible = false;
+        //隐藏pageForm
+        if (pageModel.pageVierwerRef) pageModel.pageVierwerRef.instance.visible = false;
+        //隐藏TAB
+        setTimeout(() => {
+            pageModel.componentFactoryRef.setCurrent(pageModel);
+        }, 10);
+    }
+
+    switchToPageTab(pageModel: IPageModel) {
+        //pageform->tab
+        //pageviewer->tab
+        this.switchToMainView(pageModel);
+    }
+    switchToMainView(pageModel: IPageModel) {
+        if (!!!pageModel) return;
+        if (pageModel) {
+            pageModel.views.current = null;
+
+            let modelRef = pageModel.views.modelRef;
+            if (modelRef) modelRef.instance.visible = false;
+
+            let pageViewerRef = pageModel.views.pageViewerRef;
+            if (pageViewerRef) pageViewerRef.instance.visible = false;
+
+            setTimeout(() => {
+                pageModel.componentFactoryRef.setCurrent(pageModel);
+            }, 10);
+        }
+    }
+
     /**
      * 获取所有依赖页面模型
      */
     getDependentPageModels() {
         let dependModels: IPageModel[] = [];
         this.expandPageModel({ childs: this.dependentPageModels, title: "", active: false }, (p) => {
-            if (p.formType != FormTypeEnum.group) dependModels.push(p);
+            if (p.formType != PageTypeEnum.group) dependModels.push(p);
         });
         return dependModels;
     }
@@ -546,7 +647,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         let len = this.principalPageModels.length + 1;
         let title = UUID.uuid(8, 10).toString();
         let groupPageModel: IPageModel = {
-            formType: FormTypeEnum.group,
+            formType: PageTypeEnum.group,
             title: title + '默认组',
             active: false,
             childs: [],
@@ -563,7 +664,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         groupPageModel.tag = groupNode;
 
         let pageList: IPageModel = {
-            formType: FormTypeEnum.list,
+            formType: PageTypeEnum.list,
             title: title,
             active: true,
             parent: groupPageModel,

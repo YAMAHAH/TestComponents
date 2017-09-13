@@ -1,6 +1,6 @@
 import { Component, Input, ElementRef, ViewChild, ComponentRef, Type, EventEmitter, AfterViewInit, OnDestroy, Renderer2, Output, AfterViewChecked, OnChanges, SimpleChanges } from '@angular/core';
 import { IPageModel } from '../../basic/IFormModel';
-import { FormTypeEnum } from '../../basic/FormTypeEnum';
+import { PageTypeEnum } from '../../basic/PageTypeEnum';
 import { styleUntils } from '../../untils/style';
 
 // '[style.display]': 'flex',
@@ -21,7 +21,8 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
 
     @Input() contentHeight: any;
 
-    @Input() append: ElementRef;
+    @Input() isForceAppend: boolean;
+    @Input() append: any;
     @Input() appendTo: ElementRef | string;
     appendParentNode: HTMLElement;
 
@@ -54,6 +55,11 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
         };
     }
 
+
+    get enablePredicate() {
+        return (value: any, index: number) => !!!this.isForceAppend;
+    }
+
     shown: boolean;
     _visible: boolean;
     @Input() get visible(): boolean {
@@ -77,9 +83,10 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
             this._selectResult = result;
             if (result) this.hide(null);
         });
-        if (!!!this.componentRef && (!!!this.pageModel || this.pageModel && !!!this.pageModel.componentRef) && this.append) {
-            this.appendParentNode = this.append.nativeElement.parentNode;
-            this.renderer.appendChild(this.contentElementRef.nativeElement, this.append.nativeElement);
+        if (!!!this.componentRef && (!!!this.pageModel || this.pageModel && !!!this.pageModel.componentRef) && this.append || this.isForceAppend && this.append) {
+            console.log(this.pageModel.componentRef);
+            this.appendParentNode = this.append.parentNode;
+            this.renderer.appendChild(this.contentElementRef.nativeElement, this.append);
         }
         if (this.appendTo) {
             if (typeof (this.appendTo) === 'string') {
@@ -163,10 +170,10 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
         this.onAfterHide.emit(event);
 
         if (this.append) {
-            this.append.nativeElement.visible = false;
+            this.append.visible = false;
         }
         if (this.pageModel && this.pageModel.componentFactoryRef) {
-            if (this.pageModel.formType == FormTypeEnum.container)
+            if (this.pageModel.formType == PageTypeEnum.container)
                 this.pageModel.globalManager &&
                     this.pageModel.globalManager.taskManager &&
                     this.pageModel.globalManager.taskManager.closeTaskGroup(() => this.pageModel.key);
@@ -179,9 +186,9 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
     ngOnDestroy(): void {
         if (this.append) {
             if (this.appendParentNode) {
-                this.appendParentNode.appendChild(this.append.nativeElement);
+                this.appendParentNode.appendChild(this.append);
             }
-            this.append.nativeElement.visible = true;
+            this.append.visible = true;
         }
         if (this.appendTo) {
             if (typeof (this.appendTo) === 'string') {
@@ -193,9 +200,22 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
                 this.renderer.removeChild(this.appendTo.nativeElement, this.elementRef.nativeElement);
         }
     }
-
-
-
+    /**
+     * 恢复引用父结点的内容,并隐藏本页的隐藏
+     */
+    restoreParentContent() {
+        if (this.append) {
+            if (this.appendParentNode) {
+                this.appendParentNode.appendChild(this.append);
+            }
+            this.append.visible = true;
+        }
+        this.visible = false;
+    }
+    /**
+     * 销毁函数,自动生成
+     */
+    dispose: () => void;
 }
 export class ITreeNode {
     constructor(public id: string, public name: string, public level: number) {

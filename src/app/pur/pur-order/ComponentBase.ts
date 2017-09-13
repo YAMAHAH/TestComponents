@@ -128,7 +128,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
     /**
      * 组件的host元素引用,必须在派生类注入才有效
      */
-    protected elementRef: ElementRef;
+    public elementRef: ElementRef;
     /**
      * 组件的HOST视图引用,必须在派生类注入才有效
      */

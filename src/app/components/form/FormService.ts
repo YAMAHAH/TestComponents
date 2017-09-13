@@ -27,7 +27,23 @@ export class FormService {
         this.instances.push(formRef);
         if (options.formModel) {
             options.formModel.modalRef = formRef;
+            if (options.isForceAppend) {
+                options.formModel.views = {
+                    current: formRef,
+                    pageViewerRef: options.formModel.views.pageViewerRef,
+                    modelRef: formRef,
+                    tabViewRef: options.formModel.views.tabViewRef
+                };
+            } else {
+                options.formModel.views = {
+                    current: null,
+                    pageViewerRef: null,
+                    modelRef: null,
+                    tabViewRef: null
+                };
+            }
         }
+
         if (!!options.appendComponentRef) {
             if (!!options.appendComponentRef.elementRef) {
                 options.append = options.appendComponentRef.elementRef.nativeElement;
@@ -36,6 +52,7 @@ export class FormService {
         }
 
         const instance: Form = formRef.instance;
+        instance.dispose = () => { this.close(formRef) };
         this.handleResolve(options, instance);
 
         let myOptions = options;
@@ -61,8 +78,8 @@ export class FormService {
         }
         const componentFactory = this.componentFactoryResolver.resolveComponentFactory(Form);
 
-        const injector: Injector = options.injector || rootContainer.parentInjector; 
-        
+        const injector: Injector = options.injector || rootContainer.parentInjector;
+
         const formRef = rootContainer.createComponent(componentFactory, rootContainer.length, injector);
         this.instances.push(formRef);
         if (options.formModel) {

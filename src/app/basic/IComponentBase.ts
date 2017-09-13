@@ -1,4 +1,4 @@
-import { EventEmitter, ViewContainerRef, ComponentFactoryResolver, ChangeDetectorRef } from '@angular/core';
+import { EventEmitter, ViewContainerRef, ComponentFactoryResolver, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { FormOptions } from '../components/form/FormOptions';
 import { IPageModel } from './IFormModel';
 import { IComponentFactoryType } from './IComponentFactoryType';
@@ -61,5 +61,6 @@ export interface IComponentBase {
     componentFactoryResolver: ComponentFactoryResolver;
     activeRouter: ActivatedRoute;
     changeDetectorRef: ChangeDetectorRef;
+    elementRef: ElementRef;
 
 }

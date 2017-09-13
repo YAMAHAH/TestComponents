@@ -13,7 +13,7 @@ import { TabModel } from '../../common/chrome-tabs/chrome-tabs.component';
 import { ActivatedRoute } from '@angular/router';
 import { IComponentBase } from '../../basic/IComponentBase';
 import { PageModelExtras } from '../../basic/PageModelExtras';
-import { FormTypeEnum } from '../../basic/FormTypeEnum';
+import { PageTypeEnum } from '../../basic/PageTypeEnum';
 import { ShowTypeEnum } from '../../basic/show-type-enum';
 import { FormOptions } from '../../components/form/FormOptions';
 import { NavTreeViewComponent } from '../../components/nav-tree-view/nav-tree-view.component';
@@ -52,7 +52,7 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
             componentFactoryRef: this,
             showType: ShowTypeEnum.showForm,
             childs: [],
-            formType: FormTypeEnum.container
+            formType: PageTypeEnum.container
         };
         // this.registerFactory(new PurComponentFactoryType(this.formModel.key, this));
         this.activeRouter.queryParams
@@ -69,10 +69,10 @@ export class PurOrderComponent extends ComponentFactoryConatiner implements OnIn
         return this.principalPageModels;
     }
     getDetails(grp: IPageModel) {
-        return grp.childs.filter(child => child.formType === FormTypeEnum.detail);
+        return grp.childs.filter(child => child.formType === PageTypeEnum.detail);
     }
     getLists(grp: IPageModel) {
-        return grp.childs.filter(child => child.formType === FormTypeEnum.list);
+        return grp.childs.filter(child => child.formType === PageTypeEnum.list);
     }
 
 

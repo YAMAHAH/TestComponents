@@ -7,6 +7,8 @@ export class FormOptions {
     resolve: any;
     visible: boolean = true;
     appendTo: any;// 容器添加到指定元素
+    isForceAppend: boolean = false;
+
     append: any;//添加指定元素到内容区域
     appendComponentRef: any;//已渲染的组件引用
     style: any;

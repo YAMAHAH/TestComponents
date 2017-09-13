@@ -26,7 +26,23 @@ export class PageViewerService {
         this.instances.push(pageViewerRef);
         if (options.pageModel) {
             options.pageModel.pageVierwerRef = pageViewerRef;
+            if (options.isForceAppend) {
+                options.pageModel.views = {
+                    current: pageViewerRef,
+                    pageViewerRef: pageViewerRef,
+                    modelRef: options.pageModel.views.modelRef,
+                    tabViewRef: options.pageModel.views.tabViewRef
+                };
+            } else {
+                options.pageModel.views = {
+                    current: null,
+                    pageViewerRef: null,
+                    modelRef: null,
+                    tabViewRef: null
+                };
+            }
         }
+
         if (!!options.appendComponentRef) {
             if (!!options.appendComponentRef.elementRef) {
                 options.append = options.appendComponentRef.elementRef.nativeElement;
@@ -35,6 +51,7 @@ export class PageViewerService {
         }
 
         const instance: PageViewer = pageViewerRef.instance;
+        instance.dispose = () => { this.close(pageViewerRef) };
         this.handleResolve(options, instance);
 
         let myOptions = options;

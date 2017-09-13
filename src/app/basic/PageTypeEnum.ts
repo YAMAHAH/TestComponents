@@ -2,7 +2,7 @@
 /**
  * 页面类型
  */
-export enum FormTypeEnum {
+export enum PageTypeEnum {
     /**
      * 组
      */
@@ -18,9 +18,5 @@ export enum FormTypeEnum {
     /**
      * 容器
      */
-    container = 4,
-    /**
-     * 页面容器
-     */
-    pageViewer = 5
+    container = 4
 }

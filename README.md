@@ -15,7 +15,28 @@
 
 2.单据布局组件,分为左右上下中,可以自由控制显示或隐藏
 
-3.创建一个指令,支持页面和模态互换
+3.支持页面和模态互换
+   tab -> pageviewer,modal(append)
+
+   pageviewer->modal:
+     pv->modal:
+     1.创建modal,添加pageviewer.content到modaloption的append,添加modelRef到views中
+
+     2.隐藏pageviewer
+     3.显示modal
+     4.modal->pageviewer:
+       4.1 恢复append到appendParent中
+       4.2 隐藏modal
+       4.3 显示pageviewer
+     5.关闭pageviewer/modal:
+       5.1.调用pageModel的factoryRef.close(pageModel);
+       5.2.同时处理pageModel的views,views内容只处理销毁(dispose),数据逻辑还是在主的pageModel中处理
+        
+   modal->pageviewer:与上面的同理
+
+   3.6 关闭一个page,page
+   contentContainer
+   contentElementRef.nativeElementRef
 
 
 4.model支持添加

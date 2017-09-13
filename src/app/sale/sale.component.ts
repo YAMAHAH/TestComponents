@@ -35,10 +35,12 @@ import { DateColumnBodyComponent } from './dateColumnBody';
 import { CellEditorComponent } from './cellEditor';
 import { NavTreeNode } from '../components/nav-tree-view/nav-tree-node';
 import { ComponentFactoryConatiner } from '../pur/pur-order/ComponentFactoryConatiner';
-import { FormTypeEnum } from '../basic/FormTypeEnum';
+import { PageTypeEnum } from '../basic/PageTypeEnum';
 import { PageViewerOptions } from '../common/page-viewer/page-viewer.options';
 import { HostViewContainerDirective } from '../common/directives/host.view.container';
 import { styleUntils } from '../untils/style';
+import { AppStore } from '../../app-store';
+import { IComponentBase } from '../basic/IComponentBase';
 
 
 
@@ -93,7 +95,7 @@ export class SaleComponent extends ComponentFactoryConatiner
             active: true,
             componentFactoryRef: this,
             childs: [],
-            formType: FormTypeEnum.container
+            formType: PageTypeEnum.container
         };
         console.log(this.pageModel);
         // this.registerFactory(new SaleComponentFactoryType(this.pageModel.key, this));
@@ -332,10 +334,31 @@ export class SaleComponent extends ComponentFactoryConatiner
         }
     }
     // @ViewChild('pageViewLocation', { read: ViewContainerRef }) pageViewLocation: ViewContainerRef
+    editCompRef: ComponentRef<IComponentBase>;
+    toggle() {
+        // let curPageModel = this.editCompRef.instance.pageModel;
+        // if (curPageModel.modalRef.instance.visible === false) {
+        //     curPageModel.modalRef.instance.visible = true;
+        // } else {
+        //     let options = new PageViewerOptions();
+        //     options.rootContainer = this.pageViewerLocation.viewContainerRef;
+        //     //强制追加处理isForceAppend
+        //     options.isForceAppend = true;
+        //     options.append = this.editCompRef.instance.elementRef;
+        //     //弹窗隐藏
+        //     curPageModel.modalRef.instance.visible = false;
+        //     //以pageViewer显示
+        //     this.appStore.taskManager.showPage(this.editCompRef.instance.pageModel, options).subscribe((res: any) => console.log(res));
+        // }
+        console.log(this.current);
+        this.switchToPageViewer(this.editCompRef.instance.pageModel);
+        this.changeDetectorRef.markForCheck();
+    }
     async close() {
         let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);
         if (factoryRef) {
             let compRef = factoryRef.createComponentRef(PurchaseEditComponentType); //getComponentRef(PurDetailComponent);
+            this.editCompRef = compRef;
             let options = new FormOptions();
             options.resolve = { data: '代码创建组件数据传递' };
             options.modal = false;
@@ -359,7 +382,10 @@ export class SaleComponent extends ComponentFactoryConatiner
                 let parentModel = this.pageModel.childs[0];
                 compIns.setOtherParent(parentModel);
                 compIns.showPage(options).subscribe((res: any) => console.log(res));
-                this.changeDetectorRef.markForCheck();
+                setTimeout(() => {
+                    this.setCurrent(compIns.pageModel);
+                    this.changeDetectorRef.markForCheck();
+                }, 10);
             }
         }
     }
