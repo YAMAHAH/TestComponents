@@ -335,6 +335,7 @@ export class SaleComponent extends ComponentFactoryConatiner
     }
     // @ViewChild('pageViewLocation', { read: ViewContainerRef }) pageViewLocation: ViewContainerRef
     editCompRef: ComponentRef<IComponentBase>;
+    isPageViewer: boolean = false;
     toggle() {
         // let curPageModel = this.editCompRef.instance.pageModel;
         // if (curPageModel.modalRef.instance.visible === false) {
@@ -350,9 +351,16 @@ export class SaleComponent extends ComponentFactoryConatiner
         //     //以pageViewer显示
         //     this.appStore.taskManager.showPage(this.editCompRef.instance.pageModel, options).subscribe((res: any) => console.log(res));
         // }
-        console.log(this.current);
-        this.switchToPageViewer(this.editCompRef.instance.pageModel);
-        this.changeDetectorRef.markForCheck();
+        let pageModel = this.editCompRef.instance.pageModel;
+        if (pageModel) {
+            if (this.isPageViewer)
+                this.switchToMainView(pageModel);
+            else
+                this.switchToPageViewer(pageModel);
+            this.isPageViewer = !this.isPageViewer;
+            this.changeDetectorRef.markForCheck();
+        }
+
     }
     async close() {
         let factoryRef = await this.appStore.GetOrCreateComponentFactory(PurComponentFactoryType);

@@ -25,7 +25,6 @@ export class PageViewerService {
         const pageViewerRef = rootContainer.createComponent(componentFactory, rootContainer.length, injector);
         this.instances.push(pageViewerRef);
         if (options.pageModel) {
-            options.pageModel.pageVierwerRef = pageViewerRef;
             if (options.isForceAppend) {
                 options.pageModel.views = {
                     current: pageViewerRef,
@@ -34,6 +33,7 @@ export class PageViewerService {
                     tabViewRef: options.pageModel.views.tabViewRef
                 };
             } else {
+                options.pageModel.pageViewerRef = pageViewerRef;
                 options.pageModel.views = {
                     current: null,
                     pageViewerRef: null,

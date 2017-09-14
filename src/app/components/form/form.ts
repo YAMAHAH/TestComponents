@@ -1,6 +1,6 @@
 import {
     NgModule, Component, ElementRef, AfterViewInit, AfterViewChecked,
-    OnDestroy, Input, Output, EventEmitter, Renderer,
+    OnDestroy, Input, Output, EventEmitter,
     ContentChild, ViewChild, trigger, state, style,
     transition, animate, Type, OnChanges, SimpleChanges
 } from '@angular/core';
@@ -9,7 +9,7 @@ import { Header, UISharedModule } from '../../common/shared/shared';
 import { styleUntils } from '../../untils/style';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ComponentRef } from '@angular/core';
+import { ComponentRef, Renderer2 } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { DomHandler } from '../../common/dom/domhandler';
 import { IPageModel } from '../../basic/IFormModel';
@@ -158,7 +158,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
 
     positionInitialized: boolean;
 
-    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer) { }
+    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer2) { }
 
     @Input() get visible(): boolean {
         return this._visible;
@@ -259,13 +259,13 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
         // }
 
         if (this.responsive) {
-            this.documentResponsiveListener = this.renderer.listenGlobal('window', 'resize', (event: Event) => {
+            this.documentResponsiveListener = this.renderer.listen('window', 'resize', (event: Event) => {
                 this.center();
             });
         }
 
         if (this.closeOnEscape && this.closable) {
-            this.documentEscapeListener = this.renderer.listenGlobal('body', 'keydown', (event: any) => {
+            this.documentEscapeListener = this.renderer.listen('body', 'keydown', (event: any) => {
                 if (event.which == 27) {
                     if (parseInt(this.container.style.zIndex) == DomHandler.zindex) {
                         this.hide(event);
@@ -281,10 +281,14 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
                 this.domHandler.appendChild(this.container, this.appendTo);
         }
 
-        if (!!!this.componentRef && (!!!this.formModel || this.formModel && !!!this.formModel.componentRef) && this.append) {
+        if (this.append && this.isForceAppend && this.formModel)
+            this.appendParent = this.formModel.mainViewContainerRef;
+        else {
             this.appendParent = this.append.parentNode;
-            this.domHandler.appendChild(this.append, this.contentContainer);
+            if (this.formModel) this.formModel.mainViewContainerRef = this.append.parentNode;
         }
+        this.appendContentAndShowHandler();
+
     }
 
     ngAfterViewChecked() {
@@ -406,7 +410,9 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
         let destroyFn = await this.closeBeforeCheck(event);
         if (isFunction(this.forceFn)) this.forceFn(event);
         if (event && event.cancel) {
-            await this.closeChild();
+            //  await this.closeChild();
+            if (this.formModel && this.formModel.componentFactoryRef)
+                this.formModel.componentFactoryRef.closeChildViews(this.formModel);
             if (this.append) {
                 this.append.visible = false;
             }
@@ -433,15 +439,24 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
     /**
  * 恢复引用父结点的内容,并隐藏本页的隐藏
  */
-    restoreParentContent() {
+    restoreContentAndHideHandler() {
         if (this.append) {
             if (this.appendParent) {
-                this.appendParent.appendChild(this.append.nativeElement);
+                this.appendParent.appendChild(this.append);
             }
-            this.append.nativeElement.visible = true;
+            this.append.visible = true;
         }
         this.visible = false;
     }
+    appendContentAndShowHandler() {
+        if (!!!this.componentRef &&
+            (!!!this.formModel || this.formModel && !!!this.formModel.componentRef) &&
+            this.append || this.isForceAppend && this.append) {
+            this.renderer.appendChild(this.contentContainer, this.append);
+            this.visible = true;
+        }
+    }
+
     /**
     * 销毁函数,自动生成
     */
@@ -474,7 +489,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
     initDrag(event: any) {
         if (this.draggable) {
 
-            this.documentDragListener = this.renderer.listenGlobal('body', 'mousemove', (event: Event) => {
+            this.documentDragListener = this.renderer.listen('body', 'mousemove', (event: Event) => {
                 this.onDrag(event);
             });
 
@@ -516,11 +531,11 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
     sizingPoint: SizingPointEnum = SizingPointEnum.none;
     initResize(event: any, selectPoint: SizingPointEnum) {
         if (this.resizable) {
-            this.documentResizeListener = this.renderer.listenGlobal('body', 'mousemove', (event: Event) => {
+            this.documentResizeListener = this.renderer.listen('body', 'mousemove', (event: Event) => {
                 this.onResize(event);
             });
 
-            this.documentResizeEndListener = this.renderer.listenGlobal('body', 'mouseup', (event: Event) => {
+            this.documentResizeEndListener = this.renderer.listen('body', 'mouseup', (event: Event) => {
                 if (this.resizing) {
                     if (this.delCustomStyleFn) {
                         this.delCustomStyleFn();

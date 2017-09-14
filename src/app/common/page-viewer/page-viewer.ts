@@ -2,6 +2,7 @@ import { Component, Input, ElementRef, ViewChild, ComponentRef, Type, EventEmitt
 import { IPageModel } from '../../basic/IFormModel';
 import { PageTypeEnum } from '../../basic/PageTypeEnum';
 import { styleUntils } from '../../untils/style';
+import { isFunction } from 'util';
 
 // '[style.display]': 'flex',
 // '[style.flex]': "'1 0 auto'" 
@@ -24,7 +25,7 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
     @Input() isForceAppend: boolean;
     @Input() append: any;
     @Input() appendTo: ElementRef | string;
-    appendParentNode: HTMLElement;
+    appendParentNode: Node;
 
     @ViewChild('content') contentElementRef: ElementRef;
 
@@ -33,6 +34,11 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
     @Input() componentOutlets: Type<any>[] = [];
 
     @Input() componentRef: ComponentRef<any>;
+    @Input() checkCloseBeforeFn: Function = async (event: any) => new Promise<any>(resolve => {
+        event.cancel = true;
+        return resolve(event);
+    });
+    @Input() closeAfterCallBackFn: Function = null;
 
     @Output() modalResult: EventEmitter<any> = new EventEmitter();
     @Output() onBeforeShow: EventEmitter<any> = new EventEmitter();
@@ -83,11 +89,14 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
             this._selectResult = result;
             if (result) this.hide(null);
         });
-        if (!!!this.componentRef && (!!!this.pageModel || this.pageModel && !!!this.pageModel.componentRef) && this.append || this.isForceAppend && this.append) {
-            console.log(this.pageModel.componentRef);
+        if (this.append && this.isForceAppend && this.pageModel)
+            this.appendParentNode = this.pageModel.mainViewContainerRef;
+        else {
             this.appendParentNode = this.append.parentNode;
-            this.renderer.appendChild(this.contentElementRef.nativeElement, this.append);
+            if (this.pageModel) this.pageModel.mainViewContainerRef = this.append.parentNode;
         }
+        this.appendContentAndShowHandler();
+
         if (this.appendTo) {
             if (typeof (this.appendTo) === 'string') {
                 if (this.appendTo === 'body')
@@ -122,74 +131,99 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
         this.styleClearFn = styleUntils.setElementStyle(this.elementRef.nativeElement, elStyle);
     }
 
-    close() {
-        let a = [
-            { sheng: "32", shi: "321", qu: "3211" },
-            { sheng: "32", shi: "3212", qu: "3212" },
-            { sheng: "33", shi: "331", qu: "3311" },
-            { sheng: "33", shi: "332", qu: "3312" }
-        ];
-        let treeMaps = new Map<string, ITreeNode>();
-        let allCities: ITreeNode[] = [];
-        let sheng, shi, qu;
-        a.forEach(v => {
-            sheng = treeMaps.get(v.sheng);
-            if (!treeMaps.has(v.sheng)) {
-                sheng = new ITreeNode(v.sheng, v.sheng, 0);
-                treeMaps[sheng.id] = sheng;
-                allCities.push(sheng);
-            }
-            shi = treeMaps.get(v.shi);
-            if (!treeMaps.has(v.sheng)) {
-                shi = new ITreeNode(v.shi, v.shi, 1);
-                treeMaps[shi.id] = shi;
-                sheng.childrens.push(shi);
-            }
-            qu = treeMaps.get(v.qu);
-            if (!treeMaps.has(v.qu)) {
-                qu = new ITreeNode(v.qu, v.qu, 2);
-                treeMaps[qu.id] = qu;
-                shi.childrens.push(qu);
-            }
-        });
-        return allCities;
+    forceFn: Function = null;
+    async forceClose(event: any) {
+        this.forceFn = (event: any) => { event.cancel = true; }
+        let processState = await this.hide(event);
+        this._modalResult.emit(null);
+        return processState;
+    }
+    async close(event: any) {
+        let processState = await this.hide(event);
+        this._modalResult.emit(null);
+        return processState;
+        // let a = [
+        //     { sheng: "32", shi: "321", qu: "3211" },
+        //     { sheng: "32", shi: "3212", qu: "3212" },
+        //     { sheng: "33", shi: "331", qu: "3311" },
+        //     { sheng: "33", shi: "332", qu: "3312" }
+        // ];
+        // let treeMaps = new Map<string, ITreeNode>();
+        // let allCities: ITreeNode[] = [];
+        // let sheng, shi, qu;
+        // a.forEach(v => {
+        //     sheng = treeMaps.get(v.sheng);
+        //     if (!treeMaps.has(v.sheng)) {
+        //         sheng = new ITreeNode(v.sheng, v.sheng, 0);
+        //         treeMaps[sheng.id] = sheng;
+        //         allCities.push(sheng);
+        //     }
+        //     shi = treeMaps.get(v.shi);
+        //     if (!treeMaps.has(v.sheng)) {
+        //         shi = new ITreeNode(v.shi, v.shi, 1);
+        //         treeMaps[shi.id] = shi;
+        //         sheng.childrens.push(shi);
+        //     }
+        //     qu = treeMaps.get(v.qu);
+        //     if (!treeMaps.has(v.qu)) {
+        //         qu = new ITreeNode(v.qu, v.qu, 2);
+        //         treeMaps[qu.id] = qu;
+        //         shi.childrens.push(qu);
+        //     }
+        // });
+        // return allCities;
     }
     show(): void {
         //完成检查后的逻辑处理
     }
-    hide(event: Event) {
+
+    async closeBeforeCheck(event: any) {
+        return await this.checkCloseBeforeFn(event);
+    }
+    async hide(event: any) {
         if (event) event.preventDefault();
-
-        this.onBeforeHide.emit(event);
-
-        //充许关闭后才
-        this.modalResult.emit(this._selectResult);
-
-        this.visibleChange.emit(false);
-
-        this.onAfterHide.emit(event);
-
-        if (this.append) {
-            this.append.visible = false;
+        let processStatus: boolean = false;
+        if (event) {
+            event.cancel = true;
+            event.sender = this;
+            this.onBeforeHide.emit(event);
+        } else {
+            event = { sender: this, cancel: true };
+            this.onBeforeHide.emit(event);
         }
-        if (this.pageModel && this.pageModel.componentFactoryRef) {
-            if (this.pageModel.formType == PageTypeEnum.container)
-                this.pageModel.globalManager &&
-                    this.pageModel.globalManager.taskManager &&
-                    this.pageModel.globalManager.taskManager.closeTaskGroup(() => this.pageModel.key);
-            else
-                this.pageModel.componentFactoryRef.removePageModel(this.pageModel);
-        }
+        let destroyFn = await this.closeBeforeCheck(event);
+        if (isFunction(this.forceFn)) this.forceFn(event);
+        if (event && event.cancel) {
+            //  await this.closeChild();
+            if (this.pageModel && this.pageModel.componentFactoryRef)
+                await this.pageModel.componentFactoryRef.closeChildViews(this.pageModel);
+            if (this.append) {
+                this.append.visible = false;
+            }
+            this.visibleChange.emit(false);
+            this.onAfterHide.emit(event);
+            // this.unbindMaskClickListener();
+            this.modalResult.emit(this._selectResult);
+            if (isFunction(this.closeAfterCallBackFn)) this.closeAfterCallBackFn();
 
+            if (this.pageModel && this.pageModel.componentFactoryRef) {
+                if (this.pageModel.formType == PageTypeEnum.container)
+                    this.pageModel.globalManager &&
+                        this.pageModel.globalManager.taskManager &&
+                        this.pageModel.globalManager.taskManager.closeTaskGroup(() => this.pageModel.key);
+                else
+                    this.pageModel.componentFactoryRef.removePageModel(this.pageModel);
+            }
+
+        }
+        if (isFunction(destroyFn)) destroyFn();
+        processStatus = true;
+        this.forceFn = null;
+        return processStatus;
     }
 
     ngOnDestroy(): void {
-        if (this.append) {
-            if (this.appendParentNode) {
-                this.appendParentNode.appendChild(this.append);
-            }
-            this.append.visible = true;
-        }
+        this.restoreContentAndHideHandler();
         if (this.appendTo) {
             if (typeof (this.appendTo) === 'string') {
                 if (this.appendTo === 'body')
@@ -203,7 +237,7 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
     /**
      * 恢复引用父结点的内容,并隐藏本页的隐藏
      */
-    restoreParentContent() {
+    restoreContentAndHideHandler() {
         if (this.append) {
             if (this.appendParentNode) {
                 this.appendParentNode.appendChild(this.append);
@@ -211,6 +245,17 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
             this.append.visible = true;
         }
         this.visible = false;
+    }
+    /**
+     * 追加内容到容器中
+     */
+    appendContentAndShowHandler() {
+        if (!!!this.componentRef &&
+            (!!!this.pageModel || this.pageModel && !!!this.pageModel.componentRef) &&
+            this.append || this.isForceAppend && this.append) {
+            this.renderer.appendChild(this.contentElementRef.nativeElement, this.append);
+            this.visible = true;
+        }
     }
     /**
      * 销毁函数,自动生成

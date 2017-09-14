@@ -294,9 +294,9 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         let notExistInDepends = dependModels.indexOf(pageModel) < 0;
         if (notExistInDepends && this.current && !!!this.current.godFather && this.current.showType == ShowTypeEnum.tab) {
             this.current.active = false;
-        } else if (notExistInDepends && this.current && this.current.pageVierwerRef) {
+        } else if (notExistInDepends && this.current && this.current.pageViewerRef) {
             this.current.active = false;
-            this.current.pageVierwerRef.instance.visible = false;
+            this.current.pageViewerRef.instance.visible = false;
         }
         else if (this.current)
             this.current.active = true;
@@ -306,12 +306,12 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         //先考虑子视图,再考虑子视图
         if (this.current.views && this.current.views.current) {
             if (this.current.views.current === this.current.views.modelRef) {
-                this.current.modalRef.instance.moveOnTop();
-                this.current.modalRef.instance.visible = true;
-                this.current.modalRef.instance.restore(null);
+                this.current.views.modelRef.instance.moveOnTop();
+                this.current.views.modelRef.instance.visible = true;
+                this.current.views.modelRef.instance.restore(null);
             }
             if (this.current.views.current === this.current.views.pageViewerRef) {
-                this.current.pageVierwerRef.instance.visible = true;
+                this.current.views.pageViewerRef.instance.visible = true;
             }
         } else {
             if (this.current && this.current.modalRef) {
@@ -319,8 +319,8 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                 this.current.modalRef.instance.visible = true;
                 this.current.modalRef.instance.restore(null);
             }
-            if (this.current && this.current.pageVierwerRef) {
-                this.current.pageVierwerRef.instance.visible = true;
+            if (this.current && this.current.pageViewerRef) {
+                this.current.pageViewerRef.instance.visible = true;
             }
         }
 
@@ -356,50 +356,70 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         let nodeLists = this.navTreeView
             .toList()
             .filter((nd) => nd.isGroup == false && nd.level > -1 && nd.showNode)
-            .reverse();
-        console.log(nodeLists);
-        Observable.from(nodeLists).flatMap(pageNode => {
-            if (pageNode && pageNode.tag && pageNode.tag.modalRef && pageNode.tag.modalRef.instance) {
-                return Observable.fromPromise(pageNode.tag.modalRef.instance.forceClose(null));
+            .reverse() || [];
+
+        let pageModels = nodeLists.map(c => <IPageModel>c.tag).concat(this.pageModel).filter(p => !!p);
+        console.log(pageModels);
+        if (pageModels.length > 0) {
+            Observable.from(pageModels)
+                .flatMap(pageModel => {
+                    if (pageModel && pageModel.modalRef && pageModel.modalRef.instance)
+                        return Observable.fromPromise(pageModel.modalRef.instance.forceClose(null));
+                    else if (pageModel && pageModel.pageViewerRef && pageModel.pageViewerRef.instance)
+                        return Observable.fromPromise(pageModel.pageViewerRef.instance.forceClose(null));
+                    else
+                        return Observable.fromPromise(this.closePage(pageModel));
+                }).every((val: boolean) => val === true)
+                .distinctUntilChanged()
+                .subscribe((res: boolean) => {
+                    let result = { processFinish: true, result: res };
+                    if (this.dependentPageModels.length > 0) {
+                        result.result = false;
+                    }
+                    if (action.data.sender) action.data.sender.next(result);
+                });
+        } else {
+            let result = { processFinish: true, result: true };
+            if (this.dependentPageModels.length > 0) {
+                result.result = false;
             }
-            else {
-                return Observable.fromPromise(this.closePage(pageNode.tag));
-            }
-        }).concat(Observable.of(this.pageModel).flatMap(pageNode => {
-            if (pageNode && pageNode.modalRef && pageNode.modalRef.instance) {
-                return Observable.fromPromise(pageNode.modalRef.instance.forceClose(null));
-            } else {
-                return Observable.of(true); //
-            }
-        })).every((val: boolean) => val === true)
-            .distinctUntilChanged()
-            .subscribe((res: boolean) => {
-                let result = { processFinish: true, result: res };
-                if (this.dependentPageModels.length > 0) {
-                    result.result = false;
-                }
-                if (action.data.sender) action.data.sender.next(result);
-            });
+            if (action.data.sender) action.data.sender.next(result);
+        }
     }
 
-    closePage(pageModel: IPageModel) {
-        //根据model关闭,关闭前检查,等待关闭前处理函数
-        return new Promise(async resolve => {
-            let rootNode: NavTreeNode = pageModel.extras || pageModel.tag;
-            let childNodes = rootNode && rootNode.getChildNodes()
-                .filter((nd) => nd.isGroup == false && !!nd.tag && nd.level > -1 && nd.showNode)
-                .reverse() || [];
-            let pageModels = childNodes.map(c => <IPageModel>c.tag).concat(pageModel);
-            console.log(pageModels);
-            Observable.from(pageModels)
-                .flatMap(page => {
-                    return Observable.fromPromise(this.closePageHandler(page));
-                }).every(val => val === true)
-                .subscribe(res => resolve(res));
+    async closePage(pageModel: IPageModel) {
+        return new Promise<boolean>(async resolve => {
+            let rootNode: NavTreeNode;
+            if (pageModel && !!pageModel.extras)
+                rootNode = pageModel.extras;
+            else if (pageModel && !!pageModel.tag)
+                rootNode = pageModel.tag;
+            let childNodes: NavTreeNode[] = [];
+            if (!!rootNode) {
+                childNodes = rootNode.getChildNodes()
+                    .filter((nd) => nd.isGroup == false && !!nd.tag && nd.level > -1 && nd.showNode)
+                    .reverse() || [];
+            }
+            let pageModels = childNodes.map(c => <IPageModel>c.tag);
+            if (!!pageModel) pageModels.push(pageModel);
+            if (pageModels.length > 0) {
+                Observable.from(pageModels)
+                    .flatMap(page => {
+                        if (pageModel && pageModel.modalRef && pageModel.modalRef.instance)
+                            return Observable.fromPromise(pageModel.modalRef.instance.forceClose(null));
+                        else if (pageModel && pageModel.pageViewerRef && pageModel.pageViewerRef.instance)
+                            return Observable.fromPromise(pageModel.pageViewerRef.instance.forceClose(null));
+                        else
+                            return Observable.fromPromise(this.closePageHandler(page));
+                    }).every(val => val === true)
+                    .subscribe(res => resolve(res));
+            } else {
+                resolve(true);
+            }
         });
     }
 
-    closePageHandler(pageModel: IPageModel) {
+    async closePageHandler(pageModel: IPageModel) {
         return new Promise<boolean>(async resolve => {
             if (pageModel) {
                 let event = { cancel: true, sender: pageModel };
@@ -408,9 +428,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                     destroyFn = await pageModel.closeBeforeCheckFn(event);
                 }
                 if (event.cancel) {
-                    if (pageModel && pageModel.modalRef && pageModel.modalRef.instance)
-                        pageModel.modalRef.instance.forceClose(null);
-
+                    await this.closeChildViews(pageModel);
                     if (isFunction(pageModel.closeAfterFn)) pageModel.closeAfterFn();
                     pageModel.componentFactoryRef.removePageModel(pageModel);
                 }
@@ -419,40 +437,28 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             }
         });
     }
-    private async closeChildPage(pageModel: IPageModel) {
-        return new Promise(resolve => {
-            if (pageModel && pageModel.childs) {
-                let childPages = pageModel.childs.filter(page => !!!page.godFather);
-                Observable.from(childPages)
-                    .flatMap(page => {
-                        if (page && page.modalRef && page.modalRef.instance) {
-                            return Observable.fromPromise(page.modalRef.instance.forceClose(null));
-                        } else if (page) {
-                            return Observable.fromPromise(this.closePage(page));
-                        }
-                        else {
-                            return Observable.of(true);
-                        }
-                    })
-                    .every((val: boolean) => val === true)
-                    .subscribe(res => {
-                        resolve(res);
-                    });
-            } else {
-                resolve(true);
-            }
-        });
+    async closeChildViews(pageModel: IPageModel) {
+        //获取所有的子视图,并且将其关闭
+        if (pageModel && pageModel.views && pageModel.views.modelRef && pageModel.views.modelRef.instance)
+            pageModel.views.modelRef.instance.dispose();
+        if (pageModel && pageModel.views && pageModel.views.pageViewerRef && pageModel.views.pageViewerRef.instance)
+            pageModel.views.pageViewerRef.instance.dispose();
+
     }
 
     switchToPageViewer(pageModel: IPageModel) {
         //tab->pageViewer
         //pageForm->pageViewer
         if (!!!pageModel) return;
-        if (pageModel && pageModel.showType === ShowTypeEnum.pageViewer) return;
-
+        //隐藏pageForm 
+        if (pageModel.views.modelRef) pageModel.views.modelRef.instance.restoreContentAndHideHandler();
+        //隐藏pageForm
+        if (pageModel.modalRef) pageModel.modalRef.instance.visible = false;
+        //隐藏TAB
         if (pageModel && pageModel.views.pageViewerRef) {
             pageModel.views.current = pageModel.views.pageViewerRef;
-            pageModel.views.pageViewerRef.instance.visible = true;
+            //追加内容并显示
+            pageModel.views.pageViewerRef.instance.appendContentAndShowHandler();
         } else {
             //新增显示
             let options = new PageViewerOptions();
@@ -460,19 +466,13 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             //强制追加处理isForceAppend
             options.isForceAppend = true;
             options.append = pageModel.elementRef;
-
             //以pageViewer显示
             this.appStore.taskManager
                 .showPage(pageModel, options)
                 .subscribe((res: any) => console.log(res));
         }
-        //隐藏pageForm 
-        if (pageModel.views.modelRef) pageModel.views.modelRef.instance.visible = false;
-        //隐藏pageForm
-        if (pageModel.modalRef) pageModel.modalRef.instance.visible = false;
-        //隐藏TAB
-        this.changeDetectorRef.detectChanges();
 
+        this.changeDetectorRef.detectChanges();
         setTimeout(() => {
             this.setCurrent(pageModel);
         }, 10);
@@ -481,11 +481,14 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         //tab->pageForm
         //pageviewer->pageForm
         if (!!!pageModel) return;
-        if (pageModel && pageModel.showType === ShowTypeEnum.showForm) return;
-
+        //隐藏pageViewer
+        if (pageModel.views.pageViewerRef) pageModel.views.pageViewerRef.instance.restoreContentAndHideHandler();
+        //隐藏pageViewer
+        if (pageModel.pageViewerRef) pageModel.pageViewerRef.instance.visible = false;
+        //隐藏TAB
         if (pageModel && pageModel.views.modelRef) {
             pageModel.views.current = pageModel.views.modelRef;
-            pageModel.views.modelRef.instance.visible = true;
+            pageModel.views.modelRef.instance.appendContentAndShowHandler();
         } else {
             //新增显示
             let options = new FormOptions();
@@ -499,13 +502,9 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                 .show(pageModel, options)
                 .subscribe((res: any) => console.log(res));
         }
-        //隐藏pageForm 
-        if (pageModel.views.pageViewerRef) pageModel.views.pageViewerRef.instance.visible = false;
-        //隐藏pageForm
-        if (pageModel.pageVierwerRef) pageModel.pageVierwerRef.instance.visible = false;
-        //隐藏TAB
+        this.changeDetectorRef.detectChanges();
         setTimeout(() => {
-            pageModel.componentFactoryRef.setCurrent(pageModel);
+            this.setCurrent(pageModel);
         }, 10);
     }
 
@@ -517,17 +516,17 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     switchToMainView(pageModel: IPageModel) {
         if (!!!pageModel) return;
         if (pageModel) {
-            pageModel.views.current = null;
+            let curAuxView = pageModel.views.current;
+            if (curAuxView) {
+                pageModel.views.current = null;
+            }
+            if (pageModel.views.modelRef)
+                pageModel.views.modelRef.instance.restoreContentAndHideHandler();
 
-            let modelRef = pageModel.views.modelRef;
-            if (modelRef) modelRef.instance.visible = false;
-
-            let pageViewerRef = pageModel.views.pageViewerRef;
-            if (pageViewerRef) pageViewerRef.instance.visible = false;
-
-            setTimeout(() => {
-                pageModel.componentFactoryRef.setCurrent(pageModel);
-            }, 10);
+            if (pageModel.views.pageViewerRef)
+                pageModel.views.pageViewerRef.instance.restoreContentAndHideHandler();
+            this.changeDetectorRef.detectChanges();
+            this.setCurrent(pageModel);
         }
     }
 

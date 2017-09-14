@@ -26,7 +26,6 @@ export class FormService {
         const formRef = rootContainer.createComponent(componentFactory, rootContainer.length, injector);
         this.instances.push(formRef);
         if (options.formModel) {
-            options.formModel.modalRef = formRef;
             if (options.isForceAppend) {
                 options.formModel.views = {
                     current: formRef,
@@ -35,6 +34,7 @@ export class FormService {
                     tabViewRef: options.formModel.views.tabViewRef
                 };
             } else {
+                options.formModel.modalRef = formRef;
                 options.formModel.views = {
                     current: null,
                     pageViewerRef: null,

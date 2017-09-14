@@ -58,6 +58,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
         if (this.pageModel) {
             this.pageModel.title = this.title;
             this.pageModel.elementRef = this.elementRef.nativeElement;
+            this.pageModel.mainViewContainerRef = this.pageModel.elementRef.parentNode;
             this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.pageModel.closeAfterFn = this.closeAfterFn;
         }
@@ -68,6 +69,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
         if (this.pageModel) {
             this.pageModel.title = this.title;
             this.pageModel.elementRef = this.elementRef.nativeElement;
+            this.pageModel.mainViewContainerRef = this.pageModel.elementRef.parentNode;
             this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.pageModel.closeAfterFn = this.closeAfterFn;
         }
@@ -78,6 +80,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
         if (this.pageModel) {
             this.pageModel.title = this.title;
             this.pageModel.elementRef = this.elementRef.nativeElement;
+            this.pageModel.mainViewContainerRef = this.pageModel.elementRef.parentNode;
             this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.pageModel.closeAfterFn = this.closeAfterFn;
         }
@@ -118,7 +121,13 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
     }
 
     ngOnInit() {
-        this.pageModel.globalManager = this.appStore;
+        if (this.pageModel) {
+            this.pageModel.globalManager = this.appStore;
+            this.pageModel.elementRef = this.elementRef.nativeElement;
+            this.pageModel.mainViewContainerRef = this.pageModel.elementRef.parentNode;
+            this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
+            this.pageModel.closeAfterFn = this.closeAfterFn;
+        }
     }
 
     ngOnDestroy() {

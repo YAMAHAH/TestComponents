@@ -27,7 +27,7 @@ export interface IPageModel {
      * 干爹
      */
     godFather?: IPageModel;
-    views?: { current: any; pageViewerRef: any; modelRef: any; tabViewRef: any; }
+    views?: { current: any; pageViewerRef: ComponentRef<PageViewer>; modelRef: ComponentRef<Form>; tabViewRef: any; }
     /**
      * 儿子
      */
@@ -48,7 +48,10 @@ export interface IPageModel {
      * 元素引用
      */
     elementRef?: HTMLElement;
-    elementComponentRef?: any;
+    /**
+     * 主视图的父容器
+     */
+    mainViewContainerRef?: Node;
     /**
      * 弹窗实例引用
      */
@@ -56,7 +59,7 @@ export interface IPageModel {
     /**
      * 页面查看器引用
      */
-    pageVierwerRef?: ComponentRef<PageViewer>;
+    pageViewerRef?: ComponentRef<PageViewer>;
     /**
      * 组件工厂引用
      */

@@ -68,6 +68,14 @@ export interface IComponentFactoryContainer extends IComponentBase {
     */
     closePage(pageModel: IPageModel): Promise<any>;
     /**
+     * 关闭单个pageModel处理函数
+     */
+    closePageHandler(pageModel: IPageModel): Promise<boolean>;
+    /**
+     * 关闭子视图
+     */
+    closeChildViews(pageModel: IPageModel): Promise<void>;
+    /**
      * 选择下一个可见页面
      */
     selectNextVisiblePage(pageModel: IPageModel): void;
@@ -111,4 +119,16 @@ export interface IComponentFactoryContainer extends IComponentBase {
      * 显示所有隐藏的窗口
      */
     showPageModels(): void;
+    /**
+     * 切换到PageViewer视图
+     */
+    switchToPageViewer(pageModel: IPageModel): void;
+    /**
+     * 切换到pageForm视图
+     */
+    switchToPageForm(pageModel: IPageModel): void;
+    /**
+     * 切换到主视图,即第一次打开的视图
+     */
+    switchToMainView(pageModel: IPageModel): void;
 }

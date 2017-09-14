@@ -558,7 +558,6 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
 
     taskClosing: Map<string, string> = new Map<string, string>();
     async removeTab(tabModel: TabModel) {
-        console.log(tabModel);
         if (!!!tabModel) return;
         if (tabModel.key == 'main') return;
         if (this.taskClosing.has(tabModel.key)) {
