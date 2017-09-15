@@ -267,7 +267,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                             deletedDependModel.componentRef.destroy();
                         }
                     }
-                    if (this.principalPageModels.length == 0 && this.dependentPageModels.length == 0) {
+                    if (this.principalPageModels.length == 0 && this.dependentPageModels.length == 0 && !this.appStore.taskManager.closeTasking(this.taskId)) {
                         this.appStore.taskManager.closeTaskGroup(this.taskId);
                     }
                     if (this.principalPageModels.every(model => model.tag.showNode == false) && this.dependentPageModels.length > 0) {
@@ -735,7 +735,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
      * 
      */
     closeAfterFn: Function = () => {
-        this.appStore.taskManager.closeTaskGroup(() => this.pageModel.key);
+        // this.appStore.taskManager.closeTaskGroup(() => this.pageModel.key);
     };
 }
 

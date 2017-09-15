@@ -28,6 +28,7 @@ import { DateColumnBodyComponent } from './dateColumnBody';
 import { CellEditorComponent } from './cellEditor';
 import { NavTreeViewModule } from '../components/nav-tree-view/nav-tree-view.module';
 import { SharedModule } from '../common/shared/shared-module';
+import { IframeModule } from '../common/iframe/iframe.module';
 
 export const saleRouteConfig: Routes = [
     {
@@ -50,7 +51,7 @@ export const saleRouteConfig: Routes = [
         AdModule,
         ToastyModule,
         WebFormModule, OverlayPanelModule, DropdownModule, DropdownformModule,
-        AutoCompleteModule, CalendarModule, DataTableModule
+        AutoCompleteModule, CalendarModule, DataTableModule,IframeModule
     ],
     declarations: [
         SaleComponent, ColumnBodyComponent, DateColumnBodyComponent, CellEditorComponent,

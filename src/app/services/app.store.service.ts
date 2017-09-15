@@ -11,6 +11,7 @@ import { IComponentFactoryContainer } from '../basic/IComponentFactoryContainer'
 import { FormService } from '../components/form/FormService';
 import { DesktopItem } from '../Models/desktop-Item';
 import { PageViewerService } from '../common/page-viewer/page-viewer.service';
+import { TaskQueueManager } from '../untils/taskQueue';
 
 @Injectable()
 export class AppStoreService {
@@ -72,7 +73,7 @@ export class AppStoreService {
     public stopBlock() {
         this.blockUIEvent.emit(false);
     }
-
+    public taskQueueManager: TaskQueueManager = new TaskQueueManager();
     public taskManager: ChromeTabsComponent;
     public showType: ShowTypeEnum = ShowTypeEnum.tab;
 

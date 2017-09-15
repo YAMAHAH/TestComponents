@@ -41,6 +41,7 @@ import { HostViewContainerDirective } from '../common/directives/host.view.conta
 import { styleUntils } from '../untils/style';
 import { AppStore } from '../../app-store';
 import { IComponentBase } from '../basic/IComponentBase';
+import { TaskQueueManager, TaskQueue } from '../untils/taskQueue';
 
 
 
@@ -378,25 +379,95 @@ export class SaleComponent extends ComponentFactoryConatiner
                 compIns.show(options).subscribe((res: any) => console.log(res));
             }
         }
-        if (factoryRef) {
-            let compRef = factoryRef.createComponentRef(PurchaseListComponentType);
-            let options = new PageViewerOptions();
-            options.resolve = { data: '代码创建组件数据传递' };
-            options.rootContainer = this.pageViewerLocation.viewContainerRef;
-            // options.appendTo = this.pageViewerLocation && this.pageViewerLocation.viewContainerRef.element || this.viewContainerRef.element;
-            if (compRef) {
-                let compIns = compRef.instance;
-                compIns.pageModel.title = compIns.title;
-                let parentModel = this.pageModel.childs[0];
-                compIns.setOtherParent(parentModel);
-                compIns.showPage(options).subscribe((res: any) => console.log(res));
-                setTimeout(() => {
-                    this.setCurrent(compIns.pageModel);
-                    this.changeDetectorRef.markForCheck();
-                }, 10);
+
+        let task: TaskQueue = new TaskQueue(() => {
+            if (factoryRef) {
+                let compRef = factoryRef.createComponentRef(PurchaseListComponentType);
+                let options = new PageViewerOptions();
+                options.resolve = { data: '代码创建组件数据传递' };
+                options.rootContainer = this.pageViewerLocation.viewContainerRef;
+                // options.appendTo = this.pageViewerLocation && this.pageViewerLocation.viewContainerRef.element || this.viewContainerRef.element;
+                if (compRef) {
+                    let compIns = compRef.instance;
+                    compIns.pageModel.title = compIns.title;
+                    let parentModel = this.pageModel.childs[0];
+                    compIns.setOtherParent(parentModel);
+                    compIns.showPage(options).subscribe((res: any) => console.log(res));
+                    setTimeout(() => {
+                        this.setCurrent(compIns.pageModel);
+                        this.changeDetectorRef.markForCheck();
+                    }, 10);
+                }
             }
+        });
+        this.appStore.taskQueueManager.pushTask(task);
+        let task2: TaskQueue = new TaskQueue(
+            () => {
+                window.print();
+                setTimeout(() => this.fireKeyEvent(window, "keydown", 13), 10);
+                // let event: KeyboardEvent = { keyCode: 112, ctrlKey: true, shiftKey: true };
+                //        $('#print').bind('click',function(){
+                //         console.log("start")
+                //         e = jQuery.Event("keydown");
+                //         e.keyCode= 112; //enter key
+                //         e.ctrlKey=true;
+                //         e.shiftKey=true;
+                //         $(document).trigger(e);
+                //         console.log("end")
+                //     })
+                
+                window.onkeydown = (e) => {
+                    console.log(e.keyCode)
+                    console.log(e.ctrlKey)
+                    console.log(e.shiftKey)
+                };
+            });
+
+        this.appStore.taskQueueManager.pushTask(task2);
+    }
+
+    fireKeyEvent(el: any, evtType: any, keyCode: any) {
+        let evtObj: any;
+        if (document.createEvent) {
+            if ((window as any).KeyEvent) {//firefox 浏览器下模拟事件
+                evtObj = document.createEvent('KeyEvents');
+                evtObj.initKeyEvent(evtType, true, true, window, true, false, false, false, keyCode, 0);
+            } else {//chrome 浏览器下模拟事件
+                evtObj = document.createEvent('UIEvents');
+                (evtObj as UIEvent).initUIEvent(evtType, true, true, window, 1);
+
+                delete evtObj.keyCode;
+                if (typeof evtObj.keyCode === "undefined") {//为了模拟keycode
+                    Object.defineProperty(evtObj, "keyCode", { value: keyCode });
+                } else {
+                    evtObj.key = String.fromCharCode(keyCode);
+                }
+
+                if (typeof evtObj.ctrlKey === 'undefined') {//为了模拟ctrl键
+                    Object.defineProperty(evtObj, "ctrlKey", { value: false });
+                } else {
+                    evtObj.ctrlKey = false;
+                }
+            }
+            el.dispatchEvent(evtObj);
+
+        } else if ((document as any).createEventObject) {//IE 浏览器下模拟事件
+            evtObj = (document as any).createEventObject();
+            evtObj.keyCode = keyCode
+            el.fireEvent('on' + evtType, evtObj);
         }
     }
+
+    //     var testPassword = "181818";
+    // var tp;
+    // var cCode;
+    // var testss = document.getElementById("input_txt_50531_740884");
+    // for (var i = 0; i < testPassword.length; i++) {
+    //     cCode = testPassword.charCodeAt(i);
+    //     fireKeyEvent(testss, "keydown", cCode);
+    //     fireKeyEvent(testss, "keypress", cCode);
+    //     fireKeyEvent(testss, "keyup", cCode);
+    // }
     getClass(pageModel: IPageModel) { //PurList
         if (!pageModel) return {};
         return {

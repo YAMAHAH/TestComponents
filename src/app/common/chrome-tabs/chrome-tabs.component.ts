@@ -195,6 +195,9 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             this.removeTab(taskGrp);
         }
     }
+    closeTasking(key: string) {
+        return this.taskClosing.has(key);
+    }
     getTaskGroup(key: string) {
         let taskGrp = this.tabModels.find(t => t.key == key);
         return taskGrp;
@@ -517,12 +520,12 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         }, 20);
     }
 
-    onTabClick(event: Event, tab: TabModel) {
+    async onTabClick(event: Event, tab: TabModel) {
         let targetEl = event.target as Element;
         if (targetEl.classList.contains('chrome-tab')) {
             this.select(tab);
         } else if (targetEl.classList.contains('chrome-tab-close')) {
-            this.removeTab(tab);
+            await this.removeTab(tab);
         } else if (targetEl.classList.contains('chrome-tab-title') ||
             targetEl.classList.contains('chrome-tab-favicon')) {
             this.select(tab);
@@ -541,7 +544,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
      * close self sucessful callback
      */
     closeAfterFn: Function = () => { };
-    async closeTaskChildForm(taskModal: TabModel) {
+    async closeTaskChildPage(taskModal: TabModel) {
         let state$ = new BehaviorSubject<any>(null);
         let eventArgs = { sender: this, cancel: true, data: taskModal };
         let allowClose = await this.closeBeforeCheckFn(eventArgs);
@@ -561,16 +564,17 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         if (!!!tabModel) return;
         if (tabModel.key == 'main') return;
         if (this.taskClosing.has(tabModel.key)) {
+            console.log("TAB正在关闭......");
             return;
         }
         this.taskClosing.set(tabModel.key, tabModel.key);
-        let result = await this.closeTaskChildForm(tabModel);
+        let result = await this.closeTaskChildPage(tabModel);
         result.subscribe((res: { processFinish: boolean; result: boolean }) => {
             if (res && res.processFinish) {
                 if (res.result) {
                     let enabledModels = this.tabHeaders;
                     if (this.tabHeaders.length > 2) enabledModels = this.tabHeaders.filter(tab => tab != this.homeTab);
-                    let idx = enabledModels.findIndex(value => value == tabModel); //this.tabModels
+                    let idx = enabledModels.findIndex(value => value == tabModel);
                     if (idx > -1) {
                         if (enabledModels[idx - 1]) {
                             this.select(enabledModels[idx - 1]);
@@ -587,18 +591,17 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
                         setTimeout(() => {
                             this.layoutTabs();
                             this.setupDraggabilly();
-                            this.taskClosing.delete(tabModel.key);
-                            result.unsubscribe();
-                            result = null;
                         }, 10);
                     }
-                } else {
-                    this.taskClosing.delete(tabModel.key);
-                    result.unsubscribe();
-                    result = null;
                 }
+                this.taskClosing.delete(tabModel.key);
+                result.unsubscribe();
+                result = null;
             }
         });
+    }
+
+    async removeTabHandler(tabmodel: TabModel) {
 
     }
 
