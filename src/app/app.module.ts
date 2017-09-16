@@ -15,11 +15,11 @@ import { ToastyModule } from './common/toasty/index';
 import { WebFormModule } from './components/form/FormModule';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PageViewerModule } from './common/page-viewer/page-viewer.module';
-
+import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   imports: [
     BrowserModule, BrowserAnimationsModule,
-    StaticNewsModule,
+    StaticNewsModule, HttpClientModule,
     LayoutModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: true }),
     PageLoadingModule.forRoot(),
