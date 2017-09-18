@@ -21,6 +21,7 @@ import { FormOptions } from '../../components/form/FormOptions';
 import { IPageModel } from '../../basic/IFormModel';
 import { SaleComponent } from '../../sale/sale.component';
 import { PageViewerOptions } from '../page-viewer/page-viewer.options';
+import { ReportViewer } from '../report-viewer/report.viewer';
 declare var Draggabilly: any;
 
 export interface TabModel {
@@ -369,6 +370,30 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             return this.appStore.modalService.showForm(options).subscribe(result);
         }, 10);
         return result;
+    }
+
+    showReportViewer(modalOptions: FormOptions = null) {
+        let options: FormOptions = new FormOptions();
+        options.responsive = false;
+        options.width = 800;
+        options.height = 600;
+        options.modal = true;
+        options.visible = true;
+        options.closable = true;
+        options.resizable = true;
+        options.titleAlign = 1;
+        options.rootContainer = this.viewContainerRef;
+        options.injector = this.viewContainerRef.parentInjector;
+
+        if (modalOptions) {
+            Object.assign(options, modalOptions);
+        }
+        options.componentOutlets = [ReportViewer];
+        this.appStore.modalService.showForm(options)
+            .subscribe((res: { action: string, status: string }) => {
+
+            });
+
     }
 
     onRemoveTab() {

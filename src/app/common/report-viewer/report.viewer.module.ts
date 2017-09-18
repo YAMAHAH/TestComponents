@@ -2,22 +2,22 @@
 import { NgModule } from '@angular/core';
 
 // This Module's Components
-import { IframeComponent } from './iframe.component';
-import { HttpModule } from '@angular/http';
+import { ReportViewer } from './report.viewer';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
     imports: [
         CommonModule,
-        HttpModule
+        HttpClientModule
     ],
     declarations: [
-        IframeComponent,
+        ReportViewer,
     ],
     exports: [
-        IframeComponent,
+        ReportViewer,
     ]
 })
-export class IframeModule {
+export class ReportViewerModule {
 
 }

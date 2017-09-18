@@ -42,6 +42,7 @@ import { styleUntils } from '../untils/style';
 import { AppStore } from '../../app-store';
 import { IComponentBase } from '../basic/IComponentBase';
 import { TaskQueueManager, TaskQueue } from '../untils/taskQueue';
+import { PurOrderService } from '../pur/pur-order/purOrderService';
 
 
 
@@ -403,7 +404,6 @@ export class SaleComponent extends ComponentFactoryConatiner
         this.appStore.taskQueueManager.pushTask(task);
         let task2: TaskQueue = new TaskQueue(
             () => {
-                window.print();
                 setTimeout(() => this.fireKeyEvent(window, "keydown", 13), 10);
                 // let event: KeyboardEvent = { keyCode: 112, ctrlKey: true, shiftKey: true };
                 //        $('#print').bind('click',function(){
@@ -415,7 +415,7 @@ export class SaleComponent extends ComponentFactoryConatiner
                 //         $(document).trigger(e);
                 //         console.log("end")
                 //     })
-                
+
                 window.onkeydown = (e) => {
                     console.log(e.keyCode)
                     console.log(e.ctrlKey)
@@ -424,8 +424,11 @@ export class SaleComponent extends ComponentFactoryConatiner
             });
 
         this.appStore.taskQueueManager.pushTask(task2);
-    }
 
+        let purOrdSrv = factoryRef.getService(PurOrderService);
+        purOrdSrv && purOrdSrv.showMessage();
+    }
+    
     fireKeyEvent(el: any, evtType: any, keyCode: any) {
         let evtObj: any;
         if (document.createEvent) {
@@ -458,16 +461,10 @@ export class SaleComponent extends ComponentFactoryConatiner
         }
     }
 
-    //     var testPassword = "181818";
-    // var tp;
-    // var cCode;
-    // var testss = document.getElementById("input_txt_50531_740884");
-    // for (var i = 0; i < testPassword.length; i++) {
-    //     cCode = testPassword.charCodeAt(i);
-    //     fireKeyEvent(testss, "keydown", cCode);
-    //     fireKeyEvent(testss, "keypress", cCode);
-    //     fireKeyEvent(testss, "keyup", cCode);
-    // }
+    invokeReportViewer(){
+        this.appStore.taskManager.showReportViewer();
+    }
+
     getClass(pageModel: IPageModel) { //PurList
         if (!pageModel) return {};
         return {

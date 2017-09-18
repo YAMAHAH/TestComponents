@@ -284,8 +284,8 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
         if (this.append && this.isForceAppend && this.formModel)
             this.appendParent = this.formModel.mainViewContainerRef;
         else {
-            this.appendParent = this.append.parentNode;
-            if (this.formModel) this.formModel.mainViewContainerRef = this.append.parentNode;
+            this.appendParent = this.append && this.append.parentNode;
+            if (this.formModel) this.formModel.mainViewContainerRef = this.append && this.append.parentNode;
         }
         this.appendContentAndShowHandler();
 

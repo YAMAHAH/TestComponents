@@ -9,6 +9,6 @@ export class PurOrderService {
     }
 
     showMessage() {
-        // console.log(this.data);
+        console.log(this.data);
     }
 }

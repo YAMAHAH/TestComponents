@@ -1,5 +1,5 @@
 // Angular Imports
-import { NgModule } from '@angular/core';
+import { NgModule, getModuleFactory } from '@angular/core';
 
 // This Module's Components
 import { PurOrderComponent } from './pur-order.component';
@@ -7,7 +7,7 @@ import { PurDetailComponent } from './pur.detail.component';
 import { PurListComponent } from './pur.list.component';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ControlValueAccessor } from '@angular/forms';
 import { BadgeModule } from '../../common/badge/badge.module';
 import { AlertBoxModule } from '../../common/alert-box/alert-box.module';
 import { XYZDialogModule } from '../../common/dialog/dialog.module';

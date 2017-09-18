@@ -1,7 +1,7 @@
 import { IPageModel } from './IFormModel';
 import { NavTreeViewComponent } from '../components/nav-tree-view/nav-tree-view.component';
 import { IComponentBase } from './IComponentBase';
-import { Type, ComponentRef, ComponentFactoryResolver, ViewContainerRef } from '@angular/core';
+import { Type, ComponentRef, ComponentFactoryResolver, ViewContainerRef, InjectionToken } from '@angular/core';
 import { IAction } from '../Models/IAction';
 import { PageModelExtras } from './PageModelExtras';
 import { IComponentType } from './IComponentType';
@@ -83,6 +83,10 @@ export interface IComponentFactoryContainer extends IComponentBase {
      * 获取组件引用
      */
     getComponentRef<T extends IComponentBase>(componentType: Type<T>, pageModel?: IPageModel): ComponentRef<T>;
+    /**
+     * 获取服务
+     */
+    getService<T>(serviceType: Type<T> | InjectionToken<T>): T;
     /**
      * 创建列表类型的组件
      * 派生类必须实现

@@ -6,6 +6,7 @@
                 <button (click)="open()">OpenPurOrder</button>
                 <button (click)="close()">OpenPurList</button>
                 <button (click)="toggle()">toggleToPageViewer</button>
+                <button (click)="invokeReportViewer()">reportViewer</button>
                 <button class="btn btn-default" (click)="op1.toggle($event)">overlayPanel</button>
                 <button class="btn btn-default" (click)="alert();">Alert</button>
                 <button class="btn btn-default" (click)="confirm();">Confirm</button>
@@ -55,7 +56,7 @@
             </div>
         </div>
         <div *xyzHostContainer></div>
-        <x-iframe #pdfReport style="display:flex;flex:1 0 100%;width:100% "></x-iframe>
+
     </div>
 </div>
-<!-- *xyzHostContainer -->
+<!-- *xyzHostContainer <x-iframe #pdfReport style="display:flex;flex:1 0 100%;width:100% "></x-iframe>-->

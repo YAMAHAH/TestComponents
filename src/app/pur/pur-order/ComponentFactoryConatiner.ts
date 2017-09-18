@@ -1,5 +1,5 @@
 import { ComponentBase } from './ComponentBase';
-import { OnInit, OnDestroy, ComponentFactoryResolver, ViewContainerRef, Type, ComponentRef, Injector, AfterViewInit, ViewChild } from '@angular/core';
+import { OnInit, OnDestroy, ComponentFactoryResolver, ViewContainerRef, Type, ComponentRef, Injector, AfterViewInit, ViewChild, InjectionToken } from '@angular/core';
 import { IComponentFactoryContainer } from '../../basic/IComponentFactoryContainer';
 import { IComponentBase } from '../../basic/IComponentBase';
 import { IPageModel } from '../../basic/IFormModel';
@@ -359,7 +359,6 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             .reverse() || [];
 
         let pageModels = nodeLists.map(c => <IPageModel>c.tag).concat(this.pageModel).filter(p => !!p);
-        console.log(pageModels);
         if (pageModels.length > 0) {
             Observable.from(pageModels)
                 .flatMap(pageModel => {
@@ -372,19 +371,18 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                 }).every((val: boolean) => val === true)
                 .distinctUntilChanged()
                 .subscribe((res: boolean) => {
-                    let result = { processFinish: true, result: res };
-                    if (this.dependentPageModels.length > 0) {
-                        result.result = false;
-                    }
-                    if (action.data.sender) action.data.sender.next(result);
+                    this.responseResultHandler(action, res);
                 });
         } else {
-            let result = { processFinish: true, result: true };
-            if (this.dependentPageModels.length > 0) {
-                result.result = false;
-            }
-            if (action.data.sender) action.data.sender.next(result);
+            this.responseResultHandler(action, true);
         }
+    }
+    responseResultHandler(action: IAction, resultValue: boolean) {
+        let result = { processFinish: true, result: resultValue };
+        if (this.dependentPageModels.length > 0) {
+            result.result = false;
+        }
+        if (action.data.sender) action.data.sender.next(result);
     }
 
     async closePage(pageModel: IPageModel) {
@@ -625,6 +623,10 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     }
     componentReducer<T extends IComponentBase>(componentType: Type<IComponentType>, pageModel?: IPageModel): ComponentRef<T> {
         throw new Error("Method not implemented.");
+    }
+
+    getService<T>(serviceType: Type<T> | InjectionToken<T>): T {
+        return this.injector && this.injector.get(serviceType);
     }
     getComponentRef<T extends IComponentBase>(componentType: Type<T>, formModel?: IPageModel): ComponentRef<T> {
         const rootContainer = this.viewContainerRef ||
