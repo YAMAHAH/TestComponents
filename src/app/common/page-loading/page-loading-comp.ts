@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
 import { PageLoadingService, PageAnimateAction, PageLoadActionEnum, AnimateEffectEnum, pageLoadingEffects } from '../page-loading';
 import { LoadScriptService } from '../../services/load-script-service';
-let Snap :any ;// = require("snapsvg");
+//let Snap: any;// = require("snapsvg");
 
 @Component({
     selector: 'pageloading',
@@ -21,7 +21,8 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
     options: any;
     pageLoad: boolean;
     checkStream = Observable.interval(100);
-    constructor(private pageLoadService: PageLoadingService, private loadScriptService: LoadScriptService) {
+    constructor(private pageLoadService: PageLoadingService,
+        private loadScriptService: LoadScriptService) {
         this.pageLoadService.pageLoadingStream
             .subscribe((pageAction: PageAnimateAction) => {
                 if (pageAction.method === PageLoadActionEnum.show) {
@@ -36,7 +37,9 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         this.loadScriptService
             .loadSnapSvg
-            .then(snap => { });
+            .then(snap => {
+                console.log(snap);
+            });
     }
 
     ngAfterViewInit() {
@@ -59,7 +62,7 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
 
 
     public get path(): Snap.Element {
-        let paper =  Snap("#paper");
+        let paper = window["Snap"]("#paper");
         return paper === null ? null : paper.select("path");
     }
 

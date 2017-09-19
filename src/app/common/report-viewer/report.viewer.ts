@@ -1,8 +1,13 @@
 
-import { Component, Input, ViewChild, ElementRef, OnInit, OnDestroy, EventEmitter } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, OnInit, OnDestroy, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPDFPluginInstall } from '../../untils/pdf-plugin';
+import { HttpParams } from "@angular/common/http";
+import { PageLoadingService } from '../page-loading/page-loading-service';
+import { LoadScriptService } from '../../services/load-script-service';
+import { AnimateEffectEnum } from '../page-loading/animate-effect-enum';
+import { DownloadManager } from '../../services/download.manager';
 
 @Component({
     moduleId: module.id,
@@ -20,15 +25,24 @@ export class ReportViewer implements OnInit, OnDestroy {
     pdfViewerSrc: SafeResourceUrl;
     pdfSrc: SafeResourceUrl;
     constructor(private sanitizer: DomSanitizer,
+        private pageLoadService: PageLoadingService,
+        private loadScriptService: LoadScriptService,
+        private downloadManager: DownloadManager,
         private httpClient: HttpClient) {
+        this.loadScriptService
+            .loadSnapSvg
+            .then(snap => {
+                this.pageLoadService.showPageLoading(AnimateEffectEnum.random);
+            });
     }
     buildInPlugin: boolean;
     ngOnInit() {
+
         this.buildInPlugin = isPDFPluginInstall();
-        this.getDefaultUrl();
-        setTimeout(() => this.print(), 10000);
+        this.getDefaultUrl("0", null, "");
+        //  setTimeout(() => this.print(), 10000);
         setTimeout(() => this.getPdfBlobUrl(null, null), 15000);
-        setTimeout(() => this.print(), 25000);
+        // setTimeout(() => this.print(), 25000);
     }
     ngOnDestroy(): void {
         URL.revokeObjectURL(this.fileUrl);
@@ -37,40 +51,7 @@ export class ReportViewer implements OnInit, OnDestroy {
     modalResult: EventEmitter<any>;
     //传递进来的参数
     contex: any;
-    // title: string = "简易ERP系统登录";
-    // modalResult: EventEmitter<any>;
-    // show() {
-    //     let options: FormOptions = new FormOptions();
-    //     options.responsive = true;
-    //     options.width = 450;
-    //     options.height = 310;
-    //     options.header = this.title;
-    //     options.modal = true;
-    //     options.visible = true;
-    //     options.closable = false;
-    //     options.resizable = false;
-    //     options.titleAlign = FormTitleAlignEnum.center;
-    //     options.appendComponentRef = this;
-    //     options.rootContainer = this.viewContainerRef;
-    //     options.injector = this.viewContainerRef.parentInjector;
 
-    //     this.appStore.modalService.showForm(options)
-    //         // .delay(50)
-    //         .subscribe((res: { action: string, status: string }) => {
-    //             switch (res.action) {
-    //                 case "login":
-    //                     this.test(this.target, this.defaultPage);
-    //                     //  this.router.navigateByUrl(this.target ? this.target : this.defaultPage, { skipLocationChange: true });
-    //                     this.isLogining = true;
-    //                     break;
-    //                 case "signup":
-    //                     this.router.navigateByUrl('/auth/signup', { skipLocationChange: true })
-    //                     break;
-    //                 default:
-    //                     break;
-    //             }
-    //         });
-    // }
     @ViewChild("pdfViewer", { read: ElementRef }) pdfViewerRef: ElementRef;
     @ViewChild("pdfPlugin", { read: ElementRef }) pdfPluginRef: ElementRef;
     print() {
@@ -116,10 +97,12 @@ export class ReportViewer implements OnInit, OnDestroy {
         let fileReader = new FileReader();
         fileReader.onload = (e) => { callback(e.target); };
         fileReader.readAsDataURL(blob);
+
     }
 
     fileUrl: string;
     getPdfBlobUrl(baseUrl: string, fileType: string) {
+        this.pageLoadService.showPageLoading(AnimateEffectEnum.random);
         let requestHeaders = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Accept', 'q=0.8;application/json;q=0.9');
@@ -129,20 +112,28 @@ export class ReportViewer implements OnInit, OnDestroy {
             requestHeaders = requestHeaders.set('Authorization', token);
         }
 
-        this.httpClient.get('/api/Users/GetBlobPdf',
+        this.httpClient.get('http://localhost:9500/home/pdf?report=2',
             { headers: requestHeaders, responseType: "arraybuffer", withCredentials: true })
             .subscribe(data => {
                 let blobFile = new Blob([new Uint8Array(data)], { type: "application/pdf" }); //application/octet-stream
                 this.fileUrl = URL.createObjectURL(blobFile);
                 // fileURL = encodeURIComponent(fileURL).replace("blob:http", "blob:https");
                 // fileURL = fileURL.replace("%3A9090", "");
+
                 if (this.buildInPlugin)
                     this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
                 else
                     this.pdfViewerSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
+                setTimeout(() => this.pageLoadService.hidePageLoading(), 15);
             });
     }
-    getDefaultUrl() {
+    /**
+     * 
+     * @param reportId 报表ID
+     * @param data  报表数据
+     */
+    getDefaultUrl(reportId: string, data: any, reportUrl: string = null) {
+        this.pageLoadService.showPageLoading(AnimateEffectEnum.random);
         let requestHeaders = new HttpHeaders()
             .append('Content-Type', 'application/json')
             .append('Accept', 'q=0.8;application/json;q=0.9');
@@ -150,17 +141,25 @@ export class ReportViewer implements OnInit, OnDestroy {
             let token = localStorage.getItem("jwt_token");
             requestHeaders = requestHeaders.append('Authorization', token);
         }
-        this.httpClient.get('http://localhost:9500/home/pdf?report=0',
-            { headers: requestHeaders, responseType: "arraybuffer" })
+        let rptUrl = reportUrl || 'http://localhost:9500/home/pdf';
+        let httpParams = new HttpParams().set("report", reportId);
+        this.httpClient.get(rptUrl,
+            { headers: requestHeaders, params: httpParams, responseType: "arraybuffer" })
             .subscribe(data => {
-                let file = new Blob([new Uint8Array(data)], { type: "application/pdf" });
+                let uInt8Array = new Uint8Array(data);
+                let file = new Blob([uInt8Array], { type: "application/pdf" });
                 this.fileUrl = window.URL.createObjectURL(file);
+                this.downloadManager.downloadData(uInt8Array, "myfile.pdf", "application/pdf");
                 if (this.buildInPlugin)
                     this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
                 else
                     this.pdfViewerSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
+                setTimeout(() => this.pageLoadService.hidePageLoading(), 50);
             });
     }
+
+
+
     _tokenKeyCache = new Map<any, string>();
 
     tokenKey(token: any): string {

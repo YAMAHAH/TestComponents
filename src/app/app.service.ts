@@ -9,6 +9,7 @@ import { AppStoreService } from './services/app.store.service';
 import { RouterService } from './services/router.service';
 import { FormService } from './components/form/FormService';
 import { CarService } from './services/car/carService';
+import { DownloadManager } from './services/download.manager';
 
 export const appRootProviders = [
     AuthGuard,
@@ -20,5 +21,6 @@ export const appRootProviders = [
     BlockUIService,
     AppStoreService,
     RouterService,
+    DownloadManager,
     CarService
 ];

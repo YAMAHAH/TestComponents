@@ -1,3 +1,4 @@
 export enum PageLoadActionEnum {
-    show = 1, hide = 2
+    show = 1,
+    hide = 2
 }

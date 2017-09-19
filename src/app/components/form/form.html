@@ -17,7 +17,10 @@
             <span class="fa fa-fw fa-arrows-alt"></span>
         </a>
     </div>
-    <div #content class="ui-dialog-content ui-widget-content" [style.height.px]="contentHeight">
+    <div *ngIf="dragging" [ngClass]="{'ui-dialog-mask':dragging}" style="z-index:9999;opacity:0">
+
+    </div>
+    <div #content class="ui-dialog-content ui-widget-content" [ngStyle]="flexStyle">
         <ng-container *ngFor="let comp of componentOutlets | filter:enablePredicate">
             <ng-container *jyComponentOutlet="comp;context: compctx"></ng-container>
         </ng-container>

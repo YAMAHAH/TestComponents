@@ -1,8 +1,9 @@
 <ng-container [ngSwitch]="buildInPlugin">
     <ng-container *ngSwitchCase="true">
-        <iframe style="flex:1 0 100%;height:100%" #pdfPlugin [title]="title" [attr.src]="pdfSrc"></iframe>
+        <iframe style="flex:1 0 100%;height:100%;" #pdfPlugin [title]="title" [attr.src]="pdfSrc"></iframe>
     </ng-container>
     <ng-container *ngSwitchCase="false">
-        <iframe style="flex:1 0 100%;height:100%" #pdfViewer [title]="title" [attr.src]="pdfViewerSrc"></iframe>
+        <iframe style="flex:1 0 100%;height:100%;" #pdfViewer [title]="title" [attr.src]="pdfViewerSrc"></iframe>
     </ng-container>
 </ng-container>
+<pageloading></pageloading>

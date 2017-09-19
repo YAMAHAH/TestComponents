@@ -5,11 +5,13 @@ import { NgModule } from '@angular/core';
 import { ReportViewer } from './report.viewer';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { PageLoadingModule } from '../page-loading/page-loading-module';
 
 @NgModule({
     imports: [
         CommonModule,
-        HttpClientModule
+        HttpClientModule,
+        PageLoadingModule
     ],
     declarations: [
         ReportViewer,

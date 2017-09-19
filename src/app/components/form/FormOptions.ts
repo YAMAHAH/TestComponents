@@ -20,6 +20,7 @@ export class FormOptions {
     closeOnEscape: boolean = false;
     dismissableMask: boolean = false;
     responsive: boolean = true;
+    enableFlex:boolean = false;
     header: string;
     showHeader: boolean = true;
     titleAlign: FormTitleAlignEnum = FormTitleAlignEnum.left;

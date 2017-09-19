@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Injectable()
 export class LoadScriptService {
-    constructor() { }
+    constructor(
+        private sanitizer: DomSanitizer
+    ) { }
 
     private loadlibs: Map<string, string> = new Map<string, string>();
     load(src: string): Promise<any> {
         if (!!!this.loadlibs.has(src)) {
+            let safeScript = this.sanitizer.bypassSecurityTrustResourceUrl(src);
             let doc = document;
             return new Promise((resolve, reject) => {
                 let script = doc.createElement('script');
@@ -17,12 +21,12 @@ export class LoadScriptService {
                 doc.querySelector('head').appendChild(script);
 
                 script.onload = () => {
-                    resolve();
+                    resolve(true);
                     this.loadlibs.set(src, src);
                     script.remove()
                 }
                 script.onerror = function () {
-                    reject()
+                    reject(false);
                 }
             });
         }

@@ -1,0 +1,21 @@
+.flex-column-container-item {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 100%;
+    width: 100%;
+    height: 94.5%;
+    margin: 0rem;
+    max-width: 100%;
+    background-color: #f2f2f2;
+}
+
+x-report-viewer {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 100%;
+    width: 100%;
+    height: 94.5%;
+    margin: 0rem;
+    max-width: 100%;
+    background-color: #f2f2f2;
+}

@@ -158,7 +158,9 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
 
     positionInitialized: boolean;
 
-    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer2) { }
+    constructor(public el: ElementRef,
+        public domHandler: DomHandler,
+        public renderer: Renderer2) { }
 
     @Input() get visible(): boolean {
         return this._visible;
@@ -199,6 +201,17 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
 
     get enablePredicate() {
         return (value: any, index: number) => !!!this.isForceAppend;
+    }
+
+    @Input() enableFlex: boolean;
+    get flexStyle() {
+        if (this.enableFlex)
+            return {
+                display: "flex",
+                flex: "1 0 100%",
+                height: "100%"
+            }
+        else return { height: this.contentHeight + "px" };
     }
     show() {
         if (!this.positionInitialized) {

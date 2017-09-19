@@ -18,6 +18,17 @@ x-pur-order {
     background-color: #f2f2f2; // blue; 
 }
 
+x-report-viewer {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 100%;
+    width: 100%;
+    height: 93.1338%;
+    margin: 0rem;
+    max-width: 100%;
+    background-color: #f2f2f2;
+}
+
 .el-hide {
     display: none;
 }

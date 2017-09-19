@@ -374,7 +374,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
 
     showReportViewer(modalOptions: FormOptions = null) {
         let options: FormOptions = new FormOptions();
-        options.responsive = false;
+        options.responsive = true;
         options.width = 800;
         options.height = 600;
         options.modal = true;
@@ -389,6 +389,34 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             Object.assign(options, modalOptions);
         }
         options.componentOutlets = [ReportViewer];
+        options.enableFlex = true;
+        options.header = "报表查看器";
+        this.appStore.modalService.showForm(options)
+            .subscribe((res: { action: string, status: string }) => {
+
+            });
+
+    }
+
+    PrintReport(modalOptions: FormOptions = null) {
+        let options: FormOptions = new FormOptions();
+        options.responsive = true;
+        options.width = 800;
+        options.height = 600;
+        options.modal = true;
+        options.visible = true;
+        options.closable = true;
+        options.resizable = true;
+        options.titleAlign = 1;
+        options.rootContainer = this.viewContainerRef;
+        options.injector = this.viewContainerRef.parentInjector;
+
+        if (modalOptions) {
+            Object.assign(options, modalOptions);
+        }
+        options.componentOutlets = [ReportViewer];
+        options.enableFlex = true;
+        options.header = "报表查看器";
         this.appStore.modalService.showForm(options)
             .subscribe((res: { action: string, status: string }) => {
 
