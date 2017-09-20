@@ -7,7 +7,7 @@
 <a [routerLink]="['/mobile/d3']"> d3 </a>
 <a [routerLink]="['/auth/login']">Logout</a>
 <button (click)="logout()" class="btn btn-success">注销</button>
-<pageloading></pageloading>
+<x-pageloading globalLoad="true"></x-pageloading>
 <router-outlet></router-outlet>
 <router-outlet name="bottom"></router-outlet>
 <router-outlet name="right"></router-outlet>

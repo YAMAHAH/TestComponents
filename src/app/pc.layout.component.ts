@@ -13,7 +13,7 @@ import { AuthService } from './services/auth.service';
             <x-right-sidebar></x-right-sidebar>
         </x-content>
         <x-footer></x-footer>
-        <pageloading></pageloading>
+        <x-pageloading globalLoad="true"></x-pageloading>
     `,
     styleUrls: ['pc.layout.css']
 })

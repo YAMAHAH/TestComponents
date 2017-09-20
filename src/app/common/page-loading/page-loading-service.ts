@@ -5,12 +5,12 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { PageAnimateAction, AnimateEffectEnum, PageLoadActionEnum } from './index';
 
-export interface AppState {
+export interface PageLoadState {
     // define your state here
     ready: boolean;
 }
 
-const defaultState: AppState = {
+const defaultState: PageLoadState = {
     // define your initial state here
     ready: false
 }
@@ -19,26 +19,23 @@ const defaultState: AppState = {
 export class PageLoadingService {
     isLoading: boolean;
     isShow: boolean;
-    isAnimateSVG: boolean;
     pageLoadingStream: Subject<PageAnimateAction>;
-    //ready = new BehaviorSubject<AppState>(defaultState);
-    //appState: AppState = defaultState;
-    pageReady: Subject<AppState>;
+
+    pageLoadReady: Subject<PageLoadState>;
     constructor() {
         this.pageLoadingStream = new Subject<PageAnimateAction>();
-        this.pageReady = new BehaviorSubject<AppState>(defaultState);
+        this.pageLoadReady = new BehaviorSubject<PageLoadState>(defaultState);
     }
     subscription: Subscription;
     showPageLoading(effect: AnimateEffectEnum) {
-        this.subscription = this.pageReady.subscribe(ready => {
-            if (ready.ready) {
+        this.subscription = this.pageLoadReady.subscribe(res => {
+            if (res.ready) {
+                this.pageLoadingStream.next({ method: PageLoadActionEnum.show, effect: effect });
             }
         });
-        this.pageLoadingStream.next({ method: PageLoadActionEnum.show, effect: effect });
     }
     hidePageLoading() {
         this.pageLoadingStream.next({ method: PageLoadActionEnum.hide });
-        // this.pageReady.next({ ready: false });
         this.subscription.unsubscribe();
     }
 }

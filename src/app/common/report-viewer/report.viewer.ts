@@ -8,6 +8,7 @@ import { PageLoadingService } from '../page-loading/page-loading-service';
 import { LoadScriptService } from '../../services/load-script-service';
 import { AnimateEffectEnum } from '../page-loading/animate-effect-enum';
 import { DownloadManager } from '../../services/download.manager';
+import { PageLoadingComponent } from '../page-loading/page-loading-comp';
 
 @Component({
     moduleId: module.id,
@@ -24,6 +25,7 @@ export class ReportViewer implements OnInit, OnDestroy {
     @Input() title: string = "标题";
     pdfViewerSrc: SafeResourceUrl;
     pdfSrc: SafeResourceUrl;
+    @ViewChild(PageLoadingComponent) loading: PageLoadingComponent;
     constructor(private sanitizer: DomSanitizer,
         private pageLoadService: PageLoadingService,
         private loadScriptService: LoadScriptService,
@@ -32,17 +34,17 @@ export class ReportViewer implements OnInit, OnDestroy {
         this.loadScriptService
             .loadSnapSvg
             .then(snap => {
-                this.pageLoadService.showPageLoading(AnimateEffectEnum.random);
+                // this.pageLoadService.showPageLoading(AnimateEffectEnum.random);
             });
     }
     buildInPlugin: boolean;
+
     ngOnInit() {
 
         this.buildInPlugin = isPDFPluginInstall();
         this.getDefaultUrl("0", null, "");
         //  setTimeout(() => this.print(), 10000);
         setTimeout(() => this.getPdfBlobUrl(null, null), 15000);
-        // setTimeout(() => this.print(), 25000);
     }
     ngOnDestroy(): void {
         URL.revokeObjectURL(this.fileUrl);
@@ -99,10 +101,18 @@ export class ReportViewer implements OnInit, OnDestroy {
         fileReader.readAsDataURL(blob);
 
     }
-
+    dataLoaded: boolean
+    onLoad(event: Event) {
+        if (this.dataLoaded) {
+            setTimeout(() => {
+                this.loading.Hide();
+                this.dataLoaded = false;
+            }, 50);
+        }
+    }
     fileUrl: string;
     getPdfBlobUrl(baseUrl: string, fileType: string) {
-        this.pageLoadService.showPageLoading(AnimateEffectEnum.random);
+        this.loading.showLoading(AnimateEffectEnum.random);
         let requestHeaders = new HttpHeaders()
             .set('Content-Type', 'application/json')
             .set('Accept', 'q=0.8;application/json;q=0.9');
@@ -124,7 +134,7 @@ export class ReportViewer implements OnInit, OnDestroy {
                     this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
                 else
                     this.pdfViewerSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
-                setTimeout(() => this.pageLoadService.hidePageLoading(), 15);
+                this.dataLoaded = true;
             });
     }
     /**
@@ -133,7 +143,7 @@ export class ReportViewer implements OnInit, OnDestroy {
      * @param data  报表数据
      */
     getDefaultUrl(reportId: string, data: any, reportUrl: string = null) {
-        this.pageLoadService.showPageLoading(AnimateEffectEnum.random);
+        this.loading.showLoading(AnimateEffectEnum.random);
         let requestHeaders = new HttpHeaders()
             .append('Content-Type', 'application/json')
             .append('Accept', 'q=0.8;application/json;q=0.9');
@@ -149,12 +159,12 @@ export class ReportViewer implements OnInit, OnDestroy {
                 let uInt8Array = new Uint8Array(data);
                 let file = new Blob([uInt8Array], { type: "application/pdf" });
                 this.fileUrl = window.URL.createObjectURL(file);
-                this.downloadManager.downloadData(uInt8Array, "myfile.pdf", "application/pdf");
+                // this.downloadManager.downloadData(uInt8Array, "myfile.pdf", "application/pdf");
                 if (this.buildInPlugin)
                     this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
                 else
                     this.pdfViewerSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
-                setTimeout(() => this.pageLoadService.hidePageLoading(), 50);
+                this.dataLoaded = true;
             });
     }
 

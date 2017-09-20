@@ -10,7 +10,7 @@ require("./app.scss");
   selector: 'my-app',
   styleUrls: ['./app.component.css'],
   template: `
-    <pageloading></pageloading>
+    <x-pageloading globalLoad='true'></x-pageloading>
     <router-outlet></router-outlet>
   `
 })

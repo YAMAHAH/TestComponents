@@ -133,6 +133,12 @@
     height: 100%;
 }
 
+.ui-dialog-mask-1 {
+    position: fixed;
+    width: cala(100%-20);
+    height: cala(100%-39);
+}
+
 
 /* ConfirmDialog */
 

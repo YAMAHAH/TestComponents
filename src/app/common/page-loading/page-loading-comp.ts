@@ -1,83 +1,125 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
 import { PageLoadingService, PageAnimateAction, PageLoadActionEnum, AnimateEffectEnum, pageLoadingEffects } from '../page-loading';
 import { LoadScriptService } from '../../services/load-script-service';
-//let Snap: any;// = require("snapsvg");
+import { UUID } from '../../untils/uuid';
+import { ColumnBodyTemplateLoader } from '../shared/shared2';
 
 @Component({
-    selector: 'pageloading',
+    selector: 'x-pageloading',
     templateUrl: './page-loading-comp.html',
-    styleUrls: ['./page-loading-comp.css'],
+    styleUrls: ['./page-loading-comp.css']
 })
 
 export class PageLoadingComponent implements OnInit, AfterViewInit {
-    autoPageLoading: boolean = true;
-    effect: string = 'random';
+    @Input() effect: string = 'random';
     timeOut: number = 500;
     animateOpt: any;
     isAnimating: boolean;
-    el: HTMLElement;
     options: any;
     pageLoad: boolean;
     checkStream = Observable.interval(100);
     constructor(private pageLoadService: PageLoadingService,
         private loadScriptService: LoadScriptService) {
-        this.pageLoadService.pageLoadingStream
+
+        this.pageLoadService
+            .pageLoadingStream
             .subscribe((pageAction: PageAnimateAction) => {
-                if (pageAction.method === PageLoadActionEnum.show) {
-                    this.showLoading(pageAction.effect);
-                }
+                if (this.globalLoad)
+                    if (pageAction.method === PageLoadActionEnum.show) {
+                        this.showLoading(pageAction.effect);
+                    }
                 if (pageAction.method === PageLoadActionEnum.hide) {
                     this.Hide();
                 }
+                else
+                    console.error("不是全局加载模式,禁止通过服务调用")
             });
     }
+
+    @ViewChild("paper", { read: ElementRef }) svgEl: ElementRef;
+    _postPrefix: string;
+    get postPrefix(): string {
+        if (!!!this._postPrefix)
+            this._postPrefix = UUID.uuid(8, 10);
+        return this._postPrefix;
+    }
+    svgId: string = "paper_" + this.postPrefix;
 
     ngOnInit() {
         this.loadScriptService
             .loadSnapSvg
-            .then(snap => {
-                console.log(snap);
-            });
+            .then(snap => { });
     }
 
     ngAfterViewInit() {
-        this.pageLoadService.pageReady.next({ ready: true });
+        if (this.globalLoad)
+            this.pageLoadService.pageLoadReady.next({ ready: true });
+        else
+            this.pageLoad = true;
     }
 
+    private _startLoading: boolean;
+    @Input() get startLoading() {
+        return this._startLoading;
+    }
+
+    set startLoading(value: boolean) {
+        if (value) {
+            this.showLoading(AnimateEffectEnum[this.effect]);
+        } else
+            this.Hide();
+        this._startLoading = value;
+    }
+    isShow: boolean;
+    isLoading: Boolean;
     showLoading(effect: AnimateEffectEnum) {
         let checkSubscriber = this.checkStream.subscribe((i: number) => {
-            if (this.pageLoadService.isShow === false && this.pageLoadService.isLoading) {
-                this.pageLoadService.isLoading = false;
-            }
-            if (!this.pageLoadService.isShow && !this.pageLoadService.isLoading) {
-                checkSubscriber.unsubscribe();
+            if (this.globalLoad) {
+                if (!this.pageLoadService.isShow && this.pageLoadService.isLoading) {
+                    this.pageLoadService.isLoading = false;
+                }
+                if (!this.pageLoadService.isShow && !this.pageLoadService.isLoading) {
+                    checkSubscriber.unsubscribe();
+                }
+            } else {
+                if (!this.isShow && this.isLoading) {
+                    this.isLoading = false;
+                }
+                if (!this.isShow && !this.isLoading) {
+                    checkSubscriber.unsubscribe();
+                }
             }
         });
-        this.AnimateInit({ el: "#paper", effect: AnimateEffectEnum[effect] });
+        this.AnimateInit({ el: "#" + this.svgId, effect: AnimateEffectEnum[effect] });
         this.Show(AnimateEffectEnum[effect]);
-        //  setTimeout(() => { this.Hide(); }, 1860);
     }
 
 
-    public get path(): Snap.Element {
-        let paper = window["Snap"]("#paper");
+    private get path(): Snap.Element {
+        let paper = window["Snap"](this.svgEl.nativeElement); //("#" + this.svgId);
         return paper === null ? null : paper.select("path");
     }
 
-    AnimateInit(options: any) {
+    private AnimateInit(options: any) {
         this.options = options;
         this.options.speedIn = 500;
         this.options.easingIn = 'linear';
         this.effect = options.effect || 'random';
         this.animateOpt = null;
         this.isAnimating = false;
-        this.pageLoadService.isShow = false;
-        this.pageLoadService.isLoading = false;
+        if (this.globalLoad) {
+            this.pageLoadService.isShow = false;
+            this.pageLoadService.isLoading = false;
+        } else {
+            this.isShow = false;
+            this.isLoading = false;
+        }
+
     }
 
-    GetOpt(newEffect: string) {
+    private GetOpt(newEffect: string) {
         let effect: string, effects: any, effectObj: any, initialPath: any,
             openingSteps: any, openingStepsStr: any, openingStepsTotal: any,
             closingSteps: any, closingStepsStr: any,
@@ -122,19 +164,41 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
 
         return animateOpt;
     }
-    getClass() {
+
+    @Input() globalLoad: boolean;
+    @Input() nzSpinning = true;
+    _tip: string;
+
+    @Input()
+    get tip() {
+        return this._tip;
+    }
+
+    set tip(value) {
+        this._tip = value || '加载中...';
+    }
+
+    @ViewChild('ref') _ref: ElementRef;
+    get elStyleClass() {
         return {
-            "show": this.pageLoadService.isShow,
-            "pageloading-loading": this.pageLoadService.isLoading,
+            "show": this.pageLoadService.isShow || this.isShow,
+            "pageloading-loading": this.pageLoadService.isLoading || this.isLoading,
             "pageload-overlay": true
         };
     }
 
-    Show(newEffect: string) {
+    private Show(newEffect: string) {
         let animateOpt: any;
-        if (this.isAnimating || (this.pageLoadService.isLoading || this.pageLoadService.isShow)) {
-            return false;
+        if (this.globalLoad) {
+            if (this.isAnimating || this.pageLoadService.isLoading || this.pageLoadService.isShow) {
+                return false;
+            }
+        } else {
+            if (this.isAnimating || this.isLoading || this.isShow) {
+                return false;
+            }
         }
+
         animateOpt = this.GetOpt(newEffect);
         if (!animateOpt) {
             return;
@@ -142,10 +206,20 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
         this.path.attr({ d: animateOpt.initialPath });
         this.animateOpt = animateOpt;
         this.isAnimating = true;
-        this.pageLoadService.isLoading = true;
-        let cbk = () => this.pageLoadService.isLoading = true;
+        if (this.globalLoad)
+            this.pageLoadService.isLoading = true;
+        else this.isLoading = true;
+        let cbk = () => {
+            if (this.globalLoad)
+                this.pageLoadService.isLoading = true;
+            else
+                this.isLoading = true;
+        }
         this.AnimateSVG('in', animateOpt, cbk);
-        this.pageLoadService.isShow = true;
+        if (this.globalLoad)
+            this.pageLoadService.isShow = true;
+        else
+            this.isShow = true;
     }
 
     Hide() {
@@ -154,15 +228,21 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
             return false;
         }
         this.animateOpt = null; // prevent hide one animation multi times
-        this.pageLoadService.isLoading = false;
+        if (this.globalLoad)
+            this.pageLoadService.isLoading = false;
+        else
+            this.isLoading = false;
         let cbk = () => {
-            this.pageLoadService.isShow = false;
+            if (this.globalLoad)
+                this.pageLoadService.isShow = false;
+            else
+                this.isShow = false;
             this.isAnimating = false;
         };
         this.AnimateSVG('out', animateOpt, cbk);
     }
 
-    AnimateSVG(dir: string, animateOpt: any, cbk: Function) {
+    private AnimateSVG(dir: string, animateOpt: any, cbk: Function) {
         let pos = 0,
             steps = dir === 'out' ? animateOpt.closingSteps : animateOpt.openingSteps,
             stepsTotal = dir === 'out' ? animateOpt.closingStepsTotal : animateOpt.openingStepsTotal,
@@ -182,7 +262,6 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
             });
             pos++;
         };
-
         nextStep(pos);
     }
 

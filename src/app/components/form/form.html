@@ -17,7 +17,7 @@
             <span class="fa fa-fw fa-arrows-alt"></span>
         </a>
     </div>
-    <div *ngIf="dragging" [ngClass]="{'ui-dialog-mask':dragging}" style="z-index:9999;opacity:0">
+    <div #iFrameLayer [style.cursor]="frameLayerCursorStyle" *ngIf="dragging || resizing" [ngClass]="{'ui-dialog-mask':dragging || resizing}" style="z-index:9999;opacity:0">
 
     </div>
     <div #content class="ui-dialog-content ui-widget-content" [ngStyle]="flexStyle">
@@ -29,13 +29,13 @@
     </div>
     <ng-content select="p-footer"></ng-content>
     <ng-container *ngIf="resizable">
-        <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;" (mousedown)="initResize($event,spEnum.rightBottom)"></div>
-        <div class="ui-resizable-handle ui-resizable-righttop ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 91;" (mousedown)="initResize($event,spEnum.rightTop)"></div>
-        <div class="ui-resizable-handle ui-resizable-lefttop ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 92;" (mousedown)="initResize($event,spEnum.leftTop)"></div>
-        <div class="ui-resizable-handle ui-resizable-leftbottom ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 93;" (mousedown)="initResize($event,spEnum.leftBottom)"></div>
-        <div class="ui-resizable-handle ui-resizable-left ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 94;" (mousedown)="initResize($event,spEnum.leftCenter)"></div>
-        <div class="ui-resizable-handle ui-resizable-right ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 95;" (mousedown)="initResize($event,spEnum.rightCenter)"></div>
-        <div class="ui-resizable-handle ui-resizable-top ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 96;" (mousedown)="initResize($event,spEnum.topCenter)"></div>
-        <div class="ui-resizable-handle ui-resizable-bottom ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 97;" (mousedown)="initResize($event,spEnum.bottomCenter)"></div>
+        <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;cursor: se-resize;" (mousedown)="initResize($event,spEnum.rightBottom)"></div>
+        <div class="ui-resizable-handle ui-resizable-righttop ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 91;cursor: ne-resize;" (mousedown)="initResize($event,spEnum.rightTop)"></div>
+        <div class="ui-resizable-handle ui-resizable-lefttop ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 92;cursor: nw-resize;" (mousedown)="initResize($event,spEnum.leftTop)"></div>
+        <div class="ui-resizable-handle ui-resizable-leftbottom ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 93;cursor: sw-resize;" (mousedown)="initResize($event,spEnum.leftBottom)"></div>
+        <div class="ui-resizable-handle ui-resizable-left ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 94;cursor: w-resize;" (mousedown)="initResize($event,spEnum.leftCenter)"></div>
+        <div class="ui-resizable-handle ui-resizable-right ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 95;cursor: e-resize;" (mousedown)="initResize($event,spEnum.rightCenter)"></div>
+        <div class="ui-resizable-handle ui-resizable-top ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 96;cursor: n-resize;" (mousedown)="initResize($event,spEnum.topCenter)"></div>
+        <div class="ui-resizable-handle ui-resizable-bottom ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 97;cursor: s-resize;" (mousedown)="initResize($event,spEnum.bottomCenter)"></div>
     </ng-container>
 </div>

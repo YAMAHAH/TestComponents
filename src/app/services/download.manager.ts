@@ -102,4 +102,54 @@ export class DownloadManager {
         this.download(blobUrl, filename);
     }
 
+    webViewerOpenFile() {
+        // var openFileInputName = PDFViewerApplication.appConfig.openFileInputName;
+        // document.getElementById(openFileInputName).click();
+    }
+    webViewerOpenFileViaURL(file: any) {
+        if (file && file.lastIndexOf('file:', 0) === 0) {
+            //  PDFViewerApplication.setTitleUsingUrl(file);
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                // PDFViewerApplication.open(new Uint8Array(xhr.response));
+            };
+            try {
+                xhr.open('GET', file);
+                xhr.responseType = 'arraybuffer';
+                xhr.send();
+            } catch (e) {
+                //  PDFViewerApplication.error(mozL10n.get('loading_error', null, 'An error occurred while loading the PDF.'), e);
+            }
+            return;
+        }
+        if (file) {
+            // PDFViewerApplication.open(file);
+        }
+    }
+
+    openFile() {
+        // var parameters = Object.create(null),
+        //     scale;
+        // if (typeof file === 'string') {
+        //     this.setTitleUsingUrl(file);
+        //     parameters.url = file;
+        // } else if (file && 'byteLength' in file) {
+        //     parameters.data = file;
+        // } else if (file.url && file.originalUrl) {
+        //     this.setTitleUsingUrl(file.originalUrl);
+        //     parameters.url = file.url;
+        // }
+    }
+    createFileInput(id: string) {
+        let fileInput = document.createElement('input');
+        fileInput.id = id;
+        fileInput.className = 'fileInput';
+        fileInput.setAttribute('type', 'file');
+        fileInput.oncontextmenu = this.noContextMenuHandler;
+    }
+    noContextMenuHandler(e: Event) {
+        e.preventDefault();
+    }
+
+
 }

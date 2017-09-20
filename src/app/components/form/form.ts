@@ -9,7 +9,7 @@ import { Header, UISharedModule } from '../../common/shared/shared';
 import { styleUntils } from '../../untils/style';
 import { Subscription } from 'rxjs/Subscription';
 
-import { ComponentRef, Renderer2 } from '@angular/core';
+import { ComponentRef, Renderer2, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { DomHandler } from '../../common/dom/domhandler';
 import { IPageModel } from '../../basic/IFormModel';
@@ -540,11 +540,16 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             }
         }
     }
+
+    frameLayerCursorStyle: string;
+
     spEnum = SizingPointEnum;
     sizingPoint: SizingPointEnum = SizingPointEnum.none;
     initResize(event: any, selectPoint: SizingPointEnum) {
         if (this.resizable) {
-            this.documentResizeListener = this.renderer.listen('body', 'mousemove', (event: Event) => {
+            this.frameLayerCursorStyle = event.target.style.cursor;
+
+            this.documentResizeListener = this.renderer.listen('body', 'mousemove', (event: any) => {
                 this.onResize(event);
             });
 
@@ -571,6 +576,14 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             this.lastPageX = event.pageX;
             this.lastPageY = event.pageY;
         }
+    }
+
+    changeDocumentCursorStype(el: HTMLElement) {
+        let mDownCursor = el.style.cursor;
+        if (document.documentElement)
+            document.documentElement.style.cursor = mDownCursor;
+        else
+            document.body.style.cursor = mDownCursor;
     }
 
     onResize(event: any) {
