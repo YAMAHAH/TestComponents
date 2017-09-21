@@ -24,22 +24,24 @@ export const pcRootRouterConfig: Routes = [
     },
     {
         path: 'desktop',
-        loadChildren: '../../common/desktop/desktop.module#DesktopModule'
+        loadChildren: '../../common/desktop/desktop.module#DesktopModule',
+        data: { title: '系统导航' }
     },
     {
         path: 'main',
         component: MainComponent
-        // loadChildren: '../../common/main/main.module#MainModule'
     },
     {
         path: 'sale',
         component: IndexComponent,
         loadChildren: '../../sale/sale.module#SaleModule',
-        outlet: "sale"
+        outlet: "sale",
+        data: { title: '销售模块' }
     },
     {
         path: 'purOrder', component: IndexComponent, outlet: 'pur',
-        loadChildren: "../../pur/pur-order/pur-order.module#PurOrderModule"
+        loadChildren: "../../pur/pur-order/pur-order.module#PurOrderModule",
+        data: { title: '采购模块' }
     },
     {
         path: 'footer',

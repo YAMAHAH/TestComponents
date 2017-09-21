@@ -77,6 +77,8 @@ export class AppStoreService {
     public taskManager: ChromeTabsComponent;
     public showType: ShowTypeEnum = ShowTypeEnum.tab;
 
+    OpenedRoutes: Map<string, string> = new Map<string, string>();
+
     componentFactories: Map<string, IComponentFactoryType> = new Map<string, IComponentFactoryType>();
 
     registerComponentFactoryRef(factoryComponentType: IComponentFactoryType) {

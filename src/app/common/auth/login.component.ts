@@ -71,6 +71,7 @@ export class LoginComponent extends loginBase implements OnInit, AfterViewInit {
         options.appendComponentRef = this;
         options.rootContainer = this.viewContainerRef;
         options.injector = this.viewContainerRef.parentInjector;
+        options.controlBox = false;
 
         this.appStore.modalService.showForm(options)
             // .delay(50)

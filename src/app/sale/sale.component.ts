@@ -74,6 +74,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         private toastyConfig: ToastyConfig,
         public viewContainerRef: ViewContainerRef,
         private dialogModalService: FormService,
+        private activeRoute : ActivatedRoute,
         private carService: CarService) {
 
         super(injector);

@@ -4,16 +4,16 @@
         <span class="ui-dialog-title" *ngIf="header">{{header}}</span>
         <span class="ui-dialog-title" *ngIf="headerFacet"><ng-content select="p-header"></ng-content></span>
 
-        <a *ngIf="closable" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="close($event)">
+        <a *ngIf="controlBox && closable" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="close($event)">
             <span class="fa fa-windows fa-window-close"></span>
         </a>
-        <a *ngIf="closable" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="maximize($event)">
+        <a *ngIf="controlBox && maximizeBox" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="maximize($event)">
             <span [ngClass]="{'fa-window-maximize':modalWindowState == mwState.Normal || oldModalWindowState ==mwState.Normal,'fa-window-restore': modalWindowState==mwState.Maximized || oldModalWindowState == mwState.Maximized}" class="fa fa-fw"></span>
         </a>
-        <a *ngIf="closable" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="minimize($event)">
+        <a *ngIf="controlBox && minimizeBox" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="minimize($event)">
             <span class="fa fa-fw fa-window-minimize"></span>
         </a>
-        <a *ngIf="closable" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="fullScreen($event)">
+        <a *ngIf="controlBox && fullscreenBox" [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="fullScreen($event)">
             <span class="fa fa-fw fa-arrows-alt"></span>
         </a>
     </div>

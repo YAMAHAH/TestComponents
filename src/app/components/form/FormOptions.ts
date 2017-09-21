@@ -20,7 +20,7 @@ export class FormOptions {
     closeOnEscape: boolean = false;
     dismissableMask: boolean = false;
     responsive: boolean = true;
-    enableFlex:boolean = false;
+    enableFlex: boolean = false;
     header: string;
     showHeader: boolean = true;
     titleAlign: FormTitleAlignEnum = FormTitleAlignEnum.left;
@@ -33,6 +33,10 @@ export class FormOptions {
     contentHeight: any;
     rtl: boolean;
     closable: boolean = true;
+    controlBox: boolean = true;
+    maximizeBox: boolean = true;
+    minimizeBox: boolean = true;
+    fullscreenBox: boolean = true;
     checkCloseBeforeFn: Function; //关闭前检查函数
     closeAfterCallBackFn: Function;//关闭后回调函数
     rootContainer: ViewContainerRef;

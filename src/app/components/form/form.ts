@@ -2,14 +2,13 @@ import {
     NgModule, Component, ElementRef, AfterViewInit, AfterViewChecked,
     OnDestroy, Input, Output, EventEmitter,
     ContentChild, ViewChild, trigger, state, style,
-    transition, animate, Type, OnChanges, SimpleChanges
+    transition, animate, Type, OnChanges, SimpleChanges,
+    ComponentRef, Renderer2
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header, UISharedModule } from '../../common/shared/shared';
 import { styleUntils } from '../../untils/style';
 import { Subscription } from 'rxjs/Subscription';
-
-import { ComponentRef, Renderer2, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { DomHandler } from '../../common/dom/domhandler';
 import { IPageModel } from '../../basic/IFormModel';
@@ -68,6 +67,10 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
     @Input() rtl: boolean;
 
     @Input() closable: boolean = true;
+    @Input() controlBox: boolean = true;
+    @Input() maximizeBox: boolean = true;
+    @Input() minimizeBox: boolean = true;
+    @Input() fullscreenBox: boolean = true;
 
     @Input() responsive: boolean;
 
@@ -242,35 +245,6 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
         this.container = <HTMLDivElement>this.containerViewChild.nativeElement;
         this.contentContainer = <HTMLDivElement>this.contentViewChild.nativeElement;
 
-        // if (this.draggable) {
-        //     this.documentDragListener = this.renderer.listenGlobal('body', 'mousemove', (event: Event) => {
-        //         this.onDrag(event);
-        //     });
-        // }
-
-        // if (this.resizable) {
-        //     this.documentResizeListener = this.renderer.listenGlobal('body', 'mousemove', (event: Event) => {
-        //         this.onResize(event);
-        //     });
-
-        //     this.documentResizeEndListener = this.renderer.listenGlobal('body', 'mouseup', (event: Event) => {
-        //         if (this.resizing) {
-        //             if (this.delCustomStyleFn) {
-        //                 this.delCustomStyleFn();
-        //                 this.delCustomStyleFn = null;
-        //             }
-        //             this.resizing = false;
-        //         }
-        //         // if (this.documentDragListener) {
-        //         //     this.documentDragListener();
-        //         // }
-
-        //         // if (this.documentResizeListener) {
-        //         //     this.documentResizeListener();
-        //         // }
-        //     });
-        // }
-
         if (this.responsive) {
             this.documentResponsiveListener = this.renderer.listen('window', 'resize', (event: Event) => {
                 this.center();
@@ -314,7 +288,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        // console.log(changes);
+
     }
     setupElPosStyles() {
         let styleHtml = ` 
@@ -694,11 +668,6 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
         if (event) event.preventDefault();
         if (this.modalWindowState === FormStateEnum.Minimized) {
             this.modalWindowState = this.oldModalWindowState;
-            // this.container.style.width = this.minmizeBeforeRect.width;
-            // this.container.style.left = this.minmizeBeforeRect.left;
-            // this.container.style.height = this.minmizeBeforeRect.height;
-            // this.container.style.top = this.minmizeBeforeRect.top;
-            // this.contentContainer.style.height = this.minmizeBeforeRect.height;
             return;
         }
     }
@@ -733,11 +702,6 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             return;
         }
         this.setSize(this.oldRect);
-        // this.container.style.width = this.oldRect.width.toString() + 'px';
-        // this.container.style.left = this.oldRect.left.toString() + 'px';
-        // this.container.style.height = this.oldRect.height.toString() + 'px';
-        // this.container.style.top = this.oldRect.top.toString() + 'px';
-
         this.contentContainer.style.height = this.oldRect.height.toString() + 'px';
 
         this.modalWindowState = FormStateEnum.Normal;

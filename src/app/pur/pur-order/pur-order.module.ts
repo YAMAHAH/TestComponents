@@ -18,7 +18,7 @@ import { PurOrderService } from './purOrderService';
 
 
 export const purRouteConfig: Routes = [
-    { path: "", component: PurOrderComponent }
+    { path: "", component: PurOrderComponent, data: { title: '采购模块' } }
 ];
 
 @NgModule({

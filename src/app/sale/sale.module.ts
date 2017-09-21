@@ -32,7 +32,7 @@ import { ReportViewerModule } from '../common/report-viewer/report.viewer.module
 
 export const saleRouteConfig: Routes = [
     {
-        path: "", component: SaleComponent
+        path: "", component: SaleComponent, data: { title: '销售模块' }
     }
 ];
 
