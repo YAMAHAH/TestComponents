@@ -58,6 +58,8 @@ export class AppStoreService {
         }
     }
 
+    rightSubject$ = new BehaviorSubject<{ rightId: string; templateId: string }>(null);
+
     public blockUIEvent: EventEmitter<any>;
 
     constructor(public modalService: FormService,

@@ -6,19 +6,33 @@ import { AppComponent } from './app/app.component';
 import { AppStore, State } from './app-store';
 import { AppHMRModule } from './app/app.module.hmr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { applyMixins } from './app/untils/mixins';
+import { stringExtend } from './app/untils/string-extend';
+import { UUID } from './app/untils/uuid';
+import { BehaviorSubject } from 'rxjs/Rx';
+import { HTMLElementExtendService } from './app/untils/html-element-extend';
+
+applyMixins(String, [stringExtend]);
+
+// applyMixins(HTMLElement, [HTMLElementExtend]);
+
+
 @NgModule({
     bootstrap: [
         AppComponent
     ],
     imports: [
-        AppHMRModule,BrowserAnimationsModule
+        AppHMRModule, BrowserAnimationsModule
     ],
     providers: [
         AppStore
     ]
 })
 class MainModule {
-    constructor(public appRef: ApplicationRef, public appStore: AppStore) { }
+
+    constructor(public appRef: ApplicationRef, public appStore: AppStore) {
+
+    }
 
     hmrOnInit(store: any) {
         if (!store || !store.State) { return; }

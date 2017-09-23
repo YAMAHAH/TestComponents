@@ -33,6 +33,6 @@ import { HttpClientModule } from '@angular/common/http';
   providers: [...appRootProviders]
 })
 export class AppModule {
-  constructor(public router: Router, ) {
+  constructor(public router: Router ) {
   }
 }

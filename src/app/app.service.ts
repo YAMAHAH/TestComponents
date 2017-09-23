@@ -10,6 +10,7 @@ import { RouterService } from './services/router.service';
 import { FormService } from './components/form/FormService';
 import { CarService } from './services/car/carService';
 import { DownloadManager } from './services/download.manager';
+import { HTMLElementExtendService } from './untils/html-element-extend';
 
 export const appRootProviders = [
     AuthGuard,
@@ -22,5 +23,6 @@ export const appRootProviders = [
     AppStoreService,
     RouterService,
     DownloadManager,
-    CarService
+    CarService,
+    HTMLElementExtendService
 ];
