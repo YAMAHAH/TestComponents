@@ -8,13 +8,14 @@ import { extend } from './proxy';
 @Injectable()
 export class HTMLElementExtendService {
     constructor(private appStore: AppStoreService) {
+
     }
 
     rightObserver(element: HTMLElement = HTMLElement.prototype) {
         this.appStore.rightSubject$
             .filter(x => x.templateId == element.templateId)
             .subscribe((x: any) => {
-                element.applyRight();
+               // element.applyRight();
             });
     }
 
@@ -23,7 +24,7 @@ export class HTMLElementExtendService {
     }
 
     printInfo(info: any) {
-        // console.log(info);
+         console.log(info);
         // let Person = function (name: string) {
         //     this.name = name
         // };
@@ -40,7 +41,7 @@ export class HTMLElementExtendService {
         // console.log(Peter.age);  // 13
     }
 
-    createElementProxy(element: HTMLElement = HTMLElement.prototype) {
+    createElementProxy(target: any = HTMLElement.prototype) {
         // let names = Object.getOwnPropertyNames(HTMLElement.prototype);
         // let getters = names.filter((name) => {
         //     let result = Object.getOwnPropertyDescriptor(HTMLElement.prototype, name);
@@ -62,7 +63,7 @@ export class HTMLElementExtendService {
                 // if (typeof key === "string" && setters.indexOf(key) != -1) {
                 //     return target[key];
                 // }
-                if (propertyKey in { "required": "1", "readOnly": "1", "requried": "1", "display": "1", "hidden": "1" }) {
+                if (propertyKey in { "disabled": 1, "readOnly": 1, "required": 1, 'style': 1, "hidden": 1 }) {
                     console.log("rightKey:" + propertyKey.toString());
                 } else {
                     console.log(propertyKey);
@@ -71,8 +72,11 @@ export class HTMLElementExtendService {
                 // throw new Error('');
             }
         };
-        return new Proxy(element, handler);
+        let proxy = new Proxy(target, handler);
+        // Object.setPrototypeOf(target, proxy);
+        return proxy;
     }
+
 
     createDescriptor(element: HTMLElement, property: string): PropertyDescriptor {
         return {
@@ -89,47 +93,71 @@ export class HTMLElementExtendService {
         };
     }
 
+    // var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver
+
+    createElementMutaionObserver(target: HTMLElement) {
+        let observer = target.observer = new MutationObserver(function (mutations, observer) {
+            mutations.forEach(function (mutation) {
+                console.log(mutation);
+            });
+        });
+        let config = {
+            attributes: true,
+            attributeOldValue: true,
+            attributeFilter: [
+                'style',
+                'readOnly',
+                'required',
+                'disabled',
+                'hidden'
+            ]
+        };
+        observer.observe(target, config);
+    }
 
     initConfig(element: HTMLElement = HTMLElement.prototype) {
 
-        let _this = this;
-        element.templateId = "";
-        element._rightId = "";
-        element.subscribed = false;
-        Object.defineProperties(element, {
-            rightId: {
-                get: function () {
-                    return this._rightId;
-                },
-                set: function (newValue) {
-                    if (newValue === this._rightId) return;
-                    this._rightId = newValue;
-                    if (!this.subscribed && _this.rightObserver) {
-                        _this.rightObserver(this);
-                        this.subscribed = true;
-                        this.__proto__ = _this.createElementProxy(this.__proto__);
-                    }
-                }
-            },
-            required: _this.createDescriptor(element, "required"),
-            readOnly: _this.createDescriptor(element, "readOnly"),
-            disabled: _this.createDescriptor(element, "disabled")
-        });
-
-        element.applyRight = function () {
-            if (!!this._rightId) {
-                // element.hidden = false;
-                // element.style.visibility = ""; //可视
-                // element.style.display = "";
-                //required right.readOnly && self.readOnly
-                // if (this.hasOwnProperty('required') || 'required' in this) { console.log("has required"); }
-                // if (this.hasOwnProperty('readOnly') || 'readOnly' in this) { console.log("has readonly"); }
-                // if (this.hasOwnProperty('disabled') || 'disabled' in this) { console.log("has disabled"); }
-                // style.display="block"或style.visibility="visible"时控件或见;
-                // style.display="none"或style.visibility="hidden"时控件不可见。
-                _this.printInfo("RightID:" + this._rightId);
-            } else
-                _this.printInfo("权限ID为空,不能设置权限");
-        }
+        // let _this = this;
+        // element.templateId = "";
+        // element._rightId = "";
+        // element.subscribed = false;
+        // element.readOnly = false;
+        // element.required = false;
+        // element.disabled = false;
+        // Object.defineProperties(element, {
+        //     rightId: {
+        //         get: function () {
+        //             return this._rightId;
+        //         },
+        //         set: function (newValue) {
+        //             if (newValue === this._rightId) return;
+        //             this._rightId = newValue;
+        //             if (!this.subscribed && _this.rightObserver) {
+        //               //  _this.rightObserver(this);
+        //               //  this.subscribed = true;
+        //               //  Object.setPrototypeOf(this, _this.createElementProxy(Object.getPrototypeOf(this)));
+        //                // _this.createElementMutaionObserver(this);
+        //             }
+        //         }
+        //     },
+        //     // required: _this.createDescriptor(element, "required"),
+        //     // readOnly: _this.createDescriptor(element, "readOnly"),
+        //     // disabled: _this.createDescriptor(element, "disabled")
+        // });
+        // element.applyRight = function () {
+        //     if (!!this._rightId) {
+        //         // element.hidden = false;
+        //         // element.style.visibility = ""; //可视
+        //         // element.style.display = "";
+        //         //required right.readOnly && self.readOnly
+        //         // if (this.hasOwnProperty('required') || 'required' in this) { console.log("has required"); }
+        //         // if (this.hasOwnProperty('readOnly') || 'readOnly' in this) { console.log("has readonly"); }
+        //         // if (this.hasOwnProperty('disabled') || 'disabled' in this) { console.log("has disabled"); }
+        //         // style.display="block"或style.visibility="visible"时控件或见;
+        //         // style.display="none"或style.visibility="hidden"时控件不可见。
+        //         _this.printInfo("RightID:" + this._rightId);
+        //     } else
+        //         _this.printInfo("权限ID为空,不能设置权限");
+        // }
     }
 }

@@ -9,12 +9,11 @@ interface String {
 }
 
 interface HTMLElement {
-    //权限ID
     rightId: string;
-    subscribed:boolean;
-    _rightId: string;
     templateId: string;
-    //权限设置方法
-    applyRight(): void;
-    //权限事件
+    readOnly: boolean;
+    required: boolean;
+    disabled: boolean;
+    hidden: boolean;
+    observer: MutationObserver;
 }

@@ -3,16 +3,16 @@
     <div style="display:flex;flex:1;flex-direction: column; width:100%">
         <div [ngClass]="getClass(pageModel)" style="display:flex;flex-direction: column;height: 100%; margin: 5px; background-color: #f2f2f2">
             <div>
-                <button (click)="open()">OpenPurOrder</button>
-                <button (click)="close()">OpenPurList</button>
-                <button (click)="toggle()">toggleToPageViewer</button>
-                <button (click)="invokeReportViewer()">reportViewer</button>
-                <button class="btn btn-default" (click)="op1.toggle($event)">overlayPanel</button>
-                <button class="btn btn-default" (click)="alert();">Alert</button>
-                <button class="btn btn-default" (click)="confirm();">Confirm</button>
-                <button class="btn btn-default" (click)="prompt();">Prompt</button>
-                <button class="btn btn-default" reTitle="雾里看花" trigger="hover" rePopover="打开模式窗口" placement="top" (click)="openModal();">Open modal!</button>
-                <button class="btn btn-default" (click)="addToast()">Add Toast</button>
+                <button [keyBinding]="'btn9598'" templateId='temp293432942394293' (click)="open()">OpenPurOrder</button>
+                <button keyBinding='btn9596' (click)="close()">OpenPurList</button>
+                <button keyBinding='btn9597' (click)="toggle()">toggleToPageViewer</button>
+                <button keyBinding='btn9593' (click)="invokeReportViewer()">reportViewer</button>
+                <button keyBinding='btn95962343' class="btn btn-default" (click)="op1.toggle($event)">overlayPanel</button>
+                <button keyBinding='btn95962343243' class="btn btn-default" (click)="alert();">Alert</button>
+                <button keyBinding='btn95234234296' class="btn btn-default" (click)="confirm();">Confirm</button>
+                <button keyBinding='btn9sdfddf596' class="btn btn-default" (click)="prompt();">Prompt</button>
+                <button keyBinding='btn9dfssdswerw596' class="btn btn-default" reTitle="雾里看花" trigger="hover" rePopover="打开模式窗口" placement="top" (click)="openModal();">Open modal!</button>
+                <button keyBinding='btn95dfswerewrer96' class="btn btn-default" (click)="addToast()">Add Toast</button>
                 <x-overlayPanel [style]="{width:'455px'}" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="true" [dismissable]="false" #op1>
                     <div class="ui-g-12 ui-md-6">
                         <x-calendar [(ngModel)]="date3" [showIcon]="true"></x-calendar> <span style="margin-left:35px">{{date3|date}}</span>
@@ -25,7 +25,7 @@
                     </div>
                 </x-overlayPanel>
                 <hr>
-                <div>
+                <div keyBinding='div9sdfddf596'>
                     <x-dropdown [options]="cars" [(ngModel)]="selectedCar2" [style]="{'width':'250px'}">
                         <x-overlayPanel (onFocus)="op2.toggle($event)" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="false" [dismissable]="false" #op2>
                         </x-overlayPanel>

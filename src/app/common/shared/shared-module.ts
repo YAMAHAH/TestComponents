@@ -10,6 +10,7 @@ import { FilterPipe } from './filter.pipe';
 import { FocusDirective } from '../directives/focus.directive';
 import { JYComponentOutlet } from '../directives/component.outlet';
 import { HostViewContainerDirective } from '../directives/host.view.container';
+import { KeyBindingDirective } from '../directives/key-binding';
 
 @NgModule({
   imports: [CommonModule],
@@ -20,7 +21,8 @@ import { HostViewContainerDirective } from '../directives/host.view.container';
     TitleComponent,
     FocusDirective,
     JYComponentOutlet,
-    HostViewContainerDirective
+    HostViewContainerDirective,
+    KeyBindingDirective
   ],
   exports: [
     AwesomePipe,
@@ -33,7 +35,8 @@ import { HostViewContainerDirective } from '../directives/host.view.container';
     FormsModule,
     ReactiveFormsModule,
     HttpModule,
-    HostViewContainerDirective
+    HostViewContainerDirective,
+    KeyBindingDirective
   ]
 })
 export class SharedModule {

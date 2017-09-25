@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
 import { AppStoreService } from '../services/app.store.service';
 import { AppTaskBarActions } from '../actions/app-main-tab/app-main-tab-actions'
 import { ActionsBase, AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, SaleComponentFactoryType, PurComponentFactoryType, PurchaseEditComponentType, PurchaseListComponentType } from '../actions/actions-base';
@@ -43,6 +43,7 @@ import { AppStore } from '../../app-store';
 import { IComponentBase } from '../basic/IComponentBase';
 import { TaskQueueManager, TaskQueue } from '../untils/taskQueue';
 import { PurOrderService } from '../pur/pur-order/purOrderService';
+import { KeyBindingDirective } from '../common/directives/key-binding';
 
 
 
@@ -54,8 +55,25 @@ import { PurOrderService } from '../pur/pur-order/purOrderService';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SaleComponent extends ComponentFactoryConatiner
-    implements reducer, OnInit, OnDestroy {
+    implements reducer, OnInit, OnDestroy, AfterViewInit {
 
+    testObj: any = { a: { b: { c: "" } } };
+    @ViewChildren(KeyBindingDirective) keyBindings: QueryList<KeyBindingDirective>;
+    ngAfterViewInit(): void {
+        this.keyBindings.forEach(binding => {
+            binding.elementTemplateId = "39423742047204234234";
+        });
+        console.log(this.tryGetPath(this.testObj.a.b.c.d.e));
+    }
+
+    tryGetPath(path: any) {
+        try {
+            if (path) return true;
+            return false;
+        } catch (error) {
+            return false;
+        }
+    }
 
     subject: ISubject;
     subjectActions: any;
@@ -74,7 +92,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         private toastyConfig: ToastyConfig,
         public viewContainerRef: ViewContainerRef,
         private dialogModalService: FormService,
-        private activeRoute : ActivatedRoute,
+        private activeRoute: ActivatedRoute,
         private carService: CarService) {
 
         super(injector);
@@ -429,7 +447,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         let purOrdSrv = factoryRef.getService(PurOrderService);
         purOrdSrv && purOrdSrv.showMessage();
     }
-    
+
     fireKeyEvent(el: any, evtType: any, keyCode: any) {
         let evtObj: any;
         if (document.createEvent) {
@@ -462,7 +480,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         }
     }
 
-    invokeReportViewer(){
+    invokeReportViewer() {
         this.appStore.taskManager.showReportViewer();
     }
 
