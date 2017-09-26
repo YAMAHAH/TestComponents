@@ -35,6 +35,18 @@ export class mapUntils {
         return map;
     }
 
+    static merge(...sources: any[]) {
+        return Object.assign({}, ...sources);
+    }
+    static objectsToMap(...objs: any[]) {
+        let mergeObj = this.merge(objs);
+        let map = new Map();
+        for (let key of Object.keys(mergeObj)) {
+            map.set(key, mergeObj[key]);
+        }
+        return map;
+    }
+
     static mapToJson(map: any) {
         let keys = map.keys();
         let isAllKeyStr = true;

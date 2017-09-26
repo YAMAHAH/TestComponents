@@ -6,6 +6,7 @@ import { IAction } from '../Models/IAction';
 import { PageModelExtras } from './PageModelExtras';
 import { IComponentType } from './IComponentType';
 import { HostViewContainerDirective } from '../common/directives/host.view.container';
+import { TemplateObject } from '../Models/templdate-object';
 export interface IComponentFactoryContainer extends IComponentBase {
     /**
      * 组的标题
@@ -19,6 +20,8 @@ export interface IComponentFactoryContainer extends IComponentBase {
      * 依赖页面打开的列表
      */
     dependentPageModels: IPageModel[];
+
+    templateObjectMap: Map<string, TemplateObject>;
     /**
      * 导航树
      */
@@ -87,6 +90,11 @@ export interface IComponentFactoryContainer extends IComponentBase {
      * 获取服务
      */
     getService<T>(serviceType: Type<T> | InjectionToken<T>): T;
+    /**
+     * 根据对象ID获取对象信息
+     */
+    getTemplateObject(objectId: string): TemplateObject;
+
     /**
      * 创建列表类型的组件
      * 派生类必须实现

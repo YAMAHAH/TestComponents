@@ -1,7 +1,7 @@
 import { ComponentFactoryResolver, Injector, ViewContainerRef, Injectable, ComponentFactory, ComponentRef, Type } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { _throw } from 'rxjs/observable/throw';
-import { isType } from '../../untils/type';
+import { isType } from '../../untils/type-checker';
 import { PageViewerOptions } from './page-viewer.options';
 import { PageViewer } from './page-viewer';
 

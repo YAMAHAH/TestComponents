@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { DomHandler } from '../../common/dom/domhandler';
 import { IPageModel } from '../../basic/IFormModel';
-import { isFunction } from '../../untils/type';
+import { isFunction } from '../../untils/type-checker';
 import { SizingPointEnum } from './SelectPointEnum';
 import { FormStateEnum } from './FormStateEnum';
 import { FormTitleAlignEnum } from './FormTitleAlignEnum';

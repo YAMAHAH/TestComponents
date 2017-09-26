@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector, AfterViewInit, ViewChildren, QueryList, forwardRef, Provider } from '@angular/core';
 import { AppStoreService } from '../services/app.store.service';
 import { AppTaskBarActions } from '../actions/app-main-tab/app-main-tab-actions'
 import { ActionsBase, AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, SaleComponentFactoryType, PurComponentFactoryType, PurchaseEditComponentType, PurchaseListComponentType } from '../actions/actions-base';
@@ -44,35 +44,26 @@ import { IComponentBase } from '../basic/IComponentBase';
 import { TaskQueueManager, TaskQueue } from '../untils/taskQueue';
 import { PurOrderService } from '../pur/pur-order/purOrderService';
 import { KeyBindingDirective } from '../common/directives/key-binding';
-
-
+import { providers } from '../common/toasty/index';
+import { provideParent } from '../untils/parent-helper';
+import { tryGetValue } from '../untils/type-checker';
 
 @Component({
     moduleId: module.id,
     selector: 'x-sale',
     templateUrl: 'sale.component.html',
     styleUrls: ['sale.component.css'],
+    providers: [provideParent(SaleComponent, ComponentFactoryConatiner)],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SaleComponent extends ComponentFactoryConatiner
     implements reducer, OnInit, OnDestroy, AfterViewInit {
 
-    testObj: any = { a: { b: { c: "" } } };
     @ViewChildren(KeyBindingDirective) keyBindings: QueryList<KeyBindingDirective>;
     ngAfterViewInit(): void {
         this.keyBindings.forEach(binding => {
             binding.elementTemplateId = "39423742047204234234";
         });
-        console.log(this.tryGetPath(this.testObj.a.b.c.d.e));
-    }
-
-    tryGetPath(path: any) {
-        try {
-            if (path) return true;
-            return false;
-        } catch (error) {
-            return false;
-        }
     }
 
     subject: ISubject;

@@ -19,15 +19,22 @@ import { IComponentType } from '../../basic/IComponentType';
 import { HostViewContainerDirective } from '../../common/directives/host.view.container';
 import { FormOptions } from '../../components/form/FormOptions';
 import { PageViewerOptions } from '../../common/page-viewer/page-viewer.options';
+import { BehaviorSubject } from 'rxjs/Rx';
+import { tryGetValue } from '../../untils/type-checker';
+import { TemplateObject } from '../../Models/templdate-object';
+import { mapUntils } from '../../untils/map';
 
 export abstract class ComponentFactoryConatiner extends ComponentBase
     implements OnInit, OnDestroy, IComponentFactoryContainer {
     public viewContainerRef: ViewContainerRef;
     public componentFactoryResolver: ComponentFactoryResolver;
+    containerSubject: BehaviorSubject<{ rightId: string; templateId: string }> = new BehaviorSubject<{ rightId: string; templateId: string }>(null);
     @ViewChild(HostViewContainerDirective) pageViewerLocation: HostViewContainerDirective;
     groupTitle: string;
     principalPageModels: IPageModel[] = [];
     dependentPageModels: IPageModel[] = [];
+    templateObjectMap: Map<string, TemplateObject> = new Map<string, TemplateObject>();
+
     @ViewChild(NavTreeViewComponent) navTreeView: NavTreeViewComponent;
     createGroup(pageModelExtras?: PageModelExtras): IPageModel {
         let len = this.principalPageModels.length + 1;
@@ -403,10 +410,12 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             if (pageModels.length > 0) {
                 Observable.from(pageModels)
                     .flatMap(page => {
-                        if (pageModel && pageModel.modalRef && pageModel.modalRef.instance)
+                        let selectorResult;
+                        if (tryGetValue(() => pageModel.modalRef.instance).hasValue)
                             return Observable.fromPromise(pageModel.modalRef.instance.forceClose(null));
-                        else if (pageModel && pageModel.pageViewerRef && pageModel.pageViewerRef.instance)
+                        else if (tryGetValue(() => pageModel.pageViewerRef.instance).hasValue) {
                             return Observable.fromPromise(pageModel.pageViewerRef.instance.forceClose(null));
+                        }
                         else
                             return Observable.fromPromise(this.closePageHandler(page));
                     }).every(val => val === true)
@@ -567,45 +576,6 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         });
     }
 
-    test() {
-        // let pageNodes = this.navTreeView.toList().filter(nd => nd.isGroup == false && nd.level > -1);
-        // let pageNodeIdx = pageNodes.findIndex(nd => nd.tag == pageModel || nd.extras == pageModel);
-        // let notExistInDepends = this.getDependentPageModels().findIndex(val => val == pageModel) < 0;
-        // let pageNodeFilterFn = (nd: NavTreeNode) => {
-        //     return (nd.tag && !nd.tag.modalRef) ||
-        //         nd.tag.modalRef && nd.tag.modalRef.instance.modalWindowState !== FormStateEnum.Minimized ||
-        //         (nd.extras && !nd.extras.modalRef) ||
-        //         nd.extras.modalRef && nd.extras.modalRef.instance.modalWindowState !== FormStateEnum.Minimized
-        // }
-        // if (pageNodeIdx > -1) {
-        //     // let last = pageNodes.slice(0, pageNodeIdx).filter(pageNodeFilterFn).pop();
-        //     // let first = pageNodes.slice(pageNodeIdx + 1).filter(pageNodeFilterFn).shift();
-        //     let nextPage = pageNodes.slice(0, pageNodeIdx).filter(pageNodeFilterFn).pop() ||
-        //         pageNodes.slice(pageNodeIdx + 1).filter(pageNodeFilterFn).shift();
-        //     //let partPageNodes = pageNodes.slice(0, pageNodeIdx).filter(pageNodeFilterFn);
-        //     // let nextPage = partPageNodes[partPageNodes.length - 1];
-
-        //     // partPageNodes = pageNodes.slice(pageNodeIdx + 1).filter(pageNodeFilterFn);
-        //     // nextPage = nextPage || partPageNodes[0];
-        //     if (nextPage && notExistInDepends) {
-        //         this.setCurrent(nextPage.tag || nextPage.extras);
-        //         return;
-        //     }
-        //     //else {
-        //     //     partPageNodes = pageNodes.slice(pageNodeIdx + 1).filter(pageNodeFilterFn);
-        //     //     nextPage = partPageNodes[0];
-        //     //     if (nextPage && notExistInDepends) {
-        //     //         this.setCurrent(nextPage.tag || nextPage.extras);
-        //     //         return;
-        //     //     }
-        //     // }
-        // }
-        // if (pageModel && pageModel.godFather) {
-        //     pageModel.godFather.componentFactoryRef.selectNextVisiblePage(pageModel);
-        // } else
-        //     this.setCurrent(null);
-    }
-
     createListComponent<T extends IComponentBase>(pageModel?: IPageModel): ComponentRef<T> {
         throw new Error("Method not implemented.");
     }
@@ -627,6 +597,17 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
 
     getService<T>(serviceType: Type<T> | InjectionToken<T>): T {
         return this.injector && this.injector.get(serviceType);
+    }
+
+    registerTemplateObjects(...tempObjects: TemplateObject[]) {
+        this.templateObjectMap = mapUntils.objectsToMap(tempObjects);
+    }
+    getTemplateObject(objectId: string): TemplateObject {
+        if (this.templateObjectMap.has(objectId))
+            return this.templateObjectMap.get(objectId);
+        let tempObject = new TemplateObject(objectId);
+        this.templateObjectMap.set(objectId, tempObject);
+        return tempObject;
     }
     getComponentRef<T extends IComponentBase>(componentType: Type<T>, formModel?: IPageModel): ComponentRef<T> {
         const rootContainer = this.viewContainerRef ||

@@ -1,6 +1,10 @@
-import { Directive, OnChanges, OnDestroy, Input, SimpleChanges, ElementRef, SimpleChange } from '@angular/core';
+import {
+    Directive, OnChanges, OnDestroy, Input, SimpleChanges, ElementRef,
+    SimpleChange, Optional, Host, SkipSelf,
+} from '@angular/core';
 import { AppStoreService } from '../../services/app.store.service';
 import { Subscription } from 'rxjs/Subscription';
+import { ComponentFactoryConatiner } from '../../pur/pur-order/ComponentFactoryConatiner';
 
 @Directive({
     selector: '[keyBinding]'
@@ -17,6 +21,7 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
         this.elementTemplateId = value;
     }
     constructor(private appStore: AppStoreService,
+        @Optional() private container: ComponentFactoryConatiner,
         private elementRef: ElementRef) { }
 
     get target() {
@@ -38,6 +43,11 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
                 if (key === this.keyConst && target) {
                     target.rightId = this.keyBinding;
                     target.id = this.keyBinding;
+                    //一个容器有N个组件模板,每个模板有N个模板对象
+                    //每个元素或组件绑定到模板对象ID,模板对象的从哪里获取???????
+                    //根据idKEY获取模板对象??? 从哪里取?
+                    //绑定模板对象信息到具体的元素或组件
+                    this.container.getTemplateObject(this.keyBinding);
                 }
                 if (target && key == this.keyConst && change.firstChange) {
                     target.templateId = "" || this._templateId;
@@ -46,7 +56,7 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
                     target.disabled = false;
                     target.hidden = false;
                     //创建订阅
-                    this.unSubscriber = this.createElementSubscribe(target);
+                    this.unSubscribeFn = this.createElementSubscribe(target);
                     //创建代理
                     this.createElementProxy(target);
                     //创建变化观察者
@@ -56,13 +66,13 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
         }
     }
 
-    unSubscriber: () => void;
+    unSubscribeFn: () => void;
     ngOnDestroy(): void {
-        if (this.unSubscriber) this.unSubscriber();
+        if (this.unSubscribeFn) this.unSubscribeFn();
     }
 
     printInfo(info: any) {
-       // console.log(info);
+        // console.log(info);
     }
     applyRight(target: HTMLElement) {
         if (!!target.rightId) {
@@ -80,12 +90,23 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
             this.printInfo("权限ID为空,不能设置权限");
     }
     createElementSubscribe(target: HTMLElement) {
-        let subscription = this.appStore.rightSubject$
-            .filter(x => x.templateId == target.templateId && x.rightId == target.rightId || true)
+        //订阅全局
+        let globalSubscription = this.appStore.rightSubject$
+            .filter(x => x && x.templateId == target.templateId && x.rightId == target.rightId || true)
             .subscribe((x: any) => {
                 this.applyRight(target);
             });
-        return () => subscription.unsubscribe();
+        //订阅容器
+        let containerSubscription = this.container && this.container.containerSubject
+            .filter(x => x && x.templateId == target.templateId && x.rightId == target.rightId)
+            .subscribe(x => {
+                this.applyRight(target);
+            });
+        //创建
+        return () => {
+            globalSubscription && globalSubscription.unsubscribe();
+            containerSubscription && containerSubscription.unsubscribe();
+        };
     }
 
     createElementMutaionObserver(target: HTMLElement) {
@@ -142,4 +163,47 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
         Object.setPrototypeOf(target, proxy);
         return proxy;
     }
+}
+
+
+
+export interface TemplateAction {
+    /**
+     * 模块ID
+     */
+    moduleId: string;
+    /**
+     * 模板ID
+     */
+    templateId: string;
+    /**
+     * 对象ID
+     */
+    objectId: string;
+    /**
+     * 对象名称
+     */
+    name: string;
+    /**
+     * 对象别名
+     */
+    objectAlias: string;
+    /**
+     * 对象前缀
+     */
+    prefix: string;
+
+    /**
+     * 可视
+     */
+    visible: boolean;
+    /**
+     * 可用
+     */
+    enabled: boolean;
+    /**
+     * 标题
+     */
+    text: string;
+    componentType: string;
 }

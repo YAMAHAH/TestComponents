@@ -2,7 +2,7 @@ import { ComponentFactoryResolver, Injector, ViewContainerRef, Injectable, Compo
 import { Observable } from 'rxjs/Observable';
 import { Form } from './form';
 import { _throw } from 'rxjs/observable/throw';
-import { isType } from '../../untils/type';
+import { isType } from '../../untils/type-checker';
 import { FormOptions } from './FormOptions';
 
 @Injectable()
