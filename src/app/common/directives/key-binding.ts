@@ -5,12 +5,17 @@ import {
 import { AppStoreService } from '../../services/app.store.service';
 import { Subscription } from 'rxjs/Subscription';
 import { ComponentFactoryConatiner } from '../../pur/pur-order/ComponentFactoryConatiner';
+import { HostBinding } from '@angular/core';
 
 @Directive({
     selector: '[keyBinding]'
 })
 export class KeyBindingDirective implements OnChanges, OnDestroy {
-    @Input("keyBinding") keyBinding: string;
+
+    // @HostBinding("objectId")
+    @Input("keyBinding") objectId: string;
+
+    // @HostBinding("templateId")
     @Input() get templateId(): string {
         return this._templateId;
     }
@@ -34,33 +39,44 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
         }
     }
 
-    private keyConst = "keyBinding";
+    // @HostBinding("prefix")
+    @Input() prefix: string = "自定义指令前缀";
+
+    // @HostBinding("moduleId")
+    @Input() moduleId: string;
+
+    // @HostBinding("objectName")
+    @Input() objectName: string;
+
+    private keyConst = "objectId";
     ngOnChanges(changes: SimpleChanges) {
         let target: HTMLElement = this.elementRef.nativeElement;
         for (let key in changes) {
             if (changes.hasOwnProperty(key)) {
                 let change: SimpleChange = changes[key];
+
                 if (key === this.keyConst && target) {
-                    target.rightId = this.keyBinding;
-                    target.id = this.keyBinding;
-                    //一个容器有N个组件模板,每个模板有N个模板对象
-                    //每个元素或组件绑定到模板对象ID,模板对象的从哪里获取???????
-                    //根据idKEY获取模板对象??? 从哪里取?
-                    //绑定模板对象信息到具体的元素或组件
-                    this.container.getTemplateObject(this.keyBinding);
-                }
-                if (target && key == this.keyConst && change.firstChange) {
-                    target.templateId = "" || this._templateId;
-                    target.readOnly = false;
-                    target.required = false;
-                    target.disabled = false;
-                    target.hidden = false;
-                    //创建订阅
-                    this.unSubscribeFn = this.createElementSubscribe(target);
-                    //创建代理
-                    this.createElementProxy(target);
-                    //创建变化观察者
-                    this.createElementMutaionObserver(target);
+                    let tempObject = this.container.getTemplateClassObject(this.objectId);
+
+                    target.objectId = tempObject.objectId;
+                    target.id = tempObject.objectAlias;
+
+                    if (change.firstChange) {
+                        target.moduleId = this.objectId;
+                        target.templateId = "" || tempObject.templateId;
+                        target.dataSourceName = this.objectId;
+                        target.objectName = tempObject.name;
+                        target.readOnly = false;
+                        target.required = false;
+                        target.disabled = false;
+                        target.hidden = false;
+                        //创建订阅
+                        this.unSubscribeFn = this.createElementSubscribe(target);
+                        //创建代理
+                        this.createElementProxy(target);
+                        //创建变化观察者
+                        this.createElementMutaionObserver(target);
+                    }
                 }
             }
         }
@@ -75,7 +91,8 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
         // console.log(info);
     }
     applyRight(target: HTMLElement) {
-        if (!!target.rightId) {
+        if (!!target.objectId) {
+            let tempObject = this.container.getTemplateClassObject(this.objectId);
             // element.hidden = false;
             // element.style.visibility = ""; //可视
             // element.style.display = "";
@@ -85,20 +102,20 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
             // if (this.hasOwnProperty('disabled') || 'disabled' in this) { console.log("has disabled"); }
             // style.display="block"或style.visibility="visible"时控件或见;
             // style.display="none"或style.visibility="hidden"时控件不可见。
-            this.printInfo("RightID:" + target.rightId);
+            this.printInfo("RightID:" + target.objectId);
         } else
             this.printInfo("权限ID为空,不能设置权限");
     }
     createElementSubscribe(target: HTMLElement) {
         //订阅全局
         let globalSubscription = this.appStore.rightSubject$
-            .filter(x => x && x.templateId == target.templateId && x.rightId == target.rightId || true)
+            .filter(x => x && x.templateId == target.templateId && x.objectId == target.objectId || true)
             .subscribe((x: any) => {
                 this.applyRight(target);
             });
         //订阅容器
         let containerSubscription = this.container && this.container.containerSubject
-            .filter(x => x && x.templateId == target.templateId && x.rightId == target.rightId)
+            .filter(x => x && x.templateId == target.templateId && x.objectId == target.objectId)
             .subscribe(x => {
                 this.applyRight(target);
             });
@@ -163,47 +180,4 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
         Object.setPrototypeOf(target, proxy);
         return proxy;
     }
-}
-
-
-
-export interface TemplateAction {
-    /**
-     * 模块ID
-     */
-    moduleId: string;
-    /**
-     * 模板ID
-     */
-    templateId: string;
-    /**
-     * 对象ID
-     */
-    objectId: string;
-    /**
-     * 对象名称
-     */
-    name: string;
-    /**
-     * 对象别名
-     */
-    objectAlias: string;
-    /**
-     * 对象前缀
-     */
-    prefix: string;
-
-    /**
-     * 可视
-     */
-    visible: boolean;
-    /**
-     * 可用
-     */
-    enabled: boolean;
-    /**
-     * 标题
-     */
-    text: string;
-    componentType: string;
 }

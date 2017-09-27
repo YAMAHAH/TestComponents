@@ -3,7 +3,7 @@
     <div style="display:flex;flex:1;flex-direction: column; width:100%">
         <div [ngClass]="getClass(pageModel)" style="display:flex;flex-direction: column;height: 100%; margin: 5px; background-color: #f2f2f2">
             <div>
-                <button [keyBinding]="'btn9598'" templateId='temp293432942394293' (click)="open()">OpenPurOrder</button>
+                <button [keyBinding]="td.dataFields.Tenant_Name.objectId" (click)="open()">OpenPurOrder</button>
                 <button keyBinding='btn9596' (click)="close()">OpenPurList</button>
                 <button keyBinding='btn9597' (click)="toggle()">toggleToPageViewer</button>
                 <button keyBinding='btn9593' (click)="invokeReportViewer()">reportViewer</button>

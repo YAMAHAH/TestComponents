@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
     runOne: boolean = false;
     ngOnInit() {
         console.log(new String("abc").like("ab"));
-        setInterval(() => this.appStoreService.rightSubject$.next({ rightId: "btn9598", templateId: "" }), 3000);
+        setInterval(() => this.appStoreService.rightSubject$.next({ objectId: "btn9598", templateId: "" }), 3000);
         let tempData: string[] = [];
         this.router.events
             .filter(event => event instanceof NavigationEnd)

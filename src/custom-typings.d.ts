@@ -9,7 +9,10 @@ interface String {
 }
 
 interface HTMLElement {
-    rightId: string;
+    objectId: string;
+    objectName: string;
+    dataSourceName: string;
+    moduleId: string;
     templateId: string;
     readOnly: boolean;
     required: boolean;

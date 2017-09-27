@@ -4,8 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { XYZUIModule } from '../common/rebirth-ui.module';
 import { XYZDialogModule } from '../common/dialog/dialog.module';
-// import { ButtonModule } from 'primeng/primeng';
-import { NgModule } from '@angular/core';
+import { NgModule, forwardRef } from '@angular/core';
 import { PopoverModule } from '../common/popover/popover.module';
 import { PanelModule } from '../common/panel/panel.module';
 import { AccordionModule } from '../common/accordion/accordion.module';
@@ -29,12 +28,130 @@ import { CellEditorComponent } from './cellEditor';
 import { NavTreeViewModule } from '../components/nav-tree-view/nav-tree-view.module';
 import { SharedModule } from '../common/shared/shared-module';
 import { ReportViewerModule } from '../common/report-viewer/report.viewer.module';
+import { TemplateClassBase } from '../Models/template-class';
+import { extend } from '../untils/proxy';
+import { getClassProviders } from '../untils/di-helper';
+import { SaleOrderDataResolver } from './SaleOrderDataResolver';
 
 export const saleRouteConfig: Routes = [
     {
-        path: "", component: SaleComponent, data: { title: '销售模块' }
+        path: "", component: SaleComponent,
+        data: {
+            title: '销售模块',
+            moduleId: "dfd5eccb-f04e-ce9e-9e28-37235f9e0de1"
+        },
+        resolve: {
+            dataSource: SaleOrderDataResolver,
+            resource: SaleOrderDataResolver
+        }
     }
 ];
+export class TenantManageTemplate extends TemplateClassBase {
+
+    /** 属性 */
+    TemplateId = "c256442e-4c39-a46b-62b3-6e1103d32f57";
+    TempName = "TenantManage";
+    ModuleId = "dfd5eccb-f04e-ce9e-9e28-37235f9e0de1";
+    ModuleName = "MultiTenant";
+    /** 数据字段 */
+    dataFields = {
+        Tenant_Name: {
+            objectId: "c256442e-4c39-a46b-62b3-6e1103d32f57", templateId: "c256442e-4c39-a46b-62b3-6e1103d32f57", moduleId: "dfd5eccb-f04e-ce9e-9e28-37235f9e0de1", name: "Name", queryable: true, required: true, visible: true, editable: true, text: "租户名称",
+            default: "", dataType: "String", componentType: ""
+        },
+        Tenant_IsMaster: {
+            name: "IsMaster", queryable: true, required: true, visible: true, editable: true, text: "是否主租户",
+            default: "", dataType: "Boolean", componentType: ""
+        },
+        Tenant_SuperAdminName: {
+            name: "SuperAdminName", queryable: true, required: true, visible: true, editable: true, text: "超级管理员名称",
+            default: "", dataType: "String", componentType: ""
+        },
+        Tenant_CreateTime: {
+            name: "CreateTime", queryable: true, required: true, visible: true, editable: false, text: "创建时间",
+            default: "", dataType: "String", componentType: ""
+        },
+        Tenant_UpdateTime: {
+            name: "UpdateTime", queryable: true, required: true, visible: true, editable: true, text: "更新时间",
+            default: "", dataType: "String", componentType: ""
+        },
+        Tenant_Remark: {
+            name: "Remark", queryable: true, required: false, visible: true, editable: true, text: "备注",
+            default: "", dataType: "String", componentType: ""
+        }
+    };
+
+    /** 功能 */
+    actions = {
+        // View: {
+        //     enable: true, text: "搜索", default: true
+        // },
+        // Edit: {
+        //     enable: true, text: "编辑", default: false
+        // },
+        // Remove: {
+        //     enable: true, text: "删除", default: false
+        // }
+    };
+
+    /** 过滤器 */
+    filters = {
+
+    };
+}
+export class TenantManageTemplate2 extends TemplateClassBase {
+
+    /** 属性 */
+    TemplateId = "c256442e-4c39-a46b-62b3-6e1103d32f57";
+    TempName = "TenantManage";
+    ModuleId = "dfd5eccb-f04e-ce9e-9e28-37235f9e0de1";
+    ModuleName = "MultiTenant";
+    /** 数据字段 */
+    dataFields = {
+        Tenant_Name: {
+            objectId: "c256442e-4c39-a46b-62b3-6e1103d32f57", templateId: "c256442e-4c39-a46b-62b3-6e1103d32f57", moduleId: "dfd5eccb-f04e-ce9e-9e28-37235f9e0de1", name: "Name", queryable: true, required: true, visible: true, editable: true, text: "租户名称",
+            default: "", dataType: "String", componentType: ""
+        },
+        Tenant_IsMaster: {
+            name: "IsMaster", queryable: true, required: true, visible: true, editable: true, text: "是否主租户",
+            default: "", dataType: "Boolean", componentType: ""
+        },
+        Tenant_SuperAdminName: {
+            name: "SuperAdminName", queryable: true, required: true, visible: true, editable: true, text: "超级管理员名称",
+            default: "", dataType: "String", componentType: ""
+        },
+        Tenant_CreateTime: {
+            name: "CreateTime", queryable: false, required: false, visible: false, editable: false, text: "创建时间",
+            default: "", dataType: "String", componentType: ""
+        },
+        Tenant_UpdateTime: {
+            name: "UpdateTime", queryable: true, required: true, visible: true, editable: true, text: "更新时间",
+            default: "", dataType: "String", componentType: ""
+        },
+        Tenant_Remark: {
+            name: "Remark", queryable: true, required: false, visible: true, editable: true, text: "备注",
+            default: "", dataType: "String", componentType: ""
+        }
+    };
+
+    /** 功能 */
+    actions = {
+        // View: {
+        //     enable: true, text: "搜索", default: true
+        // },
+        // Edit: {
+        //     enable: true, text: "编辑", default: false
+        // },
+        // Remove: {
+        //     enable: true, text: "删除", default: false
+        // }
+    };
+
+    /** 过滤器 */
+    filters = {
+
+    };
+}
 
 @NgModule({
     imports: [
@@ -51,7 +168,7 @@ export const saleRouteConfig: Routes = [
         AdModule,
         ToastyModule,
         WebFormModule, OverlayPanelModule, DropdownModule, DropdownformModule,
-        AutoCompleteModule, CalendarModule, DataTableModule,ReportViewerModule
+        AutoCompleteModule, CalendarModule, DataTableModule, ReportViewerModule
     ],
     declarations: [
         SaleComponent, ColumnBodyComponent, DateColumnBodyComponent, CellEditorComponent,
@@ -65,6 +182,10 @@ export const saleRouteConfig: Routes = [
         ModalTestComponent,
         PanelTestComponent,
         SaleComponent, ColumnBodyComponent, DateColumnBodyComponent, CellEditorComponent
+    ],
+    providers: [
+        ...getClassProviders([TenantManageTemplate, TenantManageTemplate2]),
+        SaleOrderDataResolver
     ]
 })
 export class SaleModule {

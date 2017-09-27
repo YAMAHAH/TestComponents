@@ -16,6 +16,8 @@ import { WebFormModule } from './components/form/FormModule';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PageViewerModule } from './common/page-viewer/page-viewer.module';
 import { HttpClientModule } from '@angular/common/http';
+
+
 @NgModule({
   imports: [
     BrowserModule, BrowserAnimationsModule,
@@ -33,6 +35,6 @@ import { HttpClientModule } from '@angular/common/http';
   providers: [...appRootProviders]
 })
 export class AppModule {
-  constructor(public router: Router ) {
+  constructor(public router: Router) {
   }
 }

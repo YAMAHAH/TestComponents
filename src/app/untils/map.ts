@@ -13,10 +13,13 @@ export class mapUntils {
         }
     }
 
-    static mapToArray(map: any) {
+    static mapToArray<K, V>(map: any): [K, V][] {
         return [...map];
     }
 
+    static arrayToMap<K, V>(entries?: [K, V][]) {
+        return new Map(entries);
+    }
     static mapForEach(map: any, callBack: {}) {
         let reporter = {
             report: (key: any, value: any) => {

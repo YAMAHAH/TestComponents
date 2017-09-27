@@ -58,7 +58,7 @@ export class AppStoreService {
         }
     }
 
-    rightSubject$ = new BehaviorSubject<{ rightId: string; templateId: string }>(null);
+    rightSubject$ = new BehaviorSubject<{ objectId: string; templateId: string }>(null);
 
     public blockUIEvent: EventEmitter<any>;
 

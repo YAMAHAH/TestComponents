@@ -6,7 +6,7 @@ import { IAction } from '../Models/IAction';
 import { PageModelExtras } from './PageModelExtras';
 import { IComponentType } from './IComponentType';
 import { HostViewContainerDirective } from '../common/directives/host.view.container';
-import { TemplateObject } from '../Models/templdate-object';
+import { TemplateClassObject } from '../Models/template-class-object';
 export interface IComponentFactoryContainer extends IComponentBase {
     /**
      * 组的标题
@@ -21,7 +21,7 @@ export interface IComponentFactoryContainer extends IComponentBase {
      */
     dependentPageModels: IPageModel[];
 
-    templateObjectMap: Map<string, TemplateObject>;
+    templateObjectMap: Map<symbol, TemplateClassObject>;
     /**
      * 导航树
      */
@@ -93,8 +93,11 @@ export interface IComponentFactoryContainer extends IComponentBase {
     /**
      * 根据对象ID获取对象信息
      */
-    getTemplateObject(objectId: string): TemplateObject;
-
+    getTemplateClassObject(objectId: string): TemplateClassObject;
+    /**
+     *  注册模板类对象
+     */
+    registerTemplateObjects(...tempObjects: TemplateClassObject[]): void;
     /**
      * 创建列表类型的组件
      * 派生类必须实现

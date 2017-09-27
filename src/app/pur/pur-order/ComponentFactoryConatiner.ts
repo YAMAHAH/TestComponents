@@ -21,19 +21,20 @@ import { FormOptions } from '../../components/form/FormOptions';
 import { PageViewerOptions } from '../../common/page-viewer/page-viewer.options';
 import { BehaviorSubject } from 'rxjs/Rx';
 import { tryGetValue } from '../../untils/type-checker';
-import { TemplateObject } from '../../Models/templdate-object';
+import { TemplateClassObject } from '../../Models/template-class-object';
 import { mapUntils } from '../../untils/map';
+import { TemplateClassBase } from '../../Models/template-class';
 
 export abstract class ComponentFactoryConatiner extends ComponentBase
     implements OnInit, OnDestroy, IComponentFactoryContainer {
     public viewContainerRef: ViewContainerRef;
     public componentFactoryResolver: ComponentFactoryResolver;
-    containerSubject: BehaviorSubject<{ rightId: string; templateId: string }> = new BehaviorSubject<{ rightId: string; templateId: string }>(null);
+    containerSubject: BehaviorSubject<{ objectId: string; templateId: string }> = new BehaviorSubject<{ objectId: string; templateId: string }>(null);
     @ViewChild(HostViewContainerDirective) pageViewerLocation: HostViewContainerDirective;
     groupTitle: string;
     principalPageModels: IPageModel[] = [];
     dependentPageModels: IPageModel[] = [];
-    templateObjectMap: Map<string, TemplateObject> = new Map<string, TemplateObject>();
+    templateObjectMap: Map<symbol, TemplateClassObject> = new Map<symbol, TemplateClassObject>();
 
     @ViewChild(NavTreeViewComponent) navTreeView: NavTreeViewComponent;
     createGroup(pageModelExtras?: PageModelExtras): IPageModel {
@@ -599,14 +600,17 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
         return this.injector && this.injector.get(serviceType);
     }
 
-    registerTemplateObjects(...tempObjects: TemplateObject[]) {
-        this.templateObjectMap = mapUntils.objectsToMap(tempObjects);
+    registerTemplateObjects(...tempObjects: TemplateClassObject[]) {
+        tempObjects.forEach(tempObj => {
+            this.templateObjectMap.set(Symbol.for(tempObj.objectId), tempObj);
+        });
     }
-    getTemplateObject(objectId: string): TemplateObject {
-        if (this.templateObjectMap.has(objectId))
-            return this.templateObjectMap.get(objectId);
-        let tempObject = new TemplateObject(objectId);
-        this.templateObjectMap.set(objectId, tempObject);
+    getTemplateClassObject(objectId: string): TemplateClassObject {
+        let objectIdKey = Symbol.for(objectId);
+        if (this.templateObjectMap.has(objectIdKey))
+            return this.templateObjectMap.get(objectIdKey);
+        let tempObject = new TemplateClassObject(objectId);
+        this.templateObjectMap.set(objectIdKey, tempObject);
         return tempObject;
     }
     getComponentRef<T extends IComponentBase>(componentType: Type<T>, formModel?: IPageModel): ComponentRef<T> {

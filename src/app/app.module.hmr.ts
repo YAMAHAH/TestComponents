@@ -17,6 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PageViewerModule } from './common/page-viewer/page-viewer.module';
 import { HttpClientModule } from '@angular/common/http';
 
+
 @NgModule({
   imports: [
     BrowserModule, BrowserAnimationsModule,

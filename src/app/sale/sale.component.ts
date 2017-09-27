@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector, AfterViewInit, ViewChildren, QueryList, forwardRef, Provider } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector, AfterViewInit, ViewChildren, QueryList, forwardRef, Provider, Inject, Optional } from '@angular/core';
 import { AppStoreService } from '../services/app.store.service';
 import { AppTaskBarActions } from '../actions/app-main-tab/app-main-tab-actions'
 import { ActionsBase, AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, SaleComponentFactoryType, PurComponentFactoryType, PurchaseEditComponentType, PurchaseListComponentType } from '../actions/actions-base';
@@ -15,7 +15,7 @@ import { Observable } from 'rxjs/Observable';
 import { SaleOrderActions, AddSaleOrderAction, RemoveSaleOrderAction } from '../actions/sale/sale-order-actions';
 import { ISubject, IAction } from '../Models/IAction';
 import { PurOrderActions } from '../actions/pur/pur-order-actions';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Modal } from '../common/modal/modal.model';
 import { ModalTestComponent } from './modal.test.component';
 import { reducer } from '../basic/IReducer';
@@ -45,8 +45,10 @@ import { TaskQueueManager, TaskQueue } from '../untils/taskQueue';
 import { PurOrderService } from '../pur/pur-order/purOrderService';
 import { KeyBindingDirective } from '../common/directives/key-binding';
 import { providers } from '../common/toasty/index';
-import { provideParent } from '../untils/parent-helper';
+import { provideParent } from '../untils/di-helper';
 import { tryGetValue } from '../untils/type-checker';
+import { TenantManageTemplate } from './sale.module';
+import { TemplateClassBase } from '../Models/template-class';
 
 @Component({
     moduleId: module.id,
@@ -84,10 +86,13 @@ export class SaleComponent extends ComponentFactoryConatiner
         public viewContainerRef: ViewContainerRef,
         private dialogModalService: FormService,
         private activeRoute: ActivatedRoute,
-        private carService: CarService) {
+        private carService: CarService,
+        private router: Router,
+        @Inject(forwardRef(() => TenantManageTemplate)) public td: TenantManageTemplate
 
+    ) { //
         super(injector);
-
+        console.log(injector.get(TenantManageTemplate));
         this.cars = [];
         this.cars.push({ label: 'Audi', value: 'Audi' });
         this.cars.push({ label: 'BMW', value: 'BMW' });
@@ -553,7 +558,10 @@ export class SaleComponent extends ComponentFactoryConatiner
 
     pageModel: IPageModel = { title: '销售订单', active: true, childs: [] };
     ngOnInit() {
-
+        this.activeRouter.data
+            .subscribe((data:any) => {
+              console.log(data);
+            });
         // this.setHostElementStyle();
         this.pageModel.closeAfterFn = this.closeAfterFn;
         this.pageModel.elementRef = this.viewContainerRef.element.nativeElement;

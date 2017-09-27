@@ -1,4 +1,4 @@
-export class TemplateObject {
+export class TemplateClassObject {
 
     constructor(id: string) {
         this.objectId = id;
@@ -6,15 +6,15 @@ export class TemplateObject {
     /**
      * 模块ID
      */
-    moduleId: string;
+    moduleId?: string;
     /**
      * 模板ID
      */
-    templateId: string;
+    templateId?: string;
     /**
      * 对象ID
      */
-    objectId: string;
+    objectId?: string;
     /**
      * 对象名称
      */
@@ -22,11 +22,11 @@ export class TemplateObject {
     /**
      * 对象别名
      */
-    objectAlias: string;
+    objectAlias?: string;
     /**
      * 对象前缀
      */
-    prefix: string;
+    prefix?: string;
     /**
      * 可查
      */
