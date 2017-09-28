@@ -30,19 +30,24 @@ export class TemplateClassObject {
     /**
      * 可查
      */
-    queryable: boolean;
+    queryable: boolean = true;
     /**
      * 必须
      */
-    required: boolean;
+    required: boolean = false;
+
+    /**
+     * 可用
+     */
+    enabled?: boolean = false;
     /**
      * 可视
      */
-    visible: boolean;
+    visible: boolean = true;
     /**
      * 可编
      */
-    editable: boolean;
+    editable: boolean = false;
     /**
      * 标题
      */

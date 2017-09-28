@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
         private titleService: Title,
         private htmlElementService: HTMLElementExtendService
     ) {
-       // this.htmlElementService.initConfig();
+        this.htmlElementService.initConfig(HTMLElement.prototype);
 
         // if (["localhost", "127.0.0.1"].findIndex(h => h == location.hostname) > -1) {
         //   this.appStateService.host = "http://" + location.host;
@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
     runOne: boolean = false;
     ngOnInit() {
         console.log(new String("abc").like("ab"));
-        setInterval(() => this.appStoreService.rightSubject$.next({ objectId: "btn9598", templateId: "" }), 3000);
+        setTimeout(() => this.appStoreService.rightSubject$.next({ objectId: "div9sdfddf596", templateId: "" }), 8000); //39423742047204234234
         let tempData: string[] = [];
         this.router.events
             .filter(event => event instanceof NavigationEnd)

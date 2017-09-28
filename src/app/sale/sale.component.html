@@ -42,7 +42,7 @@
                         <dt-column *ngFor="let col of cols" [style]=" {'overflow':'visible' }" [editable]="true" [cellEditor]="col.cellEditor" [cellComponent]="col.cellComponent" [sortable]="true" [field]="col.field" [header]="col.header"></dt-column>
                     </x-dataTable>
                     <section>
-                        <x-autoComplete ([ngModel])="brand" [componentOutlet]="componentOutlet" [panelStyle]="{'width':'260px'}" [style]="{'width':'250px'}" [inputStyle]="{'width':'232px'}" [suggestions]="filteredBrands" [dropdown]="true" (onDropdownClick)="handleDropdownClick($event)"
+                        <x-autoComplete keyBinding='div9sdfddf596' ([ngModel])="brand" [componentOutlet]="componentOutlet" [panelStyle]="{'width':'260px'}" [style]="{'width':'250px'}" [inputStyle]="{'width':'232px'}" [suggestions]="filteredBrands" [dropdown]="true" (onDropdownClick)="handleDropdownClick($event)"
                             (completeMethod)="filterBrands($event)">
                             <ng-template let-brand pTemplate="item">
                                 <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">

@@ -154,7 +154,7 @@ export class ReportViewer implements OnInit, OnDestroy {
         let rptUrl = reportUrl || 'http://localhost:9500/home/pdf';
         let httpParams = new HttpParams().set("report", reportId);
         this.httpClient.get(rptUrl,
-            { headers: requestHeaders, params: httpParams, responseType: "arraybuffer" })
+            { headers: requestHeaders, params: httpParams, withCredentials: true, responseType: "arraybuffer" })
             .subscribe(data => {
                 let uInt8Array = new Uint8Array(data);
                 let file = new Blob([uInt8Array], { type: "application/pdf" });

@@ -80,24 +80,6 @@ export class TenantManageTemplate extends TemplateClassBase {
             default: "", dataType: "String", componentType: ""
         }
     };
-
-    /** 功能 */
-    actions = {
-        // View: {
-        //     enable: true, text: "搜索", default: true
-        // },
-        // Edit: {
-        //     enable: true, text: "编辑", default: false
-        // },
-        // Remove: {
-        //     enable: true, text: "删除", default: false
-        // }
-    };
-
-    /** 过滤器 */
-    filters = {
-
-    };
 }
 export class TenantManageTemplate2 extends TemplateClassBase {
 
@@ -132,24 +114,6 @@ export class TenantManageTemplate2 extends TemplateClassBase {
             name: "Remark", queryable: true, required: false, visible: true, editable: true, text: "备注",
             default: "", dataType: "String", componentType: ""
         }
-    };
-
-    /** 功能 */
-    actions = {
-        // View: {
-        //     enable: true, text: "搜索", default: true
-        // },
-        // Edit: {
-        //     enable: true, text: "编辑", default: false
-        // },
-        // Remove: {
-        //     enable: true, text: "删除", default: false
-        // }
-    };
-
-    /** 过滤器 */
-    filters = {
-
     };
 }
 
