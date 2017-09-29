@@ -9,7 +9,7 @@ x-desktop-layout-container {
     justify-content: flex-start;
     align-content: flex-start;
     margin: 0px;
-    background-image: url(/assets/img/win10.jpg);
+    /* background-image: url(/assets/img/win10.jpg); */
     background-position: center;
     background-repeat: no-repeat;
 }

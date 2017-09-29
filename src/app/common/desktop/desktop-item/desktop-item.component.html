@@ -1,6 +1,6 @@
 <p *ngIf="!item.isEmpty">
     <a (click)="onClick($event,item)" (dblclick)="onDblClick($event,item)">
-        <img [src]="item.favicon">
+        <img width="64" height="64" [imgLazyLoad]="item.favicon">
         <br>{{item.title}}
     </a>
 </p>

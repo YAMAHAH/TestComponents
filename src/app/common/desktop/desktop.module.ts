@@ -16,7 +16,8 @@ import { SharedModule } from '../shared/shared-module';
         CommonModule,SharedModule,
         RouterModule.forChild(desktopRouterConfig),
         DesktopLayoutContainerModule,
-        DesktopItemModule
+        DesktopItemModule,
+        SharedModule
     ],
     declarations: [
         DesktopComponent,

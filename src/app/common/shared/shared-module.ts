@@ -11,6 +11,7 @@ import { FocusDirective } from '../directives/focus.directive';
 import { JYComponentOutlet } from '../directives/component.outlet';
 import { HostViewContainerDirective } from '../directives/host.view.container';
 import { KeyBindingDirective } from '../directives/key-binding';
+import { ImageLazyLoadDirective } from '../directives/img-lazy-load.directive';
 
 @NgModule({
   imports: [CommonModule],
@@ -22,7 +23,8 @@ import { KeyBindingDirective } from '../directives/key-binding';
     FocusDirective,
     JYComponentOutlet,
     HostViewContainerDirective,
-    KeyBindingDirective
+    KeyBindingDirective,
+    ImageLazyLoadDirective
   ],
   exports: [
     AwesomePipe,
@@ -36,7 +38,8 @@ import { KeyBindingDirective } from '../directives/key-binding';
     ReactiveFormsModule,
     HttpModule,
     HostViewContainerDirective,
-    KeyBindingDirective
+    KeyBindingDirective,
+    ImageLazyLoadDirective
   ]
 })
 export class SharedModule {
