@@ -1,4 +1,4 @@
-import { Directive, Input, ElementRef, OnChanges, SimpleChanges, Renderer2, AfterViewInit, OnInit } from '@angular/core';
+import { Directive, Input, ElementRef, OnChanges, SimpleChanges, Renderer2, AfterViewInit, OnInit, SimpleChange } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -24,26 +24,33 @@ export class ImageLazyLoadDirective implements OnChanges, AfterViewInit, OnInit 
     unSubscriber: Subscription;
     ngOnChanges(changes: SimpleChanges) {
         if (!this.loaded) {
-            if (this.unSubscriber) this.unSubscriber.unsubscribe();
-            let eventStream$;
-            if (this.event == "scroll") {
-                eventStream$ = Observable.fromEvent(this.container, "scroll");
+            for (let key in changes) {
+                if (changes.hasOwnProperty(key)) {
+                    let change: SimpleChange = changes[key];
+                    if (key === "originalUrl" && this.originalUrl && change.isFirstChange) {
+                        if (this.preLoad) this.preLoadImage(this.originalUrl);
+                        if (this.unSubscriber) this.unSubscriber.unsubscribe();
+                        let eventStream$;
+                        if (this.event == "scroll") {
+                            eventStream$ = Observable.fromEvent(this.container, "scroll");
+                        }
+                        else if (this.event == 'click')
+                            eventStream$ = Observable.fromEvent(this.element.nativeElement, "click");
+                        else if (this.event == 'mouseOver')
+                            eventStream$ = Observable.fromEvent(this.element.nativeElement, "mouseover");
+                        if (eventStream$)
+                            this.unSubscriber = eventStream$.subscribe(res => this.imageLoadCheck());
+                    }
+                }
             }
-            else if (this.event == 'click')
-                eventStream$ = Observable.fromEvent(this.element.nativeElement, "click");
-            else if (this.event == 'mouseOver')
-                eventStream$ = Observable.fromEvent(this.element.nativeElement, "mouseover");
-            if (eventStream$)
-                this.unSubscriber = eventStream$.subscribe(res => this.check());
         }
     }
     ngOnInit(): void {
-        this.preLoadImage(this.originalUrl);
     }
     ngAfterViewInit(): void {
         setTimeout(() => {
             if (this.event == "scroll") {
-                this.check();
+                this.imageLoadCheck();
             }
         }, 20);
     }
@@ -62,15 +69,19 @@ export class ImageLazyLoadDirective implements OnChanges, AfterViewInit, OnInit 
 
     preLoadImage(url: string, callback?: () => void) {
         if (this.preLoad) {
-            let img = new Image(); //创建一个Image对象，实现图片的预下载 
+            let img = new Image(); //创建一个Image对象，实现图片的预下载   
+            let loadComplete: boolean = false;
+            img.onload = () => { //图片下载完毕时异步调用callback函数。 
+                if (!loadComplete)
+                    img.onload = null;
+                if (callback) callback.call(img);//将回调函数的this替换为Image对象 
+            };
             img.src = url;
             if (img.complete) { // 如果图片已经存在于浏览器缓存，直接调用回调函数 
+                loadComplete = true;
                 if (callback) callback.call(img);
                 return; // 直接返回，不用再处理onload事件 
             }
-            img.onload = () => { //图片下载完毕时异步调用callback函数。 
-                if (callback) callback.call(img);//将回调函数的this替换为Image对象 
-            };
         }
     }
 
@@ -83,7 +94,7 @@ export class ImageLazyLoadDirective implements OnChanges, AfterViewInit, OnInit 
             !this.target.hidden;
     }
     private counter: number;
-    check() {
+    imageLoadCheck() {
         if (this.skip_invisible && !this.isVisible) return;
         if (this.aboveTheTop() || this.leftOfBegin()) {
             /* Nothing. */

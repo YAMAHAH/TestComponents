@@ -1,34 +1,34 @@
 import {
     Directive, OnChanges, OnDestroy, Input, SimpleChanges, ElementRef,
-    SimpleChange, Optional, Host, SkipSelf,
+    SimpleChange, Optional
 } from '@angular/core';
 import { AppStoreService } from '../../services/app.store.service';
 import { Subscription } from 'rxjs/Subscription';
 import { ComponentFactoryConatiner } from '../../pur/pur-order/ComponentFactoryConatiner';
-import { HostBinding } from '@angular/core';
-import { isFunction } from 'util';
+import { Subject } from 'rxjs/Rx';
+import { AuthorizeModel } from '../../Models/authorizeModel';
 
 @Directive({
     selector: '[keyBinding]'
 })
 export class KeyBindingDirective implements OnChanges, OnDestroy {
 
-    // @HostBinding("objectId")
     @Input("keyBinding") objectId: string;
 
-    // @HostBinding("templateId")
+    @Input() modelRef: AuthorizeModel;
     @Input() get templateId(): string {
         return this._templateId;
     }
+
     private _templateId: string;
     set templateId(value: string) {
         if (this._templateId != value)
             this._templateId = value;
-        this.elementTemplateId = value;
     }
     constructor(private appStore: AppStoreService,
         @Optional() private container: ComponentFactoryConatiner,
-        private elementRef: ElementRef) { }
+        private elementRef: ElementRef) {
+    }
 
     get target() {
         return <HTMLElement>this.elementRef.nativeElement;
@@ -39,68 +39,63 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
             this._templateId = value;
         }
     }
-
-    // @HostBinding("prefix")
-    @Input() prefix: string = "自定义指令前缀";
-
-    // @HostBinding("moduleId")
-    @Input() moduleId: string;
-
-    private _objectName: string;
-    // @HostBinding("objectName")
-    get objectName(): string {
-        return this._objectName;
-    }
-
-    set objectName(newValue: string) {
-        this._objectName = newValue;
-    }
     private keyConst = "objectId";
     ngOnChanges(changes: SimpleChanges) {
-        let target: HTMLElement = this.elementRef.nativeElement;
         for (let key in changes) {
             if (changes.hasOwnProperty(key)) {
                 let change: SimpleChange = changes[key];
 
-                if (key === this.keyConst && target) {
-                    let tempObject = this.container.getTemplateClassObject(this.objectId);
-
-                    target.objectId = tempObject.objectId;
-                    target.id = tempObject.objectId;
-
+                if (key === this.keyConst && this.target) {
+                    this.target.id = this.objectId;
+                    this.target.objectId = this.objectId;
                     if (change.firstChange) {
-                        // target.moduleId = this.objectId;
-                        // target.setAttribute("templateId", this.objectId);
-                        //target.templateId = "" || tempObject.templateId;
-                        //target.dataSourceName = this.objectId;
-                        // target.objectName = tempObject.name;
-                        // this._objectName = tempObject.objectId;
-                        target.readOnly = false;
-                        target.required = false;
-                        target.disabled = false;
-                        target.hidden = false;
                         //创建订阅
-                        this.unSubscribeFn = this.createElementSubscribe(target);
+                        this.unSubscribeFn = this.createElementSubscribe();
                         //创建代理
-                        this.createElementProxy(target);
+                        this.createElementProxy(this.target);
                         //创建变化观察者
-                        this.createElementMutaionObserver(target);
+                        this.createElementMutaionObserver(this.target);
                     }
                 }
             }
         }
     }
     unSubscribeFn: () => void;
+
+    createChildElementProxyAndMutaion(target: HTMLElement) {
+        if (!!!target.objectId && target) {
+            if (!!!target.observer)
+                this.createElementMutaionObserver(target);
+            if (!!!target.isProxy)
+                this.createElementProxy(target);
+            for (let index = 0; index < target.children.length; index++) {
+                let childElement = target.children[index];
+                this.createChildElementProxyAndMutaion(<HTMLElement>childElement);
+            }
+        }
+    }
     ngOnDestroy(): void {
         if (this.unSubscribeFn) this.unSubscribeFn();
     }
 
     applyChildAuthorize(target: HTMLElement, objectId: string) {
         if (!!!target.objectId && target && !!objectId) {
+            if (!!!target.observer) {
+                this.createChildElementMutaionObserver(target);
+            }
+            if (!!!target.isProxy) {
+                this.createElementProxy(target);
+            }
+
             let tempObject = this.container.getTemplateClassObject(objectId);
             target.required = tempObject.required;
-            if (!tempObject.editable) target.readOnly = true;
-            if (!tempObject.enabled) target.disabled = true;
+
+            if (!tempObject.editable)
+                target.readOnly = true;
+
+            if (!tempObject.enabled)
+                target.disabled = true;
+
             if (!tempObject.visible) {
                 target.style.display = "none";
                 target.style.visibility = "hidden";
@@ -113,44 +108,86 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
         }
     }
     loopCtrlVar: number = 0;
+
+    hasAttribute(attribute: string) {
+        return (attribute in this.target || this.target.hasOwnProperty(attribute) || this.target.hasAttribute(attribute));
+    }
+    //  获取对象的原型链
+    getPrototypeChain(target: HTMLElement) {
+        let result = [], proto = target;
+        while (proto != null) {
+            proto = Object.getPrototypeOf(target);
+            if (proto != null) {
+                result.push(proto);
+                target = proto;
+            }
+        }
+        return result;
+    }
     private authorizeProcessing: boolean = false;
-    applyAuthorize(target: HTMLElement) {
+    applyAuthorize() {
         this.loopCtrlVar++;
-        if (this.loopCtrlVar < 3 && !this.authorizeProcessing && !!target.objectId) {
+        if (this.loopCtrlVar < 3 && !this.authorizeProcessing && !!this.objectId) {
             this.authorizeProcessing = true;
             let tempObject = this.container.getTemplateClassObject(this.objectId);
-            target.required = tempObject.required;
-            if (!tempObject.editable) target.readOnly = true;
-            if (!tempObject.enabled) target.disabled = true;
-            if (!tempObject.visible) {
-                target.style.display = "none";
-                target.style.visibility = "hidden";
-                target.hidden = true;
+
+            this.target.required = tempObject.required;
+            if (this.modelRef) {
+                this.modelRef.required = tempObject.required;
             }
-            for (let index = 0; index < target.children.length; index++) {
-                let childElement = target.children[index];
+
+            if (!tempObject.editable) {
+                this.target.readOnly = true;
+                if (this.modelRef) {
+                    this.modelRef.editable = false;
+                }
+            }
+
+            if (!tempObject.enabled) {
+                this.target.disabled = true;
+                if (this.modelRef) {
+                    this.modelRef.enabled = false;
+                }
+            }
+
+            if (!tempObject.visible) {
+                this.target.style.display = "none";
+                this.target.style.visibility = "hidden";
+                this.target.hidden = true;
+                if (this.modelRef) {
+                    this.modelRef.visible = false;
+                }
+            }
+            for (let index = 0; index < this.target.children.length; index++) {
+                let childElement = this.target.children[index];
                 this.applyChildAuthorize(<HTMLElement>childElement, this.objectId);
             }
         }
         this.authorizeProcessing = false;
         if (this.loopCtrlVar > 2) this.loopCtrlVar = 0;
     }
-    createElementSubscribe(target: HTMLElement) {
+    createElementSubscribe() {
+        this.updateAuthorize$
+            .debounceTime(200)
+            .subscribe(res => {
+                this.updateAuthorize();
+                this.authorizeUpdated = false;
+            });
         //订阅全局
         let globalSubscription = this.appStore.rightSubject$
             .distinctUntilChanged()
-            .filter(x => x && x.templateId == target.templateId && x.objectId == target.objectId || true)
+            .filter(x => x && x.templateId == this.templateId && x.objectId == this.objectId || true)
             .subscribe((x: any) => {
                 if (x) {
-                    this.applyAuthorize(target);
+                    this.applyAuthorize();
                 }
             });
         //订阅容器
         let containerSubscription = this.container && this.container.containerSubject
-            .filter(x => x && x.templateId == target.templateId && x.objectId == target.objectId)
+            .filter(x => x && x.templateId == this.templateId && x.objectId == this.objectId)
             .subscribe(x => {
                 if (x)
-                    this.applyAuthorize(target);
+                    this.applyAuthorize();
             });
         //创建
         return () => {
@@ -158,18 +195,28 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
             containerSubscription && containerSubscription.unsubscribe();
         };
     }
-    private propertyChanged: boolean = false;
-    createElementMutaionObserver(target: HTMLElement) {
-        let observer = target.observer = new MutationObserver((mutations, observer) => {
-            mutations.forEach((mutation) => {
-                console.log(mutation);
-            });
-            this.loopCtrlVar++;
-            console.log(this.loopCtrlVar);
-            if (this.loopCtrlVar < 3 && !this.authorizeProcessing && target.objectId)
-                this.applyAuthorize(target);
-            if (this.loopCtrlVar > 2) this.loopCtrlVar = 0;
+    private authorizeUpdated: boolean = false;
 
+    updateAuthorize() {
+        if (this.authorizeUpdated) return;
+        this.authorizeUpdated = true;
+        this.loopCtrlVar++;
+        if (this.loopCtrlVar < 3 && !this.authorizeProcessing && !!this.objectId) {
+            this.applyAuthorize();
+        }
+        if (this.loopCtrlVar > 2) this.loopCtrlVar = 0;
+    }
+
+    updateAuthorize$: Subject<HTMLElement> = new Subject<HTMLElement>();
+    createElementMutaionObserver(target: HTMLElement) {
+        target.observer = new MutationObserver((mutations, observer) => {
+            // mutations.forEach((mutation) => {
+            //     console.log(mutation);
+            // });
+
+            // this.updateAuthorize$.next(target);
+            this.updateAuthorize();
+            this.authorizeUpdated = false;
         });
         let config: MutationObserverInit = {
             attributes: true,
@@ -182,53 +229,58 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
                 'hidden'
             ]
         };
-        observer.observe(target, config);
+        target.observer.observe(target, config);
+    }
+    createChildElementMutaionObserver(target: HTMLElement) {
+        target.observer = new MutationObserver((mutations, observer) => {
+            this.updateAuthorize$.next(target);
+        });
+        let config: MutationObserverInit = {
+            attributes: true,
+            attributeOldValue: true,
+            attributeFilter: [
+                'style',
+                'readOnly',
+                'required',
+                'disabled',
+                'hidden'
+            ]
+        };
+        target.observer.observe(target, config);
     }
     createElementProxy(target: HTMLElement) {
-        // let names = Object.getOwnPropertyNames(HTMLElement.prototype);
-        // let getters = names.filter((name) => {
-        //     let result = Object.getOwnPropertyDescriptor(HTMLElement.prototype, name);
-        //     return !!result.get;
-        // });
-        // let setters = names.filter((name) => {
-        //     let result = Object.getOwnPropertyDescriptor(HTMLElement.prototype, name);
-        //     return !!result.set;
-        // });
-        let handler = {
-            get(target: any, propertyKey: PropertyKey, receiver: any) {
-                // let value = target[propertyKey];
-                // if (typeof propertyKey === "string" && getters.indexOf(propertyKey) != -1) {
-                //     return target[propertyKey];
-                // }
-                // if (isFunction(value)) {
-                //     console.log("method");
-                //     return function (...argumens: any[]) {
-                //         // logMethodAsync(new Date(), key);
-                //         return Reflect.apply(value, target, arguments);
-                //     };
-                // } else
-                return Reflect.get(target, propertyKey, receiver);
-            },
-            set(target: any, propertyKey: PropertyKey, value: any, receiver?: any) {
-                // if (typeof key === "string" && setters.indexOf(key) != -1) {
-                //     return target[key];
-                // }
-                if (propertyKey in { "disabled": "disabled", "readOnly": "readOnly", "required": "required", 'style': "style", "hidden": "hidden" }) {
-                    let res = Reflect.set(target, propertyKey, value, receiver);
-                    return res;
-                } else {
-                    return Reflect.set(target, propertyKey, value, receiver);
+
+        let handler = () => {
+            let _self = this;
+            return {
+                get: function (target: any, propertyKey: PropertyKey, receiver: any) {
+                    if (propertyKey === 'isProxy')
+                        return true;
+                    else
+                        return Reflect.get(target, propertyKey, receiver);
+                },
+                set: function (target: any, propertyKey: PropertyKey, value: any, receiver?: any) {
+                    if (propertyKey in { "disabled": "disabled", "readOnly": "readOnly", "required": "required", 'style': "style", "hidden": "hidden" }) {
+                        let res = Reflect.set(target, propertyKey, value, receiver);
+                        _self.authorizeUpdated = false;
+                        _self.updateAuthorize();
+                        if (!_self.target.hasAttribute(propertyKey.toString())) {
+                            _self.authorizeUpdated = false;
+                        }
+                        return res;
+                    } else {
+                        return Reflect.set(target, propertyKey, value, receiver);
+                    }
+                },
+                apply: function (target: any, thisBinding: any, ...args: any[]) {
+                    return Reflect.apply(target, thisBinding, args);
+                },
+                construct: function (target: any, ...args: any[]) {
+                    return Reflect.construct(target, args);
                 }
-            },
-            apply(target: any, thisBinding: any, ...args: any[]) {
-                console.log(target);
-                return Reflect.apply(target, thisBinding, args);
-            },
-            construct(target: any, ...args: any[]) {
-                return Reflect.construct(target, args);
-            }
+            };
         };
-        let proxy = new Proxy(Object.getPrototypeOf(target), handler);
+        let proxy = new Proxy(Object.getPrototypeOf(target), handler());
         Object.setPrototypeOf(target, proxy);
         return proxy;
     }

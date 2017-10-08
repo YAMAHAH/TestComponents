@@ -47,7 +47,7 @@ export class TemplateClassObject {
     /**
      * 可编
      */
-    editable: boolean = false;
+    editable: boolean = true;
     /**
      * 标题
      */

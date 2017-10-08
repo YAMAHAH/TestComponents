@@ -11,63 +11,87 @@ export class HTMLElementExtendService {
         return {
             ...Object.getOwnPropertyDescriptor(element, property),
             ...{
-                set(value: any) {
+                set: function (value: any) {
+                    // return Reflect.set(element, '_' + property, value);
+                    // this.setAttribute(property, value);
                     if (value)
                         this.setAttribute(property, value);
                     else
                         this.removeAttribute(property);
-                }
+                },
+                // get: function () {
+                //     return this.hasAttribute(property) ? this.getAttribute(property) : 
+                // }
             }
         };
     }
 
     initConfig(target: HTMLElement = HTMLElement.prototype) {
-        // let _self = this;
-        // target.moduleId = "";
-        // target.templateId = "";
-        // target.dataSourceName = "";
-        // // target.objectId = "";
-        // target.objectName = "";
-        // // target.readOnly = false;
-        // // target.required = false;
-        // // target.disabled = false;
-        // Object.defineProperties(target, {
-
-        //     moduleId: this.createDescriptor(target, "moduleId"),
-        //     templateId: this.createDescriptor(target, "templateId"),
-        //     objectId: this.createDescriptor(target, "objectId"),
-        //     required: this.createDescriptor(target, "required"),
-        //     readOnly: this.createDescriptor(target, "readOnly"),
-        //     disabled: this.createDescriptor(target, "disabled")
-        // });
-        // let _this = this;
-        // element.templateId = "";
-        // element._rightId = "";
-        // element.subscribed = false;
-        // element.readOnly = false;
-        // element.required = false;
-        // element.disabled = false;
-        // Object.defineProperties(element, {
-        //     rightId: {
-        //         get: function () {
-        //             return this._rightId;
-        //         },
-        //         set: function (newValue) {
-        //             if (newValue === this._rightId) return;
-        //             this._rightId = newValue;
-        //             if (!this.subscribed && _this.rightObserver) {
-        //               //  _this.rightObserver(this);
-        //               //  this.subscribed = true;
-        //               //  Object.setPrototypeOf(this, _this.createElementProxy(Object.getPrototypeOf(this)));
-        //                // _this.createElementMutaionObserver(this);
-        //             }
-        //         }
-        //     },
-        //     // required: _this.createDescriptor(element, "required"),
-        //     // readOnly: _this.createDescriptor(element, "readOnly"),
-        //     // disabled: _this.createDescriptor(element, "disabled")
-        // });
-
-
+        Reflect.defineProperty(target, "readOnly", {
+            get() {
+                return this._readonly;
+            },
+            set(value: boolean) {
+                if (value != this._readonly)
+                    this._readonly = value;
+            },
+            configurable: true,
+            enumerable: true
+        })
+        Reflect.defineProperty(target, "required", {
+            get() {
+                return this._required;
+            },
+            set(value: boolean) {
+                if (value != this._required)
+                    this._required = value;
+            },
+            configurable: true,
+            enumerable: true
+        });
+        Reflect.defineProperty(target, "disabled", {
+            get() {
+                return this._disabled;
+            },
+            set(value: boolean) {
+                if (value != this._disabled)
+                    this._disabled = value;
+            },
+            configurable: true,
+            enumerable: true
+        });
+        Reflect.defineProperty(target, "hidden", {
+            get() {
+                return this._hidden;
+            },
+            set(value: boolean) {
+                if (value != this._hidden)
+                    this._hidden = value;
+            },
+            configurable: true,
+            enumerable: true
+        });
+        Reflect.defineProperty(target, "templateId", {
+            get() {
+                return this._templateId;
+            },
+            set(value: boolean) {
+                if (value != this._templateId)
+                    this._templateId = value;
+            },
+            configurable: true,
+            enumerable: true
+        });
+        Reflect.defineProperty(target, "objectId", {
+            get() {
+                return this._objectId;
+            },
+            set(value: boolean) {
+                if (value != this._objectId)
+                    this._objectId = value;
+            },
+            configurable: true,
+            enumerable: true
+        });
     }
 }

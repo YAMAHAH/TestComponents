@@ -124,7 +124,8 @@ export class ColumnFooters {
 })
 export class TableBody {
 
-    constructor( @Inject(forwardRef(() => DataTable)) public dt: DataTable) { }
+    constructor( @Inject(forwardRef(() => DataTable)) public dt: DataTable) {
+    }
 
     @Input("jyTableBody") columns: Column[];
 
@@ -576,7 +577,6 @@ export class DataTable implements AfterViewChecked, AfterViewInit, AfterContentI
 
     ngAfterContentInit() {
         this.initColumns();
-
         this.columnsSubscription = this.cols.changes.subscribe(_ => {
             this.initColumns();
             this.changeDetector.markForCheck();
@@ -668,8 +668,8 @@ export class DataTable implements AfterViewChecked, AfterViewInit, AfterContentI
     }
 
     initColumns(): void {
-        this.columns = this.cols.toArray();
 
+        this.columns = this.cols.toArray();
         if (this.scrollable) {
             this.scrollableColumns = [];
             this.cols.forEach((col) => {

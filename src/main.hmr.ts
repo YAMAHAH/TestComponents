@@ -11,8 +11,10 @@ import { stringExtend } from './app/untils/string-extend';
 import { UUID } from './app/untils/uuid';
 import { BehaviorSubject } from 'rxjs/Rx';
 import { HTMLElementExtendService } from './app/untils/html-element-extend';
+import { ArrayExtensions } from './app/untils/array-extensions';
 
 applyMixins(String, [stringExtend]);
+applyMixins(Array, [ArrayExtensions]);
 
 // applyMixins(HTMLElement, [HTMLElementExtend]);
 

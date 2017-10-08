@@ -1,4 +1,4 @@
-import { NgModule, EventEmitter, Directive, ViewContainerRef, Input, Output, ContentChildren, ContentChild, TemplateRef, OnInit, OnDestroy, AfterContentInit, QueryList, EmbeddedViewRef, Type } from '@angular/core';
+import { NgModule, EventEmitter, Directive, ViewContainerRef, Input, Output, ContentChildren, ContentChild, TemplateRef, OnInit, OnDestroy, AfterContentInit, QueryList, EmbeddedViewRef, Type, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
@@ -95,7 +95,6 @@ export class Column implements AfterContentInit {
     @Output() sortFunction: EventEmitter<any> = new EventEmitter();
     @ContentChildren(PrimeTemplate) templates: QueryList<any>;
     @ContentChild(TemplateRef) template: TemplateRef<any>;
-
     public headerTemplate: TemplateRef<any>;
     public bodyTemplate: TemplateRef<any>;
     public footerTemplate: TemplateRef<any>;

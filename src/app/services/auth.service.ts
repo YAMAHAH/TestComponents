@@ -59,16 +59,16 @@ export class AuthService {
     login(username: string, password: string): Promise<void> {
         return this.loadSrciptService.loadCryptoJS.then((js) => {
             let sign = CryptoJS.HmacSHA1(username, password).toString(CryptoJS.enc.Base64);
-        //     var keyHex = CryptoJS.enc.Utf8.parse('sblw-3hn8-sqoy19');
-        // var encrypted =CryptoJS.AES.encrypt('DesEncrypt',keyHex);
-        
-        //  CryptoJS.TripleDES.encrypt('DesEncrypt', 'sblw-3hn8-sqoy19', {
-             
-        //     mode: CryptoJS.mode.ECB,
-        //     padding: CryptoJS.pad.Pkcs7
-        // });
-        // console.log(encrypted.toString());
-        // console.log(encrypted.ciphertext.toString(CryptoJS.enc.Base64));
+            //     var keyHex = CryptoJS.enc.Utf8.parse('sblw-3hn8-sqoy19');
+            // var encrypted =CryptoJS.AES.encrypt('DesEncrypt',keyHex);
+
+            //  CryptoJS.TripleDES.encrypt('DesEncrypt', 'sblw-3hn8-sqoy19', {
+
+            //     mode: CryptoJS.mode.ECB,
+            //     padding: CryptoJS.pad.Pkcs7
+            // });
+            // console.log(encrypted.toString());
+            // console.log(encrypted.ciphertext.toString(CryptoJS.enc.Base64));
             return this.getToken(this.loginUrl, username, sign);
         });
     }
@@ -115,8 +115,6 @@ export class AuthService {
                 this.authError.next(error.text());
             });
     }
-
-
 
     relogin() {
     }

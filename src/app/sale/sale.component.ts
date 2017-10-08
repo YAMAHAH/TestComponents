@@ -66,6 +66,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         this.keyBindings.forEach(binding => {
             binding.elementTemplateId = "39423742047204234234";
         });
+        this.appStore.rightSubject$.next({ objectId: "div9sdfddf596", templateId: "" });
     }
 
     subject: ISubject;
@@ -559,8 +560,8 @@ export class SaleComponent extends ComponentFactoryConatiner
     pageModel: IPageModel = { title: '销售订单', active: true, childs: [] };
     ngOnInit() {
         this.activeRouter.data
-            .subscribe((data:any) => {
-              console.log(data);
+            .subscribe((data: any) => {
+                console.log(data);
             });
         // this.setHostElementStyle();
         this.pageModel.closeAfterFn = this.closeAfterFn;
@@ -646,10 +647,10 @@ export class SaleComponent extends ComponentFactoryConatiner
     cellEditor: Type<any> = CellEditorComponent;
 
     cols: any[] = [
-        { field: 'vin', header: 'Vin', cellComponent: null, cellEditor: null },
-        { field: 'year', header: 'Year', cellComponent: DateColumnBodyComponent, cellEditor: null },
-        { field: 'brand', header: 'Brand', cellComponent: null, cellEditor: this.cellEditor },
-        { field: 'color', header: 'Color', cellComponent: this.columnBody, cellEditor: null }
+        { field: 'vin', header: 'Vin', cellComponent: null, cellEditor: null, editable: true, visible: true, required: false, enabled: true },
+        { field: 'year', header: 'Year', cellComponent: DateColumnBodyComponent, cellEditor: null, editable: true, visible: true, required: false, enabled: true },
+        { field: 'brand', header: 'Brand', cellComponent: null, cellEditor: this.cellEditor, editable: true, visible: true, required: false, enabled: true },
+        { field: 'color', header: 'Color', cellComponent: this.columnBody, cellEditor: null, editable: true, visible: true, required: false, enabled: true }
     ];
     loadCarsLazy(event: LazyLoadEvent) {
         //in a real application, make a remote request to load data using state metadata from event

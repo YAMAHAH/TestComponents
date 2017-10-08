@@ -605,11 +605,16 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             this.templateObjectMap.set(Symbol.for(tempObj.objectId), tempObj);
         });
     }
+    count: number = 0;
     getTemplateClassObject(objectId: string): TemplateClassObject {
         let objectIdKey = Symbol.for(objectId);
         if (this.templateObjectMap.has(objectIdKey))
             return this.templateObjectMap.get(objectIdKey);
         let tempObject = new TemplateClassObject(objectId);
+        if (objectId.like("col3924234234244") && (this.count % 2 == 0)) {
+            tempObject.editable = false;
+        }
+        this.count++;
         this.templateObjectMap.set(objectIdKey, tempObject);
         return tempObject;
     }
