@@ -92,11 +92,48 @@ export class ArrayExtensions<T> extends Array<T> {
      * @param value 
      */
     contains(value: T) {
-        for (let i in this) {
-            if (this[i] == value) return true;
-        }
-        return false;
+        // for (let i in this) {
+        //     if (this[i] == value) return true;
+        // }
+        // return false; 
+
+        let index = this.indexOf(value);
+        return (index >= 0);
     }
+    remove(item: T) {
+        let index = this.indexOf(item);
+        if (index >= 0) {
+            return this.splice(index, 1)[0];
+        }
+        return null;
+    }
+    removeAt(index: number) {
+        if (index < 0 || index >= this.length) return;
+        return this.splice(index, 1)[0];
+    }
+    insertAt(index: number, item: T) {
+        if (index < 0) index = 0;
+        if (index > this.length) index = this.length;
+        this.length++;
+        for (let i = this.length - 1; i > index; i--) {
+            this[i] = this[i - 1];
+        }
+        this[index] = item;
+    }
+    isEmpty() {
+        if (this.length == 0)
+            return true;
+        else return false;
+    }
+    clone() {
+        return [...this];
+    }
+    clear() {
+        this.length = 0;
+        if (this.length > 0)
+            this.splice(0, this.length);
+    }
+
     uniquelizeWith(): T[] {
         let result = new Array();
         for (let i = 0; i < this.length; i++) {

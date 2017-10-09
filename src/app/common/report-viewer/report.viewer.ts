@@ -68,14 +68,19 @@ export class ReportViewer implements OnInit, OnDestroy {
 
     }
 
-    t_id = Observable.interval(150).subscribe(res=>this.animate()); // setInterval(() => this.animate(), 20);
+    t_id = Observable.interval(150).subscribe(res => this.animate()); // setInterval(() => this.animate(), 20);
     pos: number = 0;
-    dir: number = 10;
+    dir: number = 21;
     len: number = 0;
 
+    _progress: HTMLElement;
+    get progress() {
+        if (this._progress === undefined)
+            this._progress = document.getElementById('progress');
+        return this._progress;
+    }
     animate() {
-        let elem = null;
-        if (!elem) elem = document.getElementById('progress');
+        let elem = this.progress;
         if (elem != null) {
             if (this.pos == 0) this.len += this.dir;
             if (this.len > 32 || this.pos > 179) this.pos += this.dir;
@@ -83,8 +88,8 @@ export class ReportViewer implements OnInit, OnDestroy {
             if (this.pos > 179 && this.len == 0) this.pos = 0;
             elem.style.left = this.pos + 'px';
             elem.style.width = this.len + 'px';
-            this.renderer && this.renderer.setStyle(elem, 'left', this.pos);
-            this.renderer && this.renderer.setStyle(elem, 'width', this.len);
+            // this.renderer && this.renderer.setStyle(elem, 'left', this.pos);
+            // this.renderer && this.renderer.setStyle(elem, 'width', this.len);
         }
     }
 

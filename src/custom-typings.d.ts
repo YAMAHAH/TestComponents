@@ -15,6 +15,12 @@ interface ArrayConstructor {
 }
 
 interface Array<T> {
+    remove(item: T): T;
+    removeAt(index: number): T;
+    insertAt(index: number, item: T): void;
+    isEmpty(): boolean;
+    clone(): T[];
+    clear(): void;
     contains(value: T): boolean;
     each(predicate: (element: T, index?: number) => T): T[];
     intersectWith(second: T[]): T[];
