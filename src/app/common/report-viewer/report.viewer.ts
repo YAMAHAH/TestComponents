@@ -1,5 +1,5 @@
 
-import { Component, Input, ViewChild, ElementRef, OnInit, OnDestroy, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, OnInit, OnDestroy, EventEmitter, ViewEncapsulation, Renderer2 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPDFPluginInstall } from '../../untils/pdf-plugin';
@@ -9,6 +9,7 @@ import { LoadScriptService } from '../../services/load-script-service';
 import { AnimateEffectEnum } from '../page-loading/animate-effect-enum';
 import { DownloadManager } from '../../services/download.manager';
 import { PageLoadingComponent } from '../page-loading/page-loading-comp';
+import { Observable } from 'rxjs/Rx';
 
 @Component({
     moduleId: module.id,
@@ -30,6 +31,7 @@ export class ReportViewer implements OnInit, OnDestroy {
         private pageLoadService: PageLoadingService,
         private loadScriptService: LoadScriptService,
         private downloadManager: DownloadManager,
+        private renderer: Renderer2,
         private httpClient: HttpClient) {
         this.loadScriptService
             .loadSnapSvg
@@ -43,17 +45,18 @@ export class ReportViewer implements OnInit, OnDestroy {
 
         this.buildInPlugin = isPDFPluginInstall();
         this.getDefaultUrl("0", null, "");
-        //  setTimeout(() => this.print(), 10000);
+        // setTimeout(() => this.print(), 10000);
         setTimeout(() => this.getPdfBlobUrl(null, null), 15000);
     }
     ngOnDestroy(): void {
         URL.revokeObjectURL(this.fileUrl);
+        this.t_id.unsubscribe();
     }
     //返回结果
     modalResult: EventEmitter<any>;
     //传递进来的参数
     contex: any;
-
+    silent: boolean;
     @ViewChild("pdfViewer", { read: ElementRef }) pdfViewerRef: ElementRef;
     @ViewChild("pdfPlugin", { read: ElementRef }) pdfPluginRef: ElementRef;
     print() {
@@ -62,9 +65,39 @@ export class ReportViewer implements OnInit, OnDestroy {
             this.pdfViewerRef.nativeElement.contentWindow.print();
         if (this.pdfPluginRef)
             this.pdfPluginRef.nativeElement.contentWindow.print();
+
     }
+
+    t_id = Observable.interval(150).subscribe(res=>this.animate()); // setInterval(() => this.animate(), 20);
+    pos: number = 0;
+    dir: number = 10;
+    len: number = 0;
+
+    animate() {
+        let elem = null;
+        if (!elem) elem = document.getElementById('progress');
+        if (elem != null) {
+            if (this.pos == 0) this.len += this.dir;
+            if (this.len > 32 || this.pos > 179) this.pos += this.dir;
+            if (this.pos > 179) this.len -= this.dir;
+            if (this.pos > 179 && this.len == 0) this.pos = 0;
+            elem.style.left = this.pos + 'px';
+            elem.style.width = this.len + 'px';
+            this.renderer && this.renderer.setStyle(elem, 'left', this.pos);
+            this.renderer && this.renderer.setStyle(elem, 'width', this.len);
+        }
+    }
+
+    remove_loading() {
+        //    // clearInterval(this.t_id);
+        //     let targelem = document.getElementById('loader_container');
+        //     targelem.style.display = 'none';
+        //     targelem.style.visibility = 'hidden';
+    }
+
     default_url: string | Uint8Array;
     async getPdf() {
+        //(this.pdfViewerRef.nativeElement as HTMLIFrameElement)
         let requestHeaders = new HttpHeaders();
         requestHeaders.append('Content-Type', 'application/json');
         requestHeaders.append('Accept', 'q=0.8;application/json;q=0.9');
@@ -103,11 +136,12 @@ export class ReportViewer implements OnInit, OnDestroy {
     }
     dataLoaded: boolean
     onLoad(event: Event) {
+        this.remove_loading();
         if (this.dataLoaded) {
             setTimeout(() => {
                 this.loading.Hide();
                 this.dataLoaded = false;
-            }, 50);
+            }, 1500);
         }
     }
     fileUrl: string;

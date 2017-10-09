@@ -7,22 +7,21 @@ interface SystemJS {
 interface String {
     like(value: string): boolean;
 }
-// interface StringConstructor {
-//     bar(): string;
-// }
+interface ArrayConstructor {
+    intersect(...params: any[]): any[];
+    union(...params: any[]): any[];
+    uniquelize(first: any[]): any[];
+    except(first: any[], second: any[]): any[];
+}
 
 interface Array<T> {
-    intersect(...params: T[]): T[];
-    uniquelize(): T[];
-    union(...params: T[]): T[];
-    except(second: T[]): T[];
     contains(value: T): boolean;
     each(predicate: (element: T, index?: number) => T): T[];
-    intersect2(second: T[]): T[];
-    uniquelize2(): T[];
-    complement(second: T[]): T[];
-    union2(second: T[]): T[];
-    except2(second: T[]): T[];
+    intersectWith(second: T[]): T[];
+    uniquelizeWith(): T[];
+    complementWith(second: T[]): T[];
+    unionWith(second: T[]): T[];
+    exceptWith(second: T[]): T[];
 
 }
 interface HTMLElement {

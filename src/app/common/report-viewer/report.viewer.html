@@ -1,11 +1,20 @@
 <ng-container [ngSwitch]="buildInPlugin">
     <ng-container *ngSwitchCase="true">
-        <iframe (load)="onLoad($event)" style="flex:1 0 100%;height:100%;" #pdfPlugin [title]="title" [attr.src]="pdfSrc"></iframe>
+        <iframe (load)="onLoad($event)" [style.display]="silent ? 'none' : 'block'" style="flex:1 0 100%;height:100%;" #pdfPlugin [title]="title" [attr.src]="pdfSrc"></iframe>
     </ng-container>
     <ng-container *ngSwitchCase="false">
-        <iframe (load)="onLoad($event)" style="flex:1 0 100%;height:100%;" #pdfViewer [title]="title" [attr.src]="pdfViewerSrc"></iframe>
+        <iframe (load)="onLoad($event)" [style.display]="silent ? 'none' : 'block'" style="flex:1 0 100%;height:100%;" #pdfViewer [title]="title" [attr.src]="pdfViewerSrc"></iframe>
     </ng-container>
 </ng-container>
 <div>
-    <x-pageloading #loading></x-pageloading>
+    <x-pageloading #loading tip="加载中...">
+        <div id="loader_container">
+            <div id="loader">
+                <div align="center">正在为你打开报表<br/>请耐心等待...</div>
+                <div id="loader_bg">
+                    <div #progress1 id="progress"></div>
+                </div>
+            </div>
+        </div>
+    </x-pageloading>
 </div>

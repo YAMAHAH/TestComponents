@@ -27,9 +27,17 @@
 
 .loading-text {
     position: absolute;
-    top: 50%;
+    top: 55%;
     width: 100%;
+    text-align: center;
     padding-top: (20) / 2 + 2px;
+    visibility: hidden;
+    z-index: 10000;
+}
+
+.loading-text.show {
+    visibility: visible;
+    opacity: 1;
 }
 
 .pageload-overlay::after,

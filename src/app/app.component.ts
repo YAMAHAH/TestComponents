@@ -5,9 +5,6 @@ import { Router, ActivatedRoute, NavigationEnd, RoutesRecognized, Data, Activate
 import { Title } from "@angular/platform-browser";
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/toArray';
-import { ArrayExtend } from './untils/array-extend';
-import { applyMixins } from './untils/mixins';
-import { stringExtend } from './untils/string-extend';
 import { HTMLElementExtendService } from './untils/html-element-extend';
 
 
@@ -74,7 +71,7 @@ export class AppComponent implements OnInit {
                 let lastestTitles: string[] = data.routeStates
                     .filter(routeState => !!routeState.data.title)
                     .map(state => state.data.title);
-                let addTitles = ArrayExtend.except(this.existTitles, lastestTitles);
+                let addTitles = lastestTitles.exceptWith(this.existTitles);  //ArrayExtend.except(this.existTitles, lastestTitles);
                 this.existTitles = [];
                 this.existTitles.push(...lastestTitles);
                 if (addTitles.length > 0)

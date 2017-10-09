@@ -1,8 +1,10 @@
 export class ArrayExtensions<T> extends Array<T> {
-    //集合取交集
-    intersect(...params: T[]) {
-        let first = arguments[0] || [];
-        arguments[0] = this.concat(first);
+
+    /**
+     * 集合交集
+     * @param params 
+     */
+    static intersect<T>(...params: T[]) {
         let result = new Array<T>();
         let obj = {};
         for (let i = 0; i < arguments.length; i++) {
@@ -22,22 +24,11 @@ export class ArrayExtensions<T> extends Array<T> {
         return result;
     }
 
-    //集合去掉重复
-    uniquelize() {
-        let tmp = Object.create({}),
-            ret: T[] = [];
-        for (let i = 0, j = this.length; i < j; i++) {
-            if (!tmp[this[i]]) {
-                tmp[this[i]] = 1;
-                ret.push(this[i]);
-            }
-        }
-        return ret;
-    }
-    // //并集
-    union(...params: T[]): T[] {
-        let first = arguments[0] || [];
-        arguments[0] = this.concat(first);
+    /**
+     * 集合并集
+     * @param params 
+     */
+    static union<T>(...params: T[]): T[] {
         let results = new Array<T>();
         let obj = {};
         for (let i = 0; i < arguments.length; i++) {
@@ -53,20 +44,36 @@ export class ArrayExtensions<T> extends Array<T> {
     }
 
     /**
-     * 计算出已存在的数组中没有的元素
+     * 集合去掉重复
+     * @param first 
+     */
+    static uniquelize<T>(first: any[]) {
+        let tmp = Object.create({}),
+            ret: T[] = [];
+        for (let i = 0, j = first.length; i < j; i++) {
+            if (!tmp[first[i]]) {
+                tmp[first[i]] = 1;
+                ret.push(first[i]);
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * 集合差集
      * @param first 已存在的数组
      * @param second 最新的数组
      */
-    except(second: T[] = []): T[] {
+    static except<T>(first: T[], second: T[] = []): T[] {
         let result = new Array<T>();
         let obj = Object.create({});
         for (let i = 0; i < second.length; i++) {
             obj[second[i]] = 1;
         }
-        for (let j = 0; j < this.length; j++) {
-            if (!obj[this[j]]) {
-                obj[this[j]] = 1;
-                result.push(this[j]);
+        for (let j = 0; j < first.length; j++) {
+            if (!obj[first[j]]) {
+                obj[first[j]] = 1;
+                result.push(first[j]);
             }
         }
         return result;
@@ -80,14 +87,17 @@ export class ArrayExtensions<T> extends Array<T> {
         }
         return results;
     }
-
+    /**
+     * 集合包含
+     * @param value 
+     */
     contains(value: T) {
         for (let i in this) {
             if (this[i] == value) return true;
         }
         return false;
     }
-    uniquelize2(): T[] {
+    uniquelizeWith(): T[] {
         let result = new Array();
         for (let i = 0; i < this.length; i++) {
             if (!result.contains(this[i])) {
@@ -102,8 +112,8 @@ export class ArrayExtensions<T> extends Array<T> {
      * @param first 第一个数组
      * @param second 第二个数组
      */
-    complement(second: T[]): T[] {
-        return this.union2(second).except2(this.intersect2(second));
+    complementWith(second: T[]): T[] {
+        return this.unionWith(second).exceptWith(this.intersectWith(second));
     }
 
     /**
@@ -111,16 +121,16 @@ export class ArrayExtensions<T> extends Array<T> {
      * @param first 第一个数组
      * @param second 第二个数组
      */
-    intersect2(second: T[]): T[] {
-        return this.uniquelize2().each(x => second.contains(x) ? x : null);
+    intersectWith(second: T[]): T[] {
+        return this.uniquelizeWith().each(x => second.contains(x) ? x : null);
     }
     /**
      * 获取两个数组的差集
      * @param first 第一个数组
      * @param second 第二个数组
      */
-    except2(second: T[]): T[] {
-        return this.uniquelize2().each((x) => second.contains(x) ? null : x);
+    exceptWith(second: T[]): T[] {
+        return this.uniquelizeWith().each((x) => second.contains(x) ? null : x);
     }
 
     /**
@@ -128,7 +138,7 @@ export class ArrayExtensions<T> extends Array<T> {
     * @param first 第一个数组
     * @param second 第二个数组
     */
-    union2(second: T[]): T[] {
-        return this.concat(second).uniquelize2();
+    unionWith(second: T[]): T[] {
+        return this.concat(second).uniquelizeWith();
     }
 }

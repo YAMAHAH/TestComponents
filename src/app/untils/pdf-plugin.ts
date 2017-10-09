@@ -4,7 +4,6 @@ export function isPDFPluginInstall() {
         if (navigator.plugins && navigator.plugins.length) // / Adobe Reader | Adobe PDF | Acrobat | Chrome PDF Viewer
             for (var i = 0; i < navigator.plugins.length; i++) {
                 var plugin = navigator.plugins[i].name;
-                console.log(plugin);
                 if (plugin == 'Adobe Reader' || plugin == 'Adobe PDF' || plugin == 'Acrobat' || plugin == 'Chrome PDF Viewer') return true;
             }
         return false;

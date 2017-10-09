@@ -52,7 +52,8 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
                         //创建订阅
                         this.unSubscribeFn = this.createElementSubscribe();
                         //创建代理
-                        this.createElementProxy(this.target);
+                        this.createTargetProxy(this.target);
+                        if (this.modelRef) this.createTargetProxy(this.modelRef);
                         //创建变化观察者
                         this.createElementMutaionObserver(this.target);
                     }
@@ -67,7 +68,7 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
             if (!!!target.observer)
                 this.createElementMutaionObserver(target);
             if (!!!target.isProxy)
-                this.createElementProxy(target);
+                this.createTargetProxy(target);
             for (let index = 0; index < target.children.length; index++) {
                 let childElement = target.children[index];
                 this.createChildElementProxyAndMutaion(<HTMLElement>childElement);
@@ -84,7 +85,7 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
                 this.createChildElementMutaionObserver(target);
             }
             if (!!!target.isProxy) {
-                this.createElementProxy(target);
+                this.createTargetProxy(target);
             }
 
             let tempObject = this.container.getTemplateClassObject(objectId);
@@ -248,10 +249,20 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
         };
         target.observer.observe(target, config);
     }
-    createElementProxy(target: HTMLElement) {
+    createTargetProxy(target: any) {
 
         let handler = () => {
             let _self = this;
+            let listenProps = {
+                "disabled": "disabled",
+                "enabled": "enabled",
+                "readOnly": "readOnly",
+                "editable": "editable",
+                "required": "required",
+                'style': "style",
+                "hidden": "hidden",
+                "visible": "visible",
+            };
             return {
                 get: function (target: any, propertyKey: PropertyKey, receiver: any) {
                     if (propertyKey === 'isProxy')
@@ -260,7 +271,7 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
                         return Reflect.get(target, propertyKey, receiver);
                 },
                 set: function (target: any, propertyKey: PropertyKey, value: any, receiver?: any) {
-                    if (propertyKey in { "disabled": "disabled", "readOnly": "readOnly", "required": "required", 'style': "style", "hidden": "hidden" }) {
+                    if (propertyKey in listenProps) {
                         let res = Reflect.set(target, propertyKey, value, receiver);
                         _self.authorizeUpdated = false;
                         _self.updateAuthorize();

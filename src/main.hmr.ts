@@ -16,8 +16,6 @@ import { ArrayExtensions } from './app/untils/array-extensions';
 applyMixins(String, [stringExtend]);
 applyMixins(Array, [ArrayExtensions]);
 
-// applyMixins(HTMLElement, [HTMLElementExtend]);
-
 
 @NgModule({
     bootstrap: [
