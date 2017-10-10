@@ -369,14 +369,18 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             if (pageModel.componentRef) options.componentRef = pageModel.componentRef;
             return this.appStore.modalService.showForm(options).subscribe(result);
         }, 10);
+        let e = new Event('build');
+        new CustomEvent("build2", { detail: { item: 234 } })
+        let el: Element;
+        el.dispatchEvent(e);
         return result;
     }
 
     showReportViewer(modalOptions: FormOptions = null) {
         let options: FormOptions = new FormOptions();
         options.responsive = true;
-        options.width = 800;
-        options.height = 600;
+        options.width = document.body.clientWidth * 0.618;
+        options.height = document.body.clientHeight * 0.618;
         options.modal = true;
         options.visible = true;
         options.closable = true;
@@ -384,6 +388,9 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         options.titleAlign = 1;
         options.rootContainer = this.viewContainerRef;
         options.injector = this.viewContainerRef.parentInjector;
+        options.minimizeBox = false;
+        options.fullscreenBox = false;
+        options.maximizeBox = false;
 
         if (modalOptions) {
             Object.assign(options, modalOptions);

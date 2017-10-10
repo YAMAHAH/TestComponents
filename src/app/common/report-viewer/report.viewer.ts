@@ -44,6 +44,7 @@ export class ReportViewer implements OnInit, OnDestroy {
     ngOnInit() {
 
         this.buildInPlugin = isPDFPluginInstall();
+        this.silent = true;
         this.getDefaultUrl("0", null, "");
         // setTimeout(() => this.print(), 10000);
         setTimeout(() => this.getPdfBlobUrl(null, null), 15000);
@@ -56,7 +57,7 @@ export class ReportViewer implements OnInit, OnDestroy {
     modalResult: EventEmitter<any>;
     //传递进来的参数
     contex: any;
-    silent: boolean;
+    silent: boolean = true;
     @ViewChild("pdfViewer", { read: ElementRef }) pdfViewerRef: ElementRef;
     @ViewChild("pdfPlugin", { read: ElementRef }) pdfPluginRef: ElementRef;
     print() {
@@ -145,6 +146,7 @@ export class ReportViewer implements OnInit, OnDestroy {
         if (this.dataLoaded) {
             setTimeout(() => {
                 this.loading.Hide();
+                this.silent = false;
                 this.dataLoaded = false;
             }, 1500);
         }

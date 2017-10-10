@@ -212,7 +212,7 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             return {
                 display: "flex",
                 flex: "1 0 100%",
-                height: "100%"
+                height: "calc(100% - 30px)"
             }
         else return { height: this.contentHeight + "px" };
     }
