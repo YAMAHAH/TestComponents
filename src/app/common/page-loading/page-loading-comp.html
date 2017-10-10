@@ -1,9 +1,9 @@
-<div id="pageloader" [ngClass]="elStyleClass">
+<div id="pageloader" class="pageload-overlay" [ngClass]="elStyleClass">
     <svg id="paper1" #paper xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 80 60" preserveAspectRatio="none">
         <path />
     </svg>
 </div>
-<div class="loading-container" [class.ant-spin-blur]="nzSpinning" #ref [hidden]="ref.children.length == 0">
+<div class="other-comp-container" [class.ant-spin-blur]="nzSpinning" #ref [hidden]="ref.children.length == 0">
     <ng-content></ng-content>
 </div>
-<div class="loading-text" [class.show]="pageLoadService.isShow || isShow">{{_tip}}</div>
+<div class="loading-text" [style.color]="tipColor" [class.show]="pageLoadService.isShow || isShow">{{_tip}}</div>

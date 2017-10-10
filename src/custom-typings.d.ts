@@ -6,6 +6,18 @@ interface SystemJS {
 
 interface String {
     like(value: string): boolean;
+    /**
+     * 从左截取指定长度的字串 
+     */
+    left(n: number): string;
+    /**
+     * 从右截取指定长度的字串 
+     */
+    right(n: number): string;
+    isNullOrEmpty(): boolean;
+    isNotNullOrEmpty(): boolean;
+    isBlank(): boolean;
+    isNotBlank(): boolean;
 }
 interface ArrayConstructor {
     intersect(...params: any[]): any[];
@@ -19,9 +31,11 @@ interface Array<T> {
     removeAt(index: number): T;
     insertAt(index: number, item: T): void;
     isEmpty(): boolean;
+    isNotEmpty(): boolean;
     clone(): T[];
     clear(): void;
     contains(value: T): boolean;
+    notContains(value: T): boolean;
     each(predicate: (element: T, index?: number) => T): T[];
     intersectWith(second: T[]): T[];
     uniquelizeWith(): T[];

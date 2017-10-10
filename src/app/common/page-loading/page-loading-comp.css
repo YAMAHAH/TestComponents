@@ -21,7 +21,7 @@
 }
 
 .pageload-overlay svg path {
-    fill: #82E0E0;
+    fill: rgba(111, 111, 111, .3);
     opacity: 1;
 }
 
@@ -66,7 +66,7 @@
 }
 
 .pageload-overlay::before {
-    background: #4fc3f7;
+    background: rgba(111, 111, 111, .3);
     -webkit-transform: translateX(20px);
     transform: translateX(20px);
     -webkit-animation: moveLeft 0.6s linear infinite alternate;
@@ -165,3 +165,5 @@ circle {
     -webkit-animation: 0.5s draw linear forwards;
     animation: 0.5s draw linear forwards;
 }
+
+.other-comp-container {}

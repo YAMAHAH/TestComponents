@@ -177,13 +177,13 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
     set tip(value) {
         this._tip = value || '加载中...';
     }
-
+    
+    @Input() tipColor:string = "blue";
     @ViewChild('ref') _ref: ElementRef;
     get elStyleClass() {
         return {
             "show": this.pageLoadService.isShow || this.isShow,
-            "pageloading-loading": this.pageLoadService.isLoading || this.isLoading,
-            "pageload-overlay": true
+            "pageloading-loading": this.pageLoadService.isLoading || this.isLoading
         };
     }
 

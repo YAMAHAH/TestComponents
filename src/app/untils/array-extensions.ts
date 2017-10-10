@@ -92,13 +92,12 @@ export class ArrayExtensions<T> extends Array<T> {
      * @param value 
      */
     contains(value: T) {
-        // for (let i in this) {
-        //     if (this[i] == value) return true;
-        // }
-        // return false; 
-
         let index = this.indexOf(value);
         return (index >= 0);
+    }
+    notContains(value: T) {
+        let index = this.indexOf(value);
+        return (index < 0);
     }
     remove(item: T) {
         let index = this.indexOf(item);
@@ -123,7 +122,14 @@ export class ArrayExtensions<T> extends Array<T> {
     isEmpty() {
         if (this.length == 0)
             return true;
-        else return false;
+        else
+            return false;
+    }
+    isNotEmpty() {
+        if (this.length > 0)
+            return true;
+        else
+            return false;
     }
     clone() {
         return [...this];
