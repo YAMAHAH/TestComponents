@@ -3,7 +3,7 @@
         <path />
     </svg>
 </div>
+<div class="loading-text" [style.color]="tipColor" [class.show]="loadingEnabled && _tip">{{_tip}}</div>
 <div class="other-comp-container" [class.ant-spin-blur]="nzSpinning" #ref [hidden]="ref.children.length == 0">
     <ng-content></ng-content>
 </div>
-<div class="loading-text" [style.color]="tipColor" [class.show]="pageLoadService.isShow || isShow">{{_tip}}</div>

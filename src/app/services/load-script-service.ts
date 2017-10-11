@@ -76,6 +76,12 @@ export class LoadScriptService {
     get loadAnimateCSS() {
         return this.loadCSS("/assets/css/animate.css");
     }
+    get loadPrintjs() {
+        return this.load('/assets/printjs/print.min.js');
+    }
+    get loadPrintCSS() {
+        return this.loadCSS("/assets/printjs/print.min.css");
+    }
 
     get loadfontAwesomeCSS() {
         return this.loadCSS("/assets/css/font-awesome-4.7.0/css/font-awesome.min.css");

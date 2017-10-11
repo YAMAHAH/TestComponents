@@ -1,10 +1,10 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
 import { PageLoadingService, PageAnimateAction, PageLoadActionEnum, AnimateEffectEnum, pageLoadingEffects } from '../page-loading';
 import { LoadScriptService } from '../../services/load-script-service';
 import { UUID } from '../../untils/uuid';
-import { ColumnBodyTemplateLoader } from '../shared/shared2';
+import { tryGetValue } from '../../untils/type-checker';
 
 @Component({
     selector: 'x-pageloading',
@@ -26,6 +26,16 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
         this.pageLoadService
             .pageLoadingStream
             .subscribe((pageAction: PageAnimateAction) => {
+
+                if (this.disabledLoading == undefined)
+                    this.disabledLoading = tryGetValue(() => pageAction.extras.disabledLoading).value || false;
+
+                if (this.showBeforeFn == undefined)
+                    this.showBeforeFn = tryGetValue(() => pageAction.extras.showBefore).value || null;
+
+                if (this.hideBefore == undefined)
+                    this.hideBeforeFn = tryGetValue(() => pageAction.extras.hideBefore).value || null;
+
                 if (this.globalLoad)
                     if (pageAction.method === PageLoadActionEnum.show) {
                         this.showLoading(pageAction.effect);
@@ -72,9 +82,14 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
             this.Hide();
         this._startLoading = value;
     }
+    @Output() showBefore: EventEmitter<any> = new EventEmitter<any>();
+    showBeforeFn: () => void;
+    @Output() hideBefore: EventEmitter<any> = new EventEmitter<any>();
+    hideBeforeFn: () => void;
     isShow: boolean;
     isLoading: Boolean;
     showLoading(effect: AnimateEffectEnum) {
+
         let checkSubscriber = this.checkStream.subscribe((i: number) => {
             if (this.globalLoad) {
                 if (!this.pageLoadService.isShow && this.pageLoadService.isLoading) {
@@ -177,17 +192,26 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
     set tip(value) {
         this._tip = value || '加载中...';
     }
-    
-    @Input() tipColor:string = "blue";
+
+    @Input() tipColor: string = "#108ee9";
     @ViewChild('ref') _ref: ElementRef;
     get elStyleClass() {
         return {
-            "show": this.pageLoadService.isShow || this.isShow,
-            "pageloading-loading": this.pageLoadService.isLoading || this.isLoading
+            "show": this.showEnabled,
+            "pageloading-loading": this.loadingEnabled
         };
     }
 
+    get showEnabled() {
+        return this.pageLoadService.isShow || this.isShow;
+    }
+    get loadingEnabled() {
+        return (this.pageLoadService.isLoading || this.isLoading) && !this.disabledLoading;
+    }
+    @Input() disabledLoading: boolean;
     private Show(newEffect: string) {
+        this.showBefore.emit("show");
+        if (this.showBeforeFn) this.showBeforeFn();
         let animateOpt: any;
         if (this.globalLoad) {
             if (this.isAnimating || this.pageLoadService.isLoading || this.pageLoadService.isShow) {
@@ -215,7 +239,8 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
             else
                 this.isLoading = true;
         }
-        this.AnimateSVG('in', animateOpt, cbk);
+        if (!this.disabledLoading)
+            this.AnimateSVG('in', animateOpt, cbk);
         if (this.globalLoad)
             this.pageLoadService.isShow = true;
         else
@@ -223,6 +248,9 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
     }
 
     Hide() {
+        this.hideBefore.emit('hide');
+        if (this.hideBeforeFn)
+            this.hideBeforeFn();
         let animateOpt = this.animateOpt;
         if (!animateOpt) { // have stopped or is stopping the animation, just return
             return false;
@@ -239,7 +267,12 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
                 this.isShow = false;
             this.isAnimating = false;
         };
-        this.AnimateSVG('out', animateOpt, cbk);
+        if (!this.disabledLoading)
+            this.AnimateSVG('out', animateOpt, cbk);
+        if (this.globalLoad)
+            this.pageLoadService.isShow = false;
+        else
+            this.isShow = false;
     }
 
     private AnimateSVG(dir: string, animateOpt: any, cbk: Function) {

@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { PageAnimateAction, AnimateEffectEnum, PageLoadActionEnum } from './index';
+import { LoadingExtras } from './loading-extras';
 
 export interface PageLoadState {
     // define your state here
@@ -14,6 +15,7 @@ const defaultState: PageLoadState = {
     // define your initial state here
     ready: false
 }
+
 
 @Injectable()
 export class PageLoadingService {
@@ -27,10 +29,10 @@ export class PageLoadingService {
         this.pageLoadReady = new BehaviorSubject<PageLoadState>(defaultState);
     }
     subscription: Subscription;
-    showPageLoading(effect: AnimateEffectEnum) {
+    showPageLoading(effect: AnimateEffectEnum, extras: LoadingExtras = null) {
         this.subscription = this.pageLoadReady.subscribe(res => {
             if (res.ready) {
-                this.pageLoadingStream.next({ method: PageLoadActionEnum.show, effect: effect });
+                this.pageLoadingStream.next({ method: PageLoadActionEnum.show, effect: effect, extras: extras });
             }
         });
     }

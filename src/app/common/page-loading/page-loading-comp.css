@@ -10,7 +10,6 @@
 
 .pageload-overlay.show {
     visibility: visible;
-    opacity: 1;
 }
 
 .pageload-overlay svg {
@@ -21,8 +20,10 @@
 }
 
 .pageload-overlay svg path {
-    fill: rgba(111, 111, 111, .3);
-    opacity: 1;
+    fill: rgba(111, 111, 111, 0.618);
+    opacity: 0.7;
+    -webkit-filter: blur(0.5px);
+    filter: blur(0.5px);
 }
 
 .loading-text {
@@ -37,7 +38,12 @@
 
 .loading-text.show {
     visibility: visible;
-    opacity: 1;
+}
+
+.other-comp-container {
+    display: flex;
+    flex: 1 0 100%;
+    z-index: 9996;
 }
 
 .pageload-overlay::after,
@@ -66,7 +72,7 @@
 }
 
 .pageload-overlay::before {
-    background: rgba(111, 111, 111, .3);
+    background: rgb(216, 41, 41);
     -webkit-transform: translateX(20px);
     transform: translateX(20px);
     -webkit-animation: moveLeft 0.6s linear infinite alternate;
@@ -109,15 +115,6 @@ circle {
     -webkit-transition: stroke-dasharray .25s;
     transition: stroke-dasharray .25s;
 }
-
-
-/*// #pageloader {
-//     background: #4fc3f7;
-//     width: 100%;
-//     height: 100%;
-//     text-align: center;
-//     opacity: 1;
-//  }*/
 
 .svg-wrapper {
     background: #333;
@@ -165,5 +162,3 @@ circle {
     -webkit-animation: 0.5s draw linear forwards;
     animation: 0.5s draw linear forwards;
 }
-
-.other-comp-container {}

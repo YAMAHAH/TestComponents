@@ -4,6 +4,39 @@ interface SystemJS {
     import: (path?: string) => Promise<any>;
 }
 
+declare var printJS: PrintJS;
+
+interface printJsOptions {
+    printable?: string;
+    type?: "pdf" | "html" | "json" | "image";
+    frameId?: string;
+    header?: string;
+    maxWidth?: number; //800
+    font?: string; //TimesNewRoman
+    font_size?: string; //12pt
+    honorMarginPadding?: boolean;
+    properties?: string[];
+    showModal?: boolean;
+    modalMessage?: string;
+}
+interface PrintJS {
+    /**
+     * There are four print document types available: 'pdf', 'html', 'image' and 'json'.
+
+    *The default type is 'pdf'.
+
+    *It's basic usage is to call printJS() and just pass in a PDF document url: printJS('docs/PrintJS.pdf').
+
+    *For image files, the idea is the same, but you need to pass a second argument: printJS('images/PrintJS.jpg', 'image').
+
+    *To print HTML elements, in a similar way, pass in the element id and type: printJS('myElementId', 'html').
+
+    *When printing JSON data, pass in the data, type and the data properties that you want to print: 
+    
+    *printJS({printable: myData, type: 'json', properties: ['prop1', 'prop2', 'prop3']});
+     */
+    (params: string | printJsOptions): void;
+}
 interface String {
     like(value: string): boolean;
     /**
@@ -59,3 +92,4 @@ interface HTMLElement {
     observer: MutationObserver;
     isProxy: boolean;
 }
+

@@ -21,7 +21,6 @@ import { DropdownformModule } from '../components/dropdownform/dropDownForm.Modu
 import { AutoCompleteModule } from '../components/autocomplete/autocomplete';
 import { CalendarModule } from '../components/calendar/calendar';
 import { DataTableModule } from '../components/datatable/datatable';
-import { UISharedModule } from '../common/shared/shared2';
 import { ColumnBodyComponent } from './columnBody';
 import { DateColumnBodyComponent } from './dateColumnBody';
 import { CellEditorComponent } from './cellEditor';
