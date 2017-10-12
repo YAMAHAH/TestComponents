@@ -1,18 +1,18 @@
 <x-pageloading style="display:flex;flex:1 0 100%;" #loading disabledLoading="true" (hideBefore)="remove_loading()" (showBefore)="show_loading()" tip="报表加载中..." tipColor="#108ee9">
     <ng-container [ngSwitch]="buildInPlugin">
         <ng-container *ngSwitchCase="true">
-            <iframe (load)="onLoad($event)" frameborder="0" allowTransparency="true" [style.visibility]="silent ? 'hidden' : 'visible'" style="flex:1 0 100%;width:100%;height:100%;" #pdfPlugin [title]="title" [attr.src]="pdfSrc"></iframe>
+            <iframe (load)="onLoad($event)" frameborder="0" allowTransparency="true" [style.visibility]="silent ? 'hidden' : 'visible'" style="flex:1 0 100%;width:100%;height:100%;" #pdfPlugin [attr.src]="pdfSrc"></iframe>
         </ng-container>
         <ng-container *ngSwitchCase="false">
-            <iframe (load)="onLoad($event)" frameborder="0" allowTransparency="true" [style.visibility]="silent  ? 'hidden' : 'visible'" style="flex:1 0 100%;width:100%;height:100%;" #pdfViewer [title]="title" [attr.src]="pdfViewerSrc"></iframe>
+            <iframe (load)="onLoad($event)" frameborder="0" allowTransparency="true" [style.visibility]="silent  ? 'hidden' : 'visible'" style="flex:1 0 100%;width:100%;height:100%;" #pdfViewer [attr.src]="pdfViewerSrc"></iframe>
         </ng-container>
     </ng-container>
     <div class="pageload-overlay" [class.show]="showOverlay">
-        <div id="loader_container">
+        <div #loader_container_ref id="loader_container">
             <div id="loader">
                 <div align="center">正在为你打开报表<br/>请耐心等待...</div>
                 <div id="loader_bg">
-                    <div #progress1 id="progress"></div>
+                    <div #progress_ref id="progress"></div>
                 </div>
             </div>
         </div>

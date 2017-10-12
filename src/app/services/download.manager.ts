@@ -79,6 +79,10 @@ export class DownloadManager {
         }
         this.download(url + '#pdfjs.action=download', filename);
     }
+
+    downloadBlobUrl(blobUrl: string, filename: string) {
+        this.download(blobUrl, filename);
+    }
     downloadData(data: any, filename: string, contentType: string) {
         let blobFile = new Blob([data], { type: contentType });
         if (navigator.msSaveBlob) {

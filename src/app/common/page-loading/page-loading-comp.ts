@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
 import { PageLoadingService, PageAnimateAction, PageLoadActionEnum, AnimateEffectEnum, pageLoadingEffects } from '../page-loading';
@@ -21,6 +21,7 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
     pageLoad: boolean;
     checkStream = Observable.interval(100);
     constructor(private pageLoadService: PageLoadingService,
+        private cdRef: ChangeDetectorRef,
         private loadScriptService: LoadScriptService) {
 
         this.pageLoadService
@@ -89,7 +90,7 @@ export class PageLoadingComponent implements OnInit, AfterViewInit {
     isShow: boolean;
     isLoading: Boolean;
     showLoading(effect: AnimateEffectEnum) {
-
+        this.cdRef.markForCheck();
         let checkSubscriber = this.checkStream.subscribe((i: number) => {
             if (this.globalLoad) {
                 if (!this.pageLoadService.isShow && this.pageLoadService.isLoading) {

@@ -1,15 +1,15 @@
 
-import { Component, Input, ViewChild, ElementRef, OnInit, OnDestroy, EventEmitter, ViewEncapsulation, Renderer2, AfterViewInit } from '@angular/core';
+import { Component, Input, ViewChild, ElementRef, OnInit, OnDestroy, EventEmitter, ViewEncapsulation, Renderer2, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from "@angular/platform-browser";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPDFPluginInstall } from '../../untils/pdf-plugin';
 import { HttpParams } from "@angular/common/http";
-import { PageLoadingService } from '../page-loading/page-loading-service';
 import { LoadScriptService } from '../../services/load-script-service';
 import { AnimateEffectEnum } from '../page-loading/animate-effect-enum';
 import { DownloadManager } from '../../services/download.manager';
 import { PageLoadingComponent } from '../page-loading/page-loading-comp';
 import { Observable } from 'rxjs/Rx';
+import { ReportManagerService } from './report-manager.service';
 
 @Component({
     moduleId: module.id,
@@ -24,14 +24,14 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
 
 
     @Input() src: string;
-    @Input() title: string = "标题";
     pdfViewerSrc: SafeResourceUrl;
     pdfSrc: SafeResourceUrl;
     @ViewChild(PageLoadingComponent) loading: PageLoadingComponent;
     constructor(private sanitizer: DomSanitizer,
-        private pageLoadService: PageLoadingService,
         private loadScriptService: LoadScriptService,
-        private downloadManager: DownloadManager,
+        private reportMan: ReportManagerService,
+        private cdRef: ChangeDetectorRef,
+
         private renderer: Renderer2,
         private httpClient: HttpClient) {
         this.loadScriptService
@@ -45,42 +45,36 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
     ngOnInit() {
         this.buildInPlugin = isPDFPluginInstall();
         this.silent = true;
-        setTimeout(() => this.getDefaultUrl("0", null, ""), 15);
+        this.reportMan.getReportBlobUrl(this.context.baseUrl, this.context.data)
+            .then(res => {
+                this.fileUrl = res;
+                if (this.buildInPlugin)
+                    this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
+                else
+                    this.pdfViewerSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
+                this.dataLoaded = true;
+            });
+        // this.getDefaultUrl("0", null, "")
         // setTimeout(() => this.print(), 10000);
         setTimeout(() => this.getPdfBlobUrl(null, null), 6000);
+    }
 
-    }
     ngAfterViewInit(): void {
-        this.about_blank();
-        this.loadScriptService.loadPrintCSS
-            .then(css => {
-                this.loadScriptService.loadPrintjs
-                    .then(print => {
-                        //printJS('http://localhost:9500/home/pdf?report=2');
-                        printJS('http://localhost:5000/MaterialPreparation.pdf');
-                    });
-            });
-    }
-    about_blank() {
-        let frameRef = this.pdfViewerRef || this.pdfPluginRef;
-        if (frameRef) {
-           // frameRef.nativeElement.srcdoc = '<html><head></head><body></body></html>';
-            // let ed = document.all ? frameRef.nativeElement.contentWindow.document : frameRef.nativeElement.contentDocument;
-            // ed.open();
-            // ed.write('<html><head></head><body></body></html>');
-            // ed.close();
-            // ed.contentEditable = true;
-            // ed.designMode = 'on';
-        }
+
+        this.loading.showLoading(AnimateEffectEnum.random);
+        setTimeout(() => {
+            // this.reportMan.print(this.fileUrl, null);
+            // this.reportMan.download(this.fileUrl, null);
+        }, 10000);
     }
     ngOnDestroy(): void {
         URL.revokeObjectURL(this.fileUrl);
-        this.t_id.unsubscribe();
+        this.animate_id.unsubscribe();
     }
     //返回结果
     modalResult: EventEmitter<any>;
     //传递进来的参数
-    contex: any;
+    context: any;
     silent: boolean = true;
     @ViewChild("pdfViewer", { read: ElementRef }) pdfViewerRef: ElementRef;
     @ViewChild("pdfPlugin", { read: ElementRef }) pdfPluginRef: ElementRef;
@@ -90,55 +84,46 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
             this.pdfViewerRef.nativeElement.contentWindow.print();
         if (this.pdfPluginRef)
             this.pdfPluginRef.nativeElement.contentWindow.print();
-
     }
 
-    t_id = Observable.interval(150).subscribe(res => this.animate()); // setInterval(() => this.animate(), 20);
+    animate_id = Observable.interval(150).subscribe(res => this.animate());
     pos: number = 0;
     dir: number = 21;
     len: number = 0;
 
-    _progress: HTMLElement;
-    get progress() {
-        if (this._progress === undefined)
-            this._progress = document.getElementById('progress');
-        return this._progress;
-    }
+    @ViewChild("progress_ref") progess_ref: ElementRef;
     animate() {
-        let elem = this.progress;
-        if (elem != null) {
-            if (this.pos == 0) this.len += this.dir;
-            if (this.len > 32 || this.pos > 179) this.pos += this.dir;
-            if (this.pos > 179) this.len -= this.dir;
-            if (this.pos > 179 && this.len == 0) this.pos = 0;
-            elem.style.left = this.pos + 'px';
-            elem.style.width = this.len + 'px';
-            // this.renderer && this.renderer.setStyle(elem, 'left', this.pos);
-            // this.renderer && this.renderer.setStyle(elem, 'width', this.len);
-        }
+        let elem = this.progess_ref.nativeElement;
+        if (this.pos == 0) this.len += this.dir;
+        if (this.len > 32 || this.pos > 179) this.pos += this.dir;
+        if (this.pos > 179) this.len -= this.dir;
+        if (this.pos > 179 && this.len == 0) this.pos = 0;
+        this.renderer && this.renderer.setStyle(elem, 'left', this.pos + 'px');
+        this.renderer && this.renderer.setStyle(elem, 'width', this.len + 'px');
     }
 
+    @ViewChild("loader_container_ref") loader_container_ref: ElementRef;
     remove_loading() {
         this.showOverlay = false;
-        this.t_id.unsubscribe();
-        if (!this.targetElm)
-            this.targetElm = document.getElementById('loader_container');
-        if (this.targetElm) {
-            this.targetElm.style.display = 'none';
-            this.targetElm.style.visibility = 'hidden';
+        this.animate_id.unsubscribe();
+        if (this.loader_container_ref) {
+            this.loader_container_ref.nativeElement.style.display = 'none';
+            this.loader_container_ref.nativeElement.style.visibility = 'hidden';
         }
     }
-    targetElm: any;
-    showOverlay: boolean;
+    showOverlay: boolean = false;
     show_loading() {
         this.showOverlay = true;
-        if (!this.targetElm)
-            this.targetElm = document.getElementById('loader_container');
-        if (this.targetElm) {
-            this.targetElm.style.display = 'block';
-            this.targetElm.style.visibility = 'visible';
-            this.t_id = Observable.interval(150).subscribe(res => this.animate());
-        }
+        this.pos = 0;
+        this.len = 0;
+        this.cdRef.detectChanges();
+
+        // if (this.loader_container_ref) {
+        this.loader_container_ref.nativeElement.style.display = 'block';
+        this.loader_container_ref.nativeElement.style.visibility = 'visible';
+        if (this.animate_id) this.animate_id.unsubscribe();
+        this.animate_id = Observable.interval(150).subscribe(res => this.animate());
+        // }
     }
 
     default_url: string | Uint8Array;
@@ -186,7 +171,6 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
             setTimeout(() => {
                 this.silent = false;
                 this.dataLoaded = false;
-                // this.remove_loading();
                 this.loading.Hide();
             }, 1000);
         }
@@ -252,8 +236,6 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
                 this.dataLoaded = true;
             });
     }
-
-
 
     _tokenKeyCache = new Map<any, string>();
 

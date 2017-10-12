@@ -85,7 +85,7 @@ export class FormService {
         this.instances.forEach(formRef => this.close(formRef));
     }
     close(formRef: ComponentRef<Form>): void {
-        this.instances.splice(this.instances.indexOf(formRef), 1);
+        this.instances.remove(formRef); //splice(this.instances.indexOf(formRef), 1);
         formRef.destroy();
     }
     hide(formRef: ComponentRef<Form>) {

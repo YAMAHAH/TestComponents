@@ -37,6 +37,13 @@ interface PrintJS {
      */
     (params: string | printJsOptions): void;
 }
+
+interface StringConstructor {
+    isNullOrEmpty(value: any): boolean;
+    isNotNullOrEmpty(value: any): boolean;
+    isBlank(value: any): boolean;
+    isNotBlank(value: any): boolean;
+}
 interface String {
     like(value: string): boolean;
     /**
@@ -47,10 +54,10 @@ interface String {
      * 从右截取指定长度的字串 
      */
     right(n: number): string;
-    isNullOrEmpty(): boolean;
-    isNotNullOrEmpty(): boolean;
-    isBlank(): boolean;
-    isNotBlank(): boolean;
+
+    GetFileName: string;
+    GetExtensionName: string;
+    hasExtensionName: boolean;
 }
 interface ArrayConstructor {
     intersect(...params: any[]): any[];

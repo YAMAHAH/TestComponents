@@ -49,6 +49,7 @@ import { provideParent } from '../untils/di-helper';
 import { tryGetValue } from '../untils/type-checker';
 import { TenantManageTemplate } from './sale.module';
 import { TemplateClassBase } from '../Models/template-class';
+import { ReportManagerService } from '../common/report-viewer/report-manager.service';
 
 @Component({
     moduleId: module.id,
@@ -87,6 +88,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         public viewContainerRef: ViewContainerRef,
         private dialogModalService: FormService,
         private activeRoute: ActivatedRoute,
+        private reportMan: ReportManagerService,
         private carService: CarService,
         private router: Router,
         @Inject(forwardRef(() => TenantManageTemplate)) public td: TenantManageTemplate
@@ -478,7 +480,9 @@ export class SaleComponent extends ComponentFactoryConatiner
     }
 
     invokeReportViewer() {
-        this.appStore.taskManager.showReportViewer();
+        //this.appStore.taskManager.showReportViewer();
+        this.reportMan.preview("http://localhost:9500/home/pdf?report=0", null);
+        //http://localhost:9500/home/pdf?report=2
     }
 
     getClass(pageModel: IPageModel) { //PurList

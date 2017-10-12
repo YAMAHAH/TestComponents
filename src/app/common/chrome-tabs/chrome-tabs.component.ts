@@ -342,7 +342,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             if (pageModel.closeAfterFn) options.closeAfterCallBackFn = pageModel.closeAfterFn;
             if (pageModel.componentRef) options.componentRef = pageModel.componentRef;
             this.appStore.modalService.showForm(options).subscribe(result);
-        }, 10);
+        }, 20);
         return result;
     }
 
@@ -368,63 +368,38 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             if (pageModel.closeAfterFn) options.closeAfterCallBackFn = pageModel.closeAfterFn;
             if (pageModel.componentRef) options.componentRef = pageModel.componentRef;
             return this.appStore.modalService.showForm(options).subscribe(result);
-        }, 10);
+        }, 20);
         return result;
     }
 
     showReportViewer(modalOptions: FormOptions = null) {
-        let options: FormOptions = new FormOptions();
-        options.responsive = true;
-        options.width = document.body.clientWidth * 0.8;
-        options.height = document.body.clientHeight * 0.8;
-        options.modal = true;
-        options.visible = true;
-        options.closable = true;
-        options.resizable = true;
-        options.titleAlign = 1;
-        options.rootContainer = this.viewContainerRef;
-        options.injector = this.viewContainerRef.parentInjector;
-        options.minimizeBox = false;
-        options.fullscreenBox = false;
-        options.maximizeBox = false;
+        let result = new EventEmitter<any>();
+        setTimeout(() => {
+            let options: FormOptions = new FormOptions();
+            options.responsive = true;
+            options.width = document.body.clientWidth * 0.8;
+            options.height = document.body.clientHeight * 0.8;
+            options.modal = true;
+            options.visible = true;
+            options.closable = true;
+            options.resizable = true;
+            options.titleAlign = 1;
+            options.rootContainer = this.viewContainerRef;
+            options.injector = this.viewContainerRef.parentInjector;
+            options.minimizeBox = false;
+            options.fullscreenBox = false;
+            options.maximizeBox = false;
 
-        if (modalOptions) {
-            Object.assign(options, modalOptions);
-        }
-        options.componentOutlets = [ReportViewer];
-        options.enableFlex = true;
-        options.header = "报表查看器";
-        this.appStore.modalService.showForm(options)
-            .subscribe((res: { action: string, status: string }) => {
-
-            });
-
-    }
-
-    PrintReport(modalOptions: FormOptions = null) {
-        let options: FormOptions = new FormOptions();
-        options.responsive = true;
-        options.width = 800;
-        options.height = 600;
-        options.modal = true;
-        options.visible = true;
-        options.closable = true;
-        options.resizable = true;
-        options.titleAlign = 1;
-        options.rootContainer = this.viewContainerRef;
-        options.injector = this.viewContainerRef.parentInjector;
-
-        if (modalOptions) {
-            Object.assign(options, modalOptions);
-        }
-        options.componentOutlets = [ReportViewer];
-        options.enableFlex = true;
-        options.header = "报表查看器";
-        this.appStore.modalService.showForm(options)
-            .subscribe((res: { action: string, status: string }) => {
-
-            });
-
+            if (modalOptions) {
+                Object.assign(options, modalOptions);
+            }
+            options.componentOutlets = [ReportViewer];
+            options.enableFlex = true;
+            options.header = "报表查看器";
+            this.appStore.modalService.showForm(options)
+                .subscribe(result);
+        }, 20);
+        return result;
     }
 
     onRemoveTab() {

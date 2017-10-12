@@ -19,7 +19,7 @@ import { ReportViewer } from '../report-viewer/report.viewer';
         RouterModule,
         SharedModule,
         ToastyModule,
-        ReportViewerModule
+        ReportViewerModule.forRoot()
     ],
     declarations: [
         ChromeTabsComponent,
@@ -28,7 +28,7 @@ import { ReportViewer } from '../report-viewer/report.viewer';
     exports: [
         ChromeTabsComponent
     ],
-    entryComponents:[ReportViewer]
+    entryComponents: [ReportViewer]
 })
 export class ChromeTabsModule {
 
