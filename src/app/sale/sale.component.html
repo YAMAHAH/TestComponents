@@ -1,16 +1,11 @@
-<script type="text/javascript">
-    function hello() {
-        console.log("hello");
-    }
-</script>
 <div style="display:flex;flex:1 0 100%;height:100%">
     <x-nav-tree-view (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)"></x-nav-tree-view>
     <div style="display:flex;flex:1;flex-direction: column; width:100%">
         <div [ngClass]="getClass(pageModel)" style="display:flex;flex-direction: column;height: 100%; margin: 5px; background-color: #f2f2f2">
             <div>
                 <button [keyBinding]="td.dataFields.Tenant_Name.objectId" (click)="open()">OpenPurOrder</button>
-                <button keyBinding='btn9596' (click)="close()">OpenPurList</button>
-                <button keyBinding='btn9597' (click)="toggle()">toggleToPageViewer</button>
+                <button (click)="close()">OpenPurList</button>
+                <button (click)="toggle()">toggleToPageViewer</button>
                 <button (click)="invokeReportViewer()">reportViewer</button>
                 <button keyBinding='btn95962343' class="btn btn-default" (click)="op1.toggle($event)">overlayPanel</button>
                 <button keyBinding='btn95962343243' class="btn btn-default" (click)="alert();">Alert</button>
@@ -43,7 +38,26 @@
                         </ng-template>
                     </x-dropdown>
                 </div>
-                <div style="width:800px">
+                <form #printHtml method="post" action="#" id="printJS-form">
+                    <div style="display: flex; margin-bottom: 10px;">
+                        <div style="flex: 1;padding-right: 10px;">
+                            Name:
+                            <input type="text" name="name" id="name" value="John Doe" placeholder="Name">
+                        </div>
+                        <div style="flex: 1;">
+                            Email:
+                            <input type="text" name="email" id="email" value="john@doe.com" placeholder="Email">
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            Message:
+                            <textarea name="message" id="message" placeholder="Message">Print HTML Elements</textarea>
+                        </div>
+                    </div>
+                </form>
+
+                <div id="div999999" style="width:800px">
                     <x-dataTable [editable]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadCarsLazy($event)" lazy="true" [rows]="10" [paginator]="true" [responsive]="false" [pageLinks]="10" [rowsPerPageOptions]="[5,10,20]" [value]="mycars">
                         <dt-column [modelRef]="col" keyBinding='col3924234234244{{idx}}' *ngFor="let col of cols;index as idx" [style]=" {'overflow':'visible' }" [editable]="col.editable" [hidden]="!col.visible" [cellEditor]="col.cellEditor" [cellComponent]="col.cellComponent"
                             [sortable]="true" [field]="col.field" [header]="col.header"></dt-column>

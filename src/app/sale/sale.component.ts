@@ -479,10 +479,37 @@ export class SaleComponent extends ComponentFactoryConatiner
         }
     }
 
+    @ViewChild("printHtml") printHtml: ElementRef;
     invokeReportViewer() {
-        //this.appStore.taskManager.showReportViewer();
-        this.reportMan.preview("http://localhost:9500/home/pdf?report=0", null);
-        //http://localhost:9500/home/pdf?report=2
+        let someJSONdata = [
+            {
+                name: 'John Doe',
+                email: 'john@doe.com',
+                phone: '111-111-1111'
+            },
+            {
+                name: 'Barry Allen',
+                email: 'barry@flash.com',
+                phone: '222-222-2222'
+            },
+            {
+                name: 'Cool Dude',
+                email: 'cool@dude.com',
+                phone: '333-333-3333'
+            }
+        ];
+        //json
+        // this.reportMan.preview("http://localhost:9500/home/pdf?report=0", null, "json",
+        //     { printable: someJSONdata, properties: ['name', 'email', 'phone'], type: 'json' });
+        //pdf
+        // this.reportMan.preview("http://localhost:9500/home/pdf?report=0", null);
+        //image
+        // this.reportMan.preview("http://localhost:9500/home/pdf?report=0", null, "image",
+        //     { printable: '/wm.jpg', type: 'image' });
+        //html
+        this.reportMan.preview("http://localhost:9500/home/pdf?report=0", null, "html",
+            { elementRef: this.printHtml.nativeElement, type: 'html' });
+
     }
 
     getClass(pageModel: IPageModel) { //PurList

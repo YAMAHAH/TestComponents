@@ -6,19 +6,40 @@ import { AppStoreService } from '../../services/app.store.service';
 
 @Injectable()
 export class ReportManagerService {
-
     constructor(private downloadManager: DownloadManager,
         private httpClient: HttpClient,
         private globalService: AppStoreService,
         private loadScriptService: LoadScriptService) {
     }
-    preview(baseUrl: string, data: any) {
+    preview(baseUrl: string, data: any, type: printJSType = "pdf",
+        options: printJsOptions = { type: "pdf" }) {
+
+        let defaultParams: printJsOptions = {
+            printable: null,
+            type: 'pdf',
+            header: null,
+            maxWidth: 800,
+            font: 'TimesNewRoman',
+            font_size: '12pt',
+            honorMarginPadding: true,
+            honorColor: false,
+            properties: null,
+            showModal: false,
+            modalMessage: 'Retrieving Document...',
+            frameId: 'printJS',
+            border: true,
+            htmlData: ''
+        };
+        if (options)
+            defaultParams = Object.assign(defaultParams, options);
         return this.globalService.taskManager
             .showReportViewer({
-                resolve: { data, baseUrl }
+                resolve: { data, baseUrl, type, options: defaultParams }
             });
     }
-    async print(baseUrl: string, bodyData: any, fileType: string = "application/pdf") {
+    async print(baseUrl: string, bodyData: any,
+        fileType: string = "application/pdf",
+        printOptions: printJsOptions = { type: "pdf" }) {
         if (String.isBlank(baseUrl)) throw new Error("print url is null.");
         let fileUrl: string;
         if (baseUrl.hasExtensionName || baseUrl.startsWith("blob:")) {

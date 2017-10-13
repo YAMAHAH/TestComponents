@@ -1,22 +1,22 @@
 var InstallTrigger: any;
 export default class Browser {
-    isFirefox() {
+    static isFirefox() {
         return typeof InstallTrigger !== 'undefined';
     };
     // Internet Explorer 6-11
-    isIE() {
+    static isIE() {
         return navigator.userAgent.indexOf('MSIE') !== -1 || !!document['documentMode'];
     }
     // Edge 20+
-    isEdge() {
+    static isEdge() {
         return !this.isIE() && !!window['StyleMedia'];
     }
     // Chrome 1+
-    isChrome() {
+    static isChrome() {
         return !!window['chrome'] && !!window['chrome'].webstore;
     }
     // At least Safari 3+: "[object HTMLElementConstructor]"
-    isSafari() {
+    static isSafari() {
         return Object.prototype.toString.call(window['HTMLElement']).indexOf('Constructor') > 0 ||
             navigator.userAgent.toLowerCase().indexOf('safari') !== -1;
     }

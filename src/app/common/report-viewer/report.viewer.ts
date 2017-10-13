@@ -10,6 +10,10 @@ import { DownloadManager } from '../../services/download.manager';
 import { PageLoadingComponent } from '../page-loading/page-loading-comp';
 import { Observable } from 'rxjs/Rx';
 import { ReportManagerService } from './report-manager.service';
+import json from '../printjs/json';
+import html from '../printjs/html';
+import image from '../printjs/image';
+import Browser from '../../untils/browser';
 
 @Component({
     moduleId: module.id,
@@ -41,22 +45,48 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
             });
     }
     buildInPlugin: boolean;
+    reportType: printJSType;
 
     ngOnInit() {
         this.buildInPlugin = isPDFPluginInstall();
         this.silent = true;
-        this.reportMan.getReportBlobUrl(this.context.baseUrl, this.context.data)
-            .then(res => {
-                this.fileUrl = res;
-                if (this.buildInPlugin)
-                    this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
-                else
-                    this.pdfViewerSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
+        this.reportType = this.context.type;
+        switch (this.reportType) {
+            case 'pdf':
+                this.reportMan.getReportBlobUrl(this.context.baseUrl, this.context.data)
+                    .then(res => {
+                        this.fileUrl = res;
+                        if (this.buildInPlugin)
+                            this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
+                        else
+                            this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
+                        this.dataLoaded = true;
+                        this.onLoad(null);
+                    });
+                break;
+            case 'json':
+                json.preview(this.context.options, this.iFrameRef.nativeElement);
                 this.dataLoaded = true;
-            });
+                this.onLoad(null);
+                break;
+            case 'html':
+                html.preview(this.context.options, this.iFrameRef.nativeElement);
+                this.dataLoaded = true;
+                this.onLoad(null);
+                break;
+            case 'image':
+                image.preview(this.context.options, this.iFrameRef.nativeElement)
+                    .then(htmlData => {
+                        this.dataLoaded = true;
+                        this.onLoad(null);
+                    });
+                break;
+            default:
+                break;
+        }
         // this.getDefaultUrl("0", null, "")
         // setTimeout(() => this.print(), 10000);
-        setTimeout(() => this.getPdfBlobUrl(null, null), 6000);
+        //  setTimeout(() => this.getPdfBlobUrl(null, null), 6000);
     }
 
     ngAfterViewInit(): void {
@@ -76,14 +106,13 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
     //传递进来的参数
     context: any;
     silent: boolean = true;
-    @ViewChild("pdfViewer", { read: ElementRef }) pdfViewerRef: ElementRef;
-    @ViewChild("pdfPlugin", { read: ElementRef }) pdfPluginRef: ElementRef;
+    // @ViewChild("pdfViewer", { read: ElementRef }) pdfViewerRef: ElementRef;
+    @ViewChild("pdfPlugin", { read: ElementRef }) iFrameRef: ElementRef;
     print() {
-
-        if (this.pdfViewerRef)
-            this.pdfViewerRef.nativeElement.contentWindow.print();
-        if (this.pdfPluginRef)
-            this.pdfPluginRef.nativeElement.contentWindow.print();
+        // if (this.pdfViewerRef)
+        //     this.pdfViewerRef.nativeElement.contentWindow.print();
+        // if (this.pdfPluginRef)
+        //     this.pdfPluginRef.nativeElement.contentWindow.print();
     }
 
     animate_id = Observable.interval(150).subscribe(res => this.animate());
@@ -165,9 +194,29 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
         fileReader.readAsDataURL(blob);
 
     }
+
     dataLoaded: boolean
     onLoad(event: Event) {
         if (this.dataLoaded) {
+            if (this.reportType === 'pdf' && (Browser.isIE() || Browser.isEdge())) {
+            } else {
+                if (this.reportType === 'pdf') {
+                    ;
+                } else {
+                    let iframeElement: HTMLIFrameElement = this.iFrameRef.nativeElement;
+                    // Get iframe element document
+                    let printDocument: any;
+                    if (iframeElement.contentWindow)
+                        printDocument = iframeElement.contentWindow;
+                    else
+                        printDocument = iframeElement.contentDocument;
+
+                    if ((printDocument as any).document) printDocument = (printDocument as any).document;
+
+                    // Inject printable html into iframe body
+                    printDocument.body.innerHTML = this.context.options.htmlData;
+                }
+            }
             setTimeout(() => {
                 this.silent = false;
                 this.dataLoaded = false;
@@ -201,7 +250,7 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
                 if (this.buildInPlugin)
                     this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
                 else
-                    this.pdfViewerSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
+                    this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
                 this.dataLoaded = true;
             });
     }
@@ -232,7 +281,7 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
                 if (this.buildInPlugin)
                     this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
                 else
-                    this.pdfViewerSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
+                    this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
                 this.dataLoaded = true;
             });
     }

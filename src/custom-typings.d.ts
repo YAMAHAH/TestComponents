@@ -6,15 +6,20 @@ interface SystemJS {
 
 declare var printJS: PrintJS;
 
+type printJSType = "pdf" | "html" | "json" | "image";
 interface printJsOptions {
-    printable?: string;
-    type?: "pdf" | "html" | "json" | "image";
+    elementRef?: HTMLElement;
+    printable?: any;
+    type?: printJSType;
     frameId?: string;
     header?: string;
+    htmlData?: string;
     maxWidth?: number; //800
     font?: string; //TimesNewRoman
     font_size?: string; //12pt
     honorMarginPadding?: boolean;
+    honorColor?: boolean;
+    border?: boolean;
     properties?: string[];
     showModal?: boolean;
     modalMessage?: string;
@@ -35,7 +40,13 @@ interface PrintJS {
     
     *printJS({printable: myData, type: 'json', properties: ['prop1', 'prop2', 'prop3']});
      */
-    (params: string | printJsOptions): void;
+    (params: string | printJsOptions, type?: printJSType): void;
+}
+interface HTMLIFrameElement extends HTMLElement, GetSVGDocument {
+    srcdoc: string;
+}
+interface Window {
+    printjs: PrintJS;
 }
 
 interface StringConstructor {
@@ -98,5 +109,7 @@ interface HTMLElement {
     hidden: boolean;
     observer: MutationObserver;
     isProxy: boolean;
+
+    currentStyle: any;
 }
 
