@@ -47,4 +47,8 @@
   
   4.3.已渲染的组件引用,并且组件已注入elementRef,把elementRef.nativeElement添加到Modal的append中
 
+5.js模板引擎 dot/mustache  cucumber-html-report模板报表
 
+6.dom-to-image/HTML2Canvas/wkhtmltopdf/rasterizeHTML/phantomjs
+/
+HTML Renderer

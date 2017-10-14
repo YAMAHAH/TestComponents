@@ -499,17 +499,31 @@ export class SaleComponent extends ComponentFactoryConatiner
             }
         ];
         //json
-        // this.reportMan.preview("http://localhost:9500/home/pdf?report=0", null, "json",
-        //     { printable: someJSONdata, properties: ['name', 'email', 'phone'], type: 'json' });
+        // this.reportMan.preview(
+        //     {
+        //         printable: someJSONdata,
+        //         properties: ['name', 'email', 'phone'],
+        //         type: 'json'
+        //     });
+        // this.reportMan.preview({
+        //     printable: "/testjson.json", //api/users/GetTestJSON
+        //     properties: ['name', 'email', 'phone'],
+        //     type: 'json'
+        // });
         //pdf
-        // this.reportMan.preview("http://localhost:9500/home/pdf?report=0", null);
+        //this.reportMan.preview("http://localhost:9500/home/pdf?report=0");
+        // this.reportMan.preview("/MaterialPreparation.pdf");
         //image
-        // this.reportMan.preview("http://localhost:9500/home/pdf?report=0", null, "image",
-        //     { printable: '/wm.jpg', type: 'image' });
+        //this.reportMan.preview({ printable: '/wm.jpg', type: 'image' });
+        //this.reportMan.preview({ printable: 'api/Users/GetTestImage2', type: 'image', contentType: "image/jpeg" });
         //html
-        this.reportMan.preview("http://localhost:9500/home/pdf?report=0", null, "html",
-            { elementRef: this.printHtml.nativeElement, type: 'html' });
-
+        this.reportMan.preview({
+            elementRef: this.printHtml.nativeElement,
+            honorMarginPadding: true,
+            honorColor: true,
+            type: 'html',
+            htmlOptions: { elementRef: this.printHtml.nativeElement }
+        });
     }
 
     getClass(pageModel: IPageModel) { //PurList

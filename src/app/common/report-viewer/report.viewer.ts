@@ -14,6 +14,7 @@ import json from '../printjs/json';
 import html from '../printjs/html';
 import image from '../printjs/image';
 import Browser from '../../untils/browser';
+import pdf from '../printjs/pdf';
 
 @Component({
     moduleId: module.id,
@@ -44,48 +45,65 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
 
             });
     }
+
+    fireLoadEvent() {
+        this.dataLoaded = true;
+        this.onLoad(null);
+    }
     buildInPlugin: boolean;
     reportType: printJSType;
 
-    ngOnInit() {
+    async ngOnInit() {
         this.buildInPlugin = isPDFPluginInstall();
         this.silent = true;
         this.reportType = this.context.type;
-        switch (this.reportType) {
-            case 'pdf':
-                this.reportMan.getReportBlobUrl(this.context.baseUrl, this.context.data)
-                    .then(res => {
-                        this.fileUrl = res;
-                        if (this.buildInPlugin)
-                            this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
-                        else
-                            this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
-                        this.dataLoaded = true;
-                        this.onLoad(null);
-                    });
-                break;
-            case 'json':
-                json.preview(this.context.options, this.iFrameRef.nativeElement);
-                this.dataLoaded = true;
-                this.onLoad(null);
-                break;
-            case 'html':
-                html.preview(this.context.options, this.iFrameRef.nativeElement);
-                this.dataLoaded = true;
-                this.onLoad(null);
-                break;
-            case 'image':
-                image.preview(this.context.options, this.iFrameRef.nativeElement)
-                    .then(htmlData => {
-                        this.dataLoaded = true;
-                        this.onLoad(null);
-                    });
-                break;
-            default:
-                break;
+        this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl("about:blank");
+        try {
+            switch (this.reportType) {
+                case 'pdf':
+                    this.fileUrl = await this.reportMan.getResourceUrl(this.context.baseUrl, this.context.data)
+                    if (this.buildInPlugin)
+                        this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl);
+                    else
+                        this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl("/assets/pdfjs/web/viewer.html?file=" + this.fileUrl);
+                    break;
+                case 'json':
+                    if (!Array.isArray(this.context.options.printable)) {
+                        this.context.options.printable = await this.reportMan
+                            .getResource(this.context.baseUrl, this.context.data, this.context.contentType);
+
+                        if (this.context.options.printable.data)
+                            this.context.options.printable = this.context.options.printable.data;
+                    }
+                    json.preview(this.context.options, this.iFrameRef.nativeElement);
+                    break;
+                case 'html':
+                    if (this.context.htmlString && this.context.htmlOptions) {
+                        html.previewHtmlElemet(this.context.htmlString, this.context.htmlOptions, this.context.options);
+                    } else
+                        html.preview(this.context.options, this.iFrameRef.nativeElement);
+                    break;
+                case 'image':
+                    this.context.options.printable = await this.reportMan.getResourceUrl(
+                        this.context.baseUrl,
+                        this.context.data,
+                        this.context.options.contentType);
+                    await image.preview(this.context.options, this.iFrameRef.nativeElement);
+                    break;
+                default:
+                    break;
+            }
+            this.fireLoadEvent();
+        } catch (error) {
+            setTimeout(() => {
+                this.silent = false;
+                this.dataLoaded = false;
+                this.loading.Hide();
+            }, 1000);
         }
+
         // this.getDefaultUrl("0", null, "")
-        // setTimeout(() => this.print(), 10000);
+        setTimeout(() => this.print(), 10000);
         //  setTimeout(() => this.getPdfBlobUrl(null, null), 6000);
     }
 
@@ -104,15 +122,38 @@ export class ReportViewer implements OnInit, AfterViewInit, OnDestroy {
     //返回结果
     modalResult: EventEmitter<any>;
     //传递进来的参数
-    context: any;
+    context: {
+        baseUrl: any,
+        options: printJsOptions,
+        type: printJSType,
+        contentType: string,
+        data: any,
+        htmlString: string,
+        htmlOptions: htmlOptions
+    };
     silent: boolean = true;
     // @ViewChild("pdfViewer", { read: ElementRef }) pdfViewerRef: ElementRef;
     @ViewChild("pdfPlugin", { read: ElementRef }) iFrameRef: ElementRef;
     print() {
-        // if (this.pdfViewerRef)
-        //     this.pdfViewerRef.nativeElement.contentWindow.print();
-        // if (this.pdfPluginRef)
-        //     this.pdfPluginRef.nativeElement.contentWindow.print();
+        try {
+            switch (this.context.type) {
+                case 'pdf':
+                    pdf.print(this.context.options, this.iFrameRef.nativeElement);
+                    break;
+                case 'json':
+                    json.print(this.context.options, this.iFrameRef.nativeElement);
+                    break;
+                case 'html':
+                    html.print(this.context.options, this.iFrameRef.nativeElement);
+                    break;
+                case 'image':
+                    image.print(this.context.options, this.iFrameRef.nativeElement);
+                    break;
+                default:
+                    break;
+            }
+        } catch (error) {
+        }
     }
 
     animate_id = Observable.interval(150).subscribe(res => this.animate());

@@ -8,11 +8,24 @@ declare var printJS: PrintJS;
 
 type printJSType = "pdf" | "html" | "json" | "image";
 interface printJsOptions {
+    htmlOptions?: htmlOptions;
     elementRef?: HTMLElement;
+    /**
+     * 打印目标
+     */
     printable?: any;
+    /**
+     * 打印类型
+     */
     type?: printJSType;
+    contentType?: string;
     frameId?: string;
+    /**
+     * 打印头信息
+     */
     header?: string;
+    //请求数据
+    data?: any;
     htmlData?: string;
     maxWidth?: number; //800
     font?: string; //TimesNewRoman
@@ -42,11 +55,26 @@ interface PrintJS {
      */
     (params: string | printJsOptions, type?: printJSType): void;
 }
+
+interface htmlOptions {
+    elementRef?: HTMLElement;
+    htmlString?: string;
+    printMode?: string;
+    pageTitle?: string;
+    templateString?: string;
+    popupProperties?: string;
+    stylesheets?: string | string[];
+    styles?: string | string[];
+}
+
 interface HTMLIFrameElement extends HTMLElement, GetSVGDocument {
     srcdoc: string;
 }
 interface Window {
     printjs: PrintJS;
+}
+interface Document {
+    frames: any;
 }
 
 interface StringConstructor {

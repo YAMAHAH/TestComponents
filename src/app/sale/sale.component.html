@@ -38,7 +38,7 @@
                         </ng-template>
                     </x-dropdown>
                 </div>
-                <form #printHtml method="post" action="#" id="printJS-form">
+                <form method="post" action="#" id="printJS-form">
                     <div style="display: flex; margin-bottom: 10px;">
                         <div style="flex: 1;padding-right: 10px;">
                             Name:
@@ -57,7 +57,7 @@
                     </div>
                 </form>
 
-                <div id="div999999" style="width:800px">
+                <div #printHtml id="div999999" style="width:800px">
                     <x-dataTable [editable]="true" [totalRecords]="totalRecords" (onLazyLoad)="loadCarsLazy($event)" lazy="true" [rows]="10" [paginator]="true" [responsive]="false" [pageLinks]="10" [rowsPerPageOptions]="[5,10,20]" [value]="mycars">
                         <dt-column [modelRef]="col" keyBinding='col3924234234244{{idx}}' *ngFor="let col of cols;index as idx" [style]=" {'overflow':'visible' }" [editable]="col.editable" [hidden]="!col.visible" [cellEditor]="col.cellEditor" [cellComponent]="col.cellComponent"
                             [sortable]="true" [field]="col.field" [header]="col.header"></dt-column>

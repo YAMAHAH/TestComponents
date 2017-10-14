@@ -9,7 +9,7 @@ let printTypes = ['pdf', 'html', 'image', 'json'];
 
 export default class PrintJS {
     static init(params: string | printJsOptions, type?: printJSType) {
-        let defualtParams: printJsOptions = {
+        let defaultParams: printJsOptions = {
             printable: null,
             type: 'pdf',
             header: null,
@@ -34,42 +34,42 @@ export default class PrintJS {
 
         switch (typeof args) {
             case 'string':
-                defualtParams.printable = encodeURI(args);
-                defualtParams.type = arguments[1] || defualtParams.type;
+                defaultParams.printable = encodeURI(args);
+                defaultParams.type = arguments[1] || defaultParams.type;
                 break;
 
             case 'object':
-                defualtParams.printable = args.printable;
-                defualtParams.type = typeof args.type !== 'undefined' ? args.type : defualtParams.type;
-                defualtParams.frameId = typeof args.frameId !== 'undefined' ? args.frameId : defualtParams.frameId;
-                defualtParams.header = typeof args.header !== 'undefined' ? args.header : defualtParams.header;
-                defualtParams.maxWidth = typeof args.maxWidth !== 'undefined' ? args.maxWidth : defualtParams.maxWidth;
-                defualtParams.font = typeof args.font !== 'undefined' ? args.font : defualtParams.font;
-                defualtParams.font_size = typeof args.font_size !== 'undefined' ? args.font_size : defualtParams.font_size;
-                defualtParams.honorMarginPadding = typeof args.honorMarginPadding !== 'undefined' ? args.honorMarginPadding : defualtParams.honorMarginPadding
-                defualtParams.properties = typeof args.properties !== 'undefined' ? args.properties : defualtParams.properties;
-                defualtParams.showModal = typeof args.showModal !== 'undefined' ? args.showModal : defualtParams.showModal;
-                defualtParams.modalMessage = typeof args.modalMessage !== 'undefined' ? args.modalMessage : defualtParams.modalMessage;
+                defaultParams.printable = args.printable;
+                defaultParams.type = typeof args.type !== 'undefined' ? args.type : defaultParams.type;
+                defaultParams.frameId = typeof args.frameId !== 'undefined' ? args.frameId : defaultParams.frameId;
+                defaultParams.header = typeof args.header !== 'undefined' ? args.header : defaultParams.header;
+                defaultParams.maxWidth = typeof args.maxWidth !== 'undefined' ? args.maxWidth : defaultParams.maxWidth;
+                defaultParams.font = typeof args.font !== 'undefined' ? args.font : defaultParams.font;
+                defaultParams.font_size = typeof args.font_size !== 'undefined' ? args.font_size : defaultParams.font_size;
+                defaultParams.honorMarginPadding = typeof args.honorMarginPadding !== 'undefined' ? args.honorMarginPadding : defaultParams.honorMarginPadding
+                defaultParams.properties = typeof args.properties !== 'undefined' ? args.properties : defaultParams.properties;
+                defaultParams.showModal = typeof args.showModal !== 'undefined' ? args.showModal : defaultParams.showModal;
+                defaultParams.modalMessage = typeof args.modalMessage !== 'undefined' ? args.modalMessage : defaultParams.modalMessage;
                 break;
             default:
                 throw new Error('Unexpected argument type! Expected "string" or "object", got ' + typeof args);
         }
 
-        if (!defualtParams.printable) {
+        if (!defaultParams.printable) {
             throw new Error('Missing printable information.');
         }
 
-        if (!defualtParams.type || typeof defualtParams.type !== 'string' || printTypes.indexOf(defualtParams.type.toLowerCase()) === -1) {
+        if (!defaultParams.type || typeof defaultParams.type !== 'string' || printTypes.indexOf(defaultParams.type.toLowerCase()) === -1) {
             throw new Error('Invalid print type. Available types are: pdf, html, image and json.');
         }
 
         // Check if we are showing a feedback message to the user (useful for large files)
-        if (defualtParams.showModal) {
-            Modal.show(defualtParams);
+        if (defaultParams.showModal) {
+            Modal.show(defaultParams);
         }
 
         // To prevent duplication and issues, remove printFrame from the DOM, if it exists
-        let usedFrame = document.getElementById(defualtParams.frameId);
+        let usedFrame = document.getElementById(defaultParams.frameId);
 
         if (usedFrame) {
             usedFrame.parentNode.removeChild(usedFrame);
@@ -85,35 +85,35 @@ export default class PrintJS {
         printFrame.setAttribute('style', 'display:none;');
 
         // Set element id
-        printFrame.setAttribute('id', defualtParams.frameId);
+        printFrame.setAttribute('id', defaultParams.frameId);
 
         // For non pdf printing in Chrome and Safari, pass an empty html document to srcdoc (force onload callback)
-        if (defualtParams.type !== 'pdf' && (Browser.isChrome() || Browser.isSafari())) {
+        if (defaultParams.type !== 'pdf' && (Browser.isChrome() || Browser.isSafari())) {
             printFrame.srcdoc = '<html><head></head><body></body></html>';
         }
 
         // Check printable type
-        switch (defualtParams.type) {
+        switch (defaultParams.type) {
             case 'pdf':
                 // Check browser support for pdf and if not supported we will just open the pdf file instead
                 if (Browser.isFirefox() || Browser.isEdge() || Browser.isIE()) {
                     console.log('PrintJS currently doesn\'t support PDF printing in Firefox, Internet Explorer and Edge.');
-                    let win = window.open(defualtParams.printable, '_blank');
+                    let win = window.open(defaultParams.printable, '_blank');
                     win.focus();
                     // Make sure there is no loading modal opened
-                    if (defualtParams.showModal) Modal.close();
+                    if (defaultParams.showModal) Modal.close();
                 } else {
-                    Pdf.directPrint(defualtParams, printFrame);
+                    Pdf.directPrint(defaultParams, printFrame);
                 }
                 break;
             case 'image':
-                Image.directPrint(defualtParams, printFrame);
+                Image.directPrint(defaultParams, printFrame);
                 break;
             case 'html':
-                Html.directPrint(defualtParams, printFrame);
+                Html.directPrint(defaultParams, printFrame);
                 break;
             case 'json':
-                Json.directPrint(defualtParams, printFrame);
+                Json.directPrint(defaultParams, printFrame);
                 break;
             default:
                 throw new Error('Invalid print type. Available types are: pdf, html, image and json.');
