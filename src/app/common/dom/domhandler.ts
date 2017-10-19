@@ -88,8 +88,10 @@ export class DomHandler {
         element.style.left = left + 'px';
     }
 
-    public absolutePosition(element: any, target: any): void {
-        let elementDimensions = element.offsetParent ? { width: element.offsetWidth, height: element.offsetHeight } : this.getHiddenElementDimensions(element)
+    public absolutePosition(element: any, target: any) {
+        let elementDimensions = element.offsetParent ?
+            { width: element.offsetWidth, height: element.offsetHeight } :
+            this.getHiddenElementDimensions(element);
         let elementOuterHeight = elementDimensions.height;
         let elementOuterWidth = elementDimensions.width;
         let targetOuterHeight = target.offsetHeight;
@@ -109,7 +111,7 @@ export class DomHandler {
             if (targetParentIsBody)
                 top = targetOuterHeight + targetOffset.top + windowScrollTop;
             else
-                top = targetOuterHeight + target.offsetTop + windowScrollTop;
+                top = targetOuterHeight + windowScrollTop;
         }
 
         if (targetOffset.left + targetOuterWidth + elementOuterWidth > viewport.width)
@@ -122,7 +124,73 @@ export class DomHandler {
                 left = targetOffset.left + windowScrollLeft;
             else
                 left = target.offsetLeft + windowScrollLeft;
+        element.style.top = top + 'px';
+        element.style.left = left + 'px';
+    }
 
+    public absolutePositionByDirection(element: any, target: any, direction: popupDirection = 'right') {
+        let elementDimensions = element.offsetParent ?
+            { width: element.offsetWidth, height: element.offsetHeight } :
+            this.getHiddenElementDimensions(element);
+        let elementOuterHeight = elementDimensions.height;
+        let elementOuterWidth = elementDimensions.width;
+        let targetOuterHeight = target.offsetHeight;
+        let targetOuterWidth = target.offsetWidth;
+        let targetOffset: ClientRect = target.getBoundingClientRect();
+        let windowScrollTop = this.getWindowScrollTop();
+        let windowScrollLeft = this.getWindowScrollLeft();
+        let viewport = this.getViewport();
+        let top, left;
+
+        if (direction == 'left') {
+            top = targetOffset.top;
+            left = targetOffset.left - elementOuterWidth;
+            if (targetOffset.left - Math.abs(left) < elementOuterWidth)
+                if (targetOffset.right + elementOuterWidth < viewport.width)
+                    left = targetOffset.right;
+                else left = 0;
+            if (targetOffset.top + elementOuterHeight > viewport.height)
+                if (targetOffset.top - elementOuterHeight > -1)
+                    top = targetOffset.top - elementOuterHeight;
+                else top = viewport.height - elementOuterHeight;
+        }
+        if (direction == 'right') {
+            top = targetOffset.top;
+            left = targetOffset.right;
+            if (targetOffset.right + elementOuterWidth > viewport.width)
+                if (targetOffset.left - elementOuterWidth > -1)
+                    left = targetOffset.left - elementOuterWidth;
+                else left = viewport.width - elementOuterWidth;
+            if (targetOffset.top + elementOuterHeight > viewport.height)
+                if (targetOffset.top - elementOuterHeight > -1)
+                    top = targetOffset.top - elementOuterHeight;
+                else top = viewport.height - elementOuterHeight;
+        }
+        if (direction == 'top') {
+            top = targetOffset.top - elementOuterHeight;
+            left = targetOffset.left;
+            if (targetOffset.left + elementOuterWidth > viewport.width)
+                if (targetOffset.left - elementOuterWidth > -1)
+                    left = targetOffset.left - elementOuterWidth;
+                else left = viewport.width - elementOuterWidth;
+            if (targetOffset.top - Math.abs(top) < elementOuterHeight)
+                if (targetOffset.bottom + elementOuterHeight > -1)
+                    top = targetOffset.bottom;
+                else top = 0;
+        }
+        if (direction == 'bottom') {
+            top = targetOffset.bottom;
+            left = targetOffset.left;
+            if (targetOffset.left + elementOuterWidth > viewport.width)
+                if (targetOffset.left - elementOuterWidth > -1)
+                    left = targetOffset.left - elementOuterWidth;
+                else left = viewport.width - elementOuterWidth;
+
+            if (targetOffset.bottom + elementOuterHeight > viewport.height)
+                if (targetOffset.top - elementOuterHeight > -1)
+                    top = targetOffset.top - elementOuterHeight;
+                else top = viewport.height - elementOuterHeight;
+        }
         element.style.top = top + 'px';
         element.style.left = left + 'px';
     }

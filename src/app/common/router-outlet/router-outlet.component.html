@@ -1,4 +1,4 @@
 <ng-container *ngIf="isMain">
-    <router-outlet (activate)='OnActivate($event)' #portal (deactivate)="OnDeActivate($event)" [attr.name]="outletName">
+    <router-outlet #portal (activate)='onActivate($event)' (deactivate)="onDeActivate($event)" [attr.name]="outletName">
     </router-outlet>
 </ng-container>

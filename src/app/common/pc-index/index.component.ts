@@ -19,11 +19,11 @@ export class IndexComponent implements OnDestroy {
     childRouterOutlet$: EventEmitter<any> = new EventEmitter<any>();
 
     instances: any[] = [];
-    OnActivate(event: any) {
+    onActivate(event: any) {
         this.instances.push(event);
         this.childRouterOutlet$.next(event);
     }
-    OnDeActivate(event: any) {
+    onDeActivate(event: any) {
         this.childRouterOutlet$.next(event);
         this.instances.splice(0, this.instances.length);
     }

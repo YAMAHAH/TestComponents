@@ -1,5 +1,6 @@
-import { Component, AfterViewInit, Output, EventEmitter, Input, Renderer, HostListener } from '@angular/core';
+import { Component, AfterViewInit, Output, EventEmitter, Input, Renderer, HostListener, Renderer2, ViewChild, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { OverlayPanel } from '../overlaypanel/overlaypanel';
 
 
 //  <li [routerLink]="['/pc/desktop']" [queryParams]="{subappid:'myapp'}" routerLinkActive="navbar-nav-menu">
@@ -36,15 +37,43 @@ export enum SideExpandControlTypeEnum {
 })
 export class SideSilderMenuComponent implements AfterViewInit {
 
-    constructor(private renderer: Renderer) {
+    constructor(private hostElementRef: ElementRef, private renderer: Renderer2) {
 
     }
+
+    @ViewChild("popup") itemPopupMenuRef: OverlayPanel;
+    menuItems: NodeListOf<Element>;
     ngAfterViewInit(): void {
-        let aa = document.querySelectorAll(".side-silder-menu,.side-silder-menu ul>li>a,.side-silder-menu input,.side-silder-menu button");
-        Observable.fromEvent(aa, 'click').subscribe((event: MouseEvent) => {
+        let childElements = this.hostElementRef.nativeElement.querySelectorAll(".side-silder-menu,.side-silder-menu ul>li>a,.side-silder-menu input,.side-silder-menu button");
+        Observable.fromEvent(childElements, 'click').subscribe((event: MouseEvent) => {
             event.preventDefault();
             event.stopPropagation();
         });
+
+        this.menuItems = this.itemPopupMenuRef.el.nativeElement.querySelectorAll("div.flex-row-col.flex-col-xs");
+
+        Observable.fromEvent(this.menuItems, 'mouseover')
+            .subscribe((event: any) => {
+                event.preventDefault();
+                event.stopPropagation();
+                this.renderer.addClass(this.foundParentElement(event.target), "menuStandartItemOver_Mouse");
+            });
+        Observable.fromEvent(this.menuItems, 'mouseleave')
+            .subscribe((event: any) => {
+                event.preventDefault();
+                event.stopPropagation();
+                this.renderer.removeClass(this.foundParentElement(event.target), "menuStandartItemOver_Mouse");
+            });
+    }
+    private foundParentElement(element: any) {
+        let foundEl = element;
+        while (foundEl) {
+            for (let index = 0; index < this.menuItems.length; index++) {
+                if (this.menuItems[index] === foundEl) return foundEl;
+            }
+            foundEl = foundEl.parentElement;
+        }
+        return null;
     }
     items: SideItem[] = [
         {
@@ -165,7 +194,7 @@ export class SideSilderMenuComponent implements AfterViewInit {
         this.menuExpanded.emit({ event: event, data: this.isExpanded });
 
         if (this.isExpanded) {
-            this.documentClickListener = this.renderer.listenGlobal('body', 'click', (e: any) => {
+            this.documentClickListener = this.renderer.listen('body', 'click', (e: any) => {
                 this.expand(event);
             });
         } else {

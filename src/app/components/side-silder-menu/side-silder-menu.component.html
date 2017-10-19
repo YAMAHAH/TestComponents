@@ -1,4 +1,4 @@
-<nav (mouseover)="mouseOverHandler($event)" (mouseleave)="mouseLeaveHandler($event)" [style.width.px]="isExpanded ? 255:55" class="side-silder-menu">
+<nav #navcontainer (mouseover)="mouseOverHandler($event)" (mouseleave)="mouseLeaveHandler($event)" [style.width.px]="isExpanded ? 255:55" class="side-silder-menu">
     <div class="logo"></div>
     <div (click)="headerClickHandler($event)" class="settings">
         <a (click)="expandClick($event)">
@@ -10,9 +10,9 @@
     </div>
     <ul style="clear: both">
         <li *ngFor="let item of items">
-            <a (click)="itemClick($event)" [routerLink]="item.routerLink" [queryParams]="item.queryParams" [skipLocationChange]="item.skipLocationChange">
+            <a [style.width.px]="isExpanded ? 255:55" (click)="bottomPopup.toggle($event)" [routerLink]="item.routerLink" [queryParams]="item.queryParams" [skipLocationChange]="item.skipLocationChange">
                 <i jyTooltip="{{item.title}}" [tooltipDisabled]="isExpanded" tooltipPosition="right" class="{{item.iconCss}}"></i>
-                <span class="nav-text">{{item.title}}</span>
+                <span [style.display]="isExpanded ? '':'none'" class="nav-text">{{item.title}}</span>
             </a>
         </li>
     </ul>
@@ -25,5 +25,158 @@
         </li>
     </ul>
 </nav>
+<x-overlayPanel [contentStyle]="{padding:'0.5em 0em'}" [style]="{width:'189px','max-height':'455px'}" [showCloseIcon]="false" [dismissable]="true" #popup>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3 "><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAACOSURBVHjaYvz//z8DJYAFRLimu5Jlyu6ZuxlZYBwjx2CSNJ/bvxbhAhSJ20vxajRSjcb0AiFF+AxnYqAQsBBrE9EG4HI+QQNIsRUCOFANmJS8hGit28+tY9j+ZBumF0ASFAWip1EQ0S7AagBFLshrTGEQlVZieP30HlE0HIByo0uay39yaBBmpDQ7AwQYAKvMXw3NrZ7jAAAAAElFTkSuQmCC"></div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3 ">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
+        </div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容2</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAACOSURBVHjaYvz//z8DJYAFRLimu5Jlyu6ZuxlZYBwjx2CSNJ/bvxbhAhSJ20vxajRSjcb0AiFF+AxnYqAQsBBrE9EG4HI+QQNIsRUCOFANmJS8hGit28+tY9j+ZBumF0ASFAWip1EQ0S7AagBFLshrTGEQlVZieP30HlE0HIByo0uay39yaBBmpDQ7AwQYAKvMXw3NrZ7jAAAAAElFTkSuQmCC"></div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="margin: 5px 0px 5px 0px;height:1px;background: #c6c6c6">
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
+        </div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容2</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAACOSURBVHjaYvz//z8DJYAFRLimu5Jlyu6ZuxlZYBwjx2CSNJ/bvxbhAhSJ20vxajRSjcb0AiFF+AxnYqAQsBBrE9EG4HI+QQNIsRUCOFANmJS8hGit28+tY9j+ZBumF0ASFAWip1EQ0S7AagBFLshrTGEQlVZieP30HlE0HIByo0uay39yaBBmpDQ7AwQYAKvMXw3NrZ7jAAAAAElFTkSuQmCC"></div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
+        </div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容2</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAACOSURBVHjaYvz//z8DJYAFRLimu5Jlyu6ZuxlZYBwjx2CSNJ/bvxbhAhSJ20vxajRSjcb0AiFF+AxnYqAQsBBrE9EG4HI+QQNIsRUCOFANmJS8hGit28+tY9j+ZBumF0ASFAWip1EQ0S7AagBFLshrTGEQlVZieP30HlE0HIByo0uay39yaBBmpDQ7AwQYAKvMXw3NrZ7jAAAAAElFTkSuQmCC"></div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="margin: 5px 0px 5px 0px;height:1px;background: #c6c6c6">
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
+        </div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容2</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAACOSURBVHjaYvz//z8DJYAFRLimu5Jlyu6ZuxlZYBwjx2CSNJ/bvxbhAhSJ20vxajRSjcb0AiFF+AxnYqAQsBBrE9EG4HI+QQNIsRUCOFANmJS8hGit28+tY9j+ZBumF0ASFAWip1EQ0S7AagBFLshrTGEQlVZieP30HlE0HIByo0uay39yaBBmpDQ7AwQYAKvMXw3NrZ7jAAAAAElFTkSuQmCC"></div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
+        </div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容2</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:1px;margin: 5px 0px 5px 0px;background: #c6c6c6">
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAACOSURBVHjaYvz//z8DJYAFRLimu5Jlyu6ZuxlZYBwjx2CSNJ/bvxbhAhSJ20vxajRSjcb0AiFF+AxnYqAQsBBrE9EG4HI+QQNIsRUCOFANmJS8hGit28+tY9j+ZBumF0ASFAWip1EQ0S7AagBFLshrTGEQlVZieP30HlE0HIByo0uay39yaBBmpDQ7AwQYAKvMXw3NrZ7jAAAAAElFTkSuQmCC"></div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
+        </div>
+        <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">导航标题内容2</div>
+    </div>
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:1px;margin: 5px 0px 5px 0px;background: #c6c6c6">
+    </div>
+    <div class="flex-col-row flex-col-xs middle-xs">
+        <div style="padding: 0px 0px 0px 0px;width:100%;vertical-align: middle; text-align: center;line-height:24px; white-space: nowrap;background: #c6c6c6" class="flex-col-xs-12">导航标题栏</div>
+        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-row-col flex-col-xs start-xs">
+            <div class="flex-col-row flex-col-xs middle-xs" style="height:80px;width:100px;">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
+            </div>
+            <div class="flex-col-row flex-col-xs middle-xs" style="height:80px;width:100px;">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
+            </div>
+            <div class="flex-col-row flex-col-xs middle-xs" style="height:80px;width:100px;">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
+            </div>
+        </div>
+
+    </div>
+</x-overlayPanel>
+
+<x-overlayPanel [contentStyle]="{padding:'0em 0em'}" position="right" [style]="{width:'352px', 'max-height':'350px'}" [showCloseIcon]="false" [dismissable]="true" #bottomPopup>
+    <div style="padding: 0px;width:100%;vertical-align: middle; text-align: center;line-height:24px; white-space: nowrap;background: #eee">导航标题栏</div>
+    <div class="flex-row-col start-xs" style="flex-wrap:wrap">
+        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
+            <a><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABmSURBVHjaYvz//z/DQAImhgEGLCCioqJiQIKho6ODkQWJQ1fLgZ4eHFEw6gAWdAG/5p00tXBTrTt+B6ArGI2C0SgYjYLRKBiNgtEoGI2C0SgYdcDIyQWwjgK9AeOI75wOuAMAAgwA07cpg2jN9E0AAAAASUVORK5CYII=">
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">Text</span>
+            </a>
+        </div>
+        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
+            <a>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAALWSURBVFhH7ZdLTxNRFMf/M21pC7RFm8DCR0BdGBN04yMmxo0fAddu2PkF2p2JKz6CkWCCCQYTjQsXmrDQHYVIoxIRiYkgoJbS0vdjOjP1nPE2zi0YXlO68dc093Fuc/7nMdMZpU6gjahibBtWBqLRqFgeLSMjIwALiEQiPBwpDZ9tL0FLBGhbn5H79BDp2fvILYxBzy0Ly3YcF1BNxlFYmoReWKf6GtDz35FbHLfGnXBcQHntrZjZqJsorU6JhYyjAupmDaaWFSsZo5ISMxlHBSiqB2pHSKxkXL6wmMk4XgL/iZtiZkNR0XnylljIOC7A23sZ3eeG4Orssxy7A6cROH8H7mC/OCHjuACmI3wRocG7OH71HoIXhuEJDgjLdloiYD/sKKCim/iR08SqtUgCkoUansQ3MTGXxEq6imcfUnjzNQvDbN0/tiRgdCaBM2Evhq/14Xp/ALcvheFxKRib2UC6pItTziIJGBoM48qpbrECakYdNwaC6A14MBpLYD37pyxcoqmlDB5MJ6xvbCUP84DPNZKAubUinr5PWdF+S1doXaDoEzgb9sGlKhh/l0ScznCZYisF/KI+4e/rxQweky1b3n+WJAFLyTI5r1lOX8ynSUQVqxkNzz+mUK6Z0CjyV4tbKFQN9PhdlqgGy3R2bHbD6iNmr1mSBDCbRR1FzUSuYuDLRlns0r1cNCKXJVM2SEwdx/xuSQT/5hGJmP9ZxARlaXp59yxtE7AXOJI8ZYGz0tMkgvdeLmRQoTHk2zlLdg4koAE746wGyZGq/HXEpcpQpArtBbyyjbNk51ACOBPZig43RdnsiEuVr+rweVR0e1XJZudQAhjujTxF1UVOujpUiloYCKtf6Ipicc22BgcWYL85csdnqTFDdGV0elySI7Zxv3A/NNuYXQX8M3VN20XNQImuHkahT5UcN+C6l6hfGLZJ2J/Rj5KGz7a/Gf1/OW2zAOA3xN1lJqVWqh4AAAAASUVORK5CYII=">
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">Image</span>
+            </a>
+
+        </div>
+        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
+            <a>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALxJREFUeNpi/P//P8NAAhZ0gfIVM2jmos6IDEZ0MSaGAQYD7gAWQgqu3bpJtuFaauqUO4BYg8h1+GgaGHUACzUTFE0cQE4OGE0Dow4YftmQGGBjbDawDgCBGxv24pX3LTWirQNAoLS0FKt4d3c3CP8HyjMOWBoAOQ7kCJqGAAgsP3gHhR9prwIPBSgNDwmaOABmIa6ogTmEbiGAz3F0CwG6ZMPREBgeIYCt/0Z0Ucyw9/9oGkAuZIgBAAEGAArhQAyjI5imAAAAAElFTkSuQmCC">
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">SubReport</span>
+            </a>
+        </div>
+
+        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
+            <a>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAACbSURBVHja7JcxDoAgDEUp4W5uXgcWJxfO4wKeropxUlBMSD6J/QMD/ELTPEghZlZIaQWWScM4r5AyLNNA5jJxM+3J5QKb+fTTYm7T1j5dCipt2tpH6RYgGYDfApUqYK3lN4UQuEa1vvNM/DvQx0OUFGN8Ndd4vviEAWFAGBAGhAFhQBjoggF4AkdX7JyDdMXee6Lff07hCWwCDAAzAKjTDLhWzwAAAABJRU5ErkJggg==">
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">Table</span>
+            </a>
+        </div>
+        <div style="height:80px;width:55px; text-align: center;margin: 5px;flex: none">
+            <a style="width:100%;height:100%">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALxJREFUeNpi/P//P8NAAhZ0gfIVM2jmos6IDEZ0MSaGAQYD7gAWQgqu3bpJtuFaauqUO4BYg8h1+GgaGHUACzUTFE0cQE4OGE0Dow4YftmQGGBjbDawDgCBGxv24pX3LTWirQNAoLS0FKt4d3c3CP8HyjMOWBoAOQ7kCJqGAAgsP3gHhR9prwIPBSgNDwmaOABmIa6ogTmEbiGAz3F0CwG6ZMPREBgeIYCt/0Z0Ucyw9/9oGkAuZIgBAAEGAArhQAyjI5imAAAAAElFTkSuQmCC">
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">Cross-Tab</span>
+            </a>
+        </div>
+        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
+            <a><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABmSURBVHjaYvz//z/DQAImhgEGLCCioqJiQIKho6ODkQWJQ1fLgZ4eHFEw6gAWdAG/5p00tXBTrTt+B6ArGI2C0SgYjYLRKBiNgtEoGI2C0SgYdcDIyQWwjgK9AeOI75wOuAMAAgwA07cpg2jN9E0AAAAASUVORK5CYII=">
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">Text</span>
+            </a>
+        </div>
+        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
+            <a>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAAAlwSFlzAAAOxAAADsQBlSsOGwAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAALWSURBVFhH7ZdLTxNRFMf/M21pC7RFm8DCR0BdGBN04yMmxo0fAddu2PkF2p2JKz6CkWCCCQYTjQsXmrDQHYVIoxIRiYkgoJbS0vdjOjP1nPE2zi0YXlO68dc093Fuc/7nMdMZpU6gjahibBtWBqLRqFgeLSMjIwALiEQiPBwpDZ9tL0FLBGhbn5H79BDp2fvILYxBzy0Ly3YcF1BNxlFYmoReWKf6GtDz35FbHLfGnXBcQHntrZjZqJsorU6JhYyjAupmDaaWFSsZo5ISMxlHBSiqB2pHSKxkXL6wmMk4XgL/iZtiZkNR0XnylljIOC7A23sZ3eeG4Orssxy7A6cROH8H7mC/OCHjuACmI3wRocG7OH71HoIXhuEJDgjLdloiYD/sKKCim/iR08SqtUgCkoUansQ3MTGXxEq6imcfUnjzNQvDbN0/tiRgdCaBM2Evhq/14Xp/ALcvheFxKRib2UC6pItTziIJGBoM48qpbrECakYdNwaC6A14MBpLYD37pyxcoqmlDB5MJ6xvbCUP84DPNZKAubUinr5PWdF+S1doXaDoEzgb9sGlKhh/l0ScznCZYisF/KI+4e/rxQweky1b3n+WJAFLyTI5r1lOX8ynSUQVqxkNzz+mUK6Z0CjyV4tbKFQN9PhdlqgGy3R2bHbD6iNmr1mSBDCbRR1FzUSuYuDLRlns0r1cNCKXJVM2SEwdx/xuSQT/5hGJmP9ZxARlaXp59yxtE7AXOJI8ZYGz0tMkgvdeLmRQoTHk2zlLdg4koAE746wGyZGq/HXEpcpQpArtBbyyjbNk51ACOBPZig43RdnsiEuVr+rweVR0e1XJZudQAhjujTxF1UVOujpUiloYCKtf6Ipicc22BgcWYL85csdnqTFDdGV0elySI7Zxv3A/NNuYXQX8M3VN20XNQImuHkahT5UcN+C6l6hfGLZJ2J/Rj5KGz7a/Gf1/OW2zAOA3xN1lJqVWqh4AAAAASUVORK5CYII=">
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">Image</span>
+            </a>
+
+        </div>
+        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
+            <a>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALxJREFUeNpi/P//P8NAAhZ0gfIVM2jmos6IDEZ0MSaGAQYD7gAWQgqu3bpJtuFaauqUO4BYg8h1+GgaGHUACzUTFE0cQE4OGE0Dow4YftmQGGBjbDawDgCBGxv24pX3LTWirQNAoLS0FKt4d3c3CP8HyjMOWBoAOQ7kCJqGAAgsP3gHhR9prwIPBSgNDwmaOABmIa6ogTmEbiGAz3F0CwG6ZMPREBgeIYCt/0Z0Ucyw9/9oGkAuZIgBAAEGAArhQAyjI5imAAAAAElFTkSuQmCC">
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">SubReport</span>
+            </a>
+        </div>
+
+        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
+            <a>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAACbSURBVHja7JcxDoAgDEUp4W5uXgcWJxfO4wKeropxUlBMSD6J/QMD/ELTPEghZlZIaQWWScM4r5AyLNNA5jJxM+3J5QKb+fTTYm7T1j5dCipt2tpH6RYgGYDfApUqYK3lN4UQuEa1vvNM/DvQx0OUFGN8Ndd4vviEAWFAGBAGhAFhQBjoggF4AkdX7JyDdMXee6Lff07hCWwCDAAzAKjTDLhWzwAAAABJRU5ErkJggg==">
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">Table</span>
+            </a>
+        </div>
+        <div style="height:80px;width:55px; text-align: center;margin: 5px;flex: none">
+            <a style="width:100%;height:100%">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALxJREFUeNpi/P//P8NAAhZ0gfIVM2jmos6IDEZ0MSaGAQYD7gAWQgqu3bpJtuFaauqUO4BYg8h1+GgaGHUACzUTFE0cQE4OGE0Dow4YftmQGGBjbDawDgCBGxv24pX3LTWirQNAoLS0FKt4d3c3CP8HyjMOWBoAOQ7kCJqGAAgsP3gHhR9prwIPBSgNDwmaOABmIa6ogTmEbiGAz3F0CwG6ZMPREBgeIYCt/0Z0Ucyw9/9oGkAuZIgBAAEGAArhQAyjI5imAAAAAElFTkSuQmCC">
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">Cross-Tab</span>
+            </a>
+        </div>
+    </div>
+</x-overlayPanel>
 
 <!--(mouseover)="mouseOverHandler($event)" (mouseleave)="mouseLeaveHandler($event)"-->

@@ -7,6 +7,7 @@ interface SystemJS {
 declare var printJS: PrintJS;
 
 type printJSType = "pdf" | "html" | "json" | "image";
+type popupDirection = 'left' | 'right' | 'top' | "bottom";
 interface printJsOptions {
     htmlOptions?: htmlOptions;
     elementRef?: HTMLElement;
@@ -76,7 +77,18 @@ interface Window {
 interface Document {
     frames: any;
 }
-
+interface ViewContainerRefEx {
+    readonly _data?: {
+        renderElement: any,
+        componentView: {
+            component: any,
+            context: any
+        }
+    };
+}
+interface InjectorEx {
+    readonly view?: { component: any, context: any };
+}
 interface StringConstructor {
     isNullOrEmpty(value: any): boolean;
     isNotNullOrEmpty(value: any): boolean;

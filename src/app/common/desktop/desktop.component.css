@@ -12,6 +12,7 @@ x-desktop-layout-container {
     /* background-image: url(/assets/img/win10.jpg); */
     background-position: center;
     background-repeat: no-repeat;
+    background-size: 100% 100%;
 }
 
 x-desktop-item {
@@ -19,5 +20,5 @@ x-desktop-item {
     height: 100px;
     text-align: center;
     margin: 5px;
-    flex-grow: 0 0 auto;
+    flex: 0 0 auto;
 }

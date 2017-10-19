@@ -14,28 +14,28 @@ import { RouterOutlet, Router, ChildrenOutletContexts, OutletContext } from '@an
 export class RouterOutletComponent implements AfterViewInit, OnInit, OnDestroy {
     @Input('name') outletName: string = "primary";
 
-    @ViewChild("portal") mainOutlet: RouterOutlet;
+    @ViewChild("portal", { read: RouterOutlet }) mainOutlet: RouterOutlet;
 
-    OnActivate: (event?: any, args?: any[]) => void = (event: any) => {
+    onActivate(event: any) {
         if (event && event.childRouterOutlet$) {
             event.childRouterOutlet$.subscribe(this.activate);
         } else {
             this.activate.next(event);
         }
-    };
-    OnDeActivate: (event?: any, args?: any[]) => void = (event: any) => {
+    }
+    onDeActivate(event: any) {
         if (event && event.childRouterOutlet$) {
             event.childRouterOutlet$.subscribe(this.activate);
         } else {
             this.activate.next(event);
         }
-    };
+    }
     @Output() activate: EventEmitter<any> = new EventEmitter<any>();
     @Output() deactivate: EventEmitter<any> = new EventEmitter<any>();
     private auxOutlet: RouterOutlet;
     isMain: boolean;
     constructor(
-        private parentContext: ChildrenOutletContexts,
+        private parentContexts: ChildrenOutletContexts,
         private location: ViewContainerRef,
         private resolver: ComponentFactoryResolver,
         private changeDetector: ChangeDetectorRef) { }
@@ -49,21 +49,36 @@ export class RouterOutletComponent implements AfterViewInit, OnInit, OnDestroy {
         } else {
             this.isMain = false;
             this.auxOutlet = new RouterOutlet(
-                this.parentContext,
+                this.parentContexts,
                 this.location,
                 this.resolver,
                 this.outletName,
                 this.changeDetector);
+            //以下代码可以不要
+            if (!this.auxOutlet.isActivated) {
+                // If the outlet was not instantiated at the time the route got activated we need to populate
+                // the outlet when it is initialized (ie inside a NgIf)
+                const context = this.parentContexts.getContext(this.outletName);
+                if (context && context.route) {
+                    if (context.attachRef) {
+                        // `attachRef` is populated when there is an existing component to mount
+                        this.auxOutlet.attach(context.attachRef, context.route);
+                    } else {
+                        // otherwise the component defined in the configuration is created
+                        this.auxOutlet.activateWith(context.route, context.resolver || null);
+                    }
+                }
+            }
         }
     }
 
 
     ngAfterViewInit() {
         if (!this.isMain) {
-            this.parentContext && this.parentContext.onChildOutletCreated(this.outletName, this.auxOutlet);
+            this.parentContexts && this.parentContexts.onChildOutletCreated(this.outletName, this.auxOutlet);
         } else {
             if (this.mainOutlet) {
-                this.parentContext && this.parentContext.onChildOutletCreated('primary', this.mainOutlet);
+                this.parentContexts && this.parentContexts.onChildOutletCreated('primary', this.mainOutlet);
                 if (this.mainOutlet['name'] === null) {
                     this.mainOutlet['name'] = this.outletName || 'primary';
                 }
@@ -71,9 +86,9 @@ export class RouterOutletComponent implements AfterViewInit, OnInit, OnDestroy {
         }
     }
     ngOnDestroy() {
-        if (this.parentContext) {
+        if (this.parentContexts) {
             //只清除outlet,其它信息还在
-            this.parentContext.onChildOutletDestroyed(this.outletName);
+            this.parentContexts.onChildOutletDestroyed(this.outletName);
         }
     }
 }

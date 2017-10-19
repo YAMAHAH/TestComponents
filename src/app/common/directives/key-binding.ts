@@ -7,6 +7,8 @@ import { Subscription } from 'rxjs/Subscription';
 import { ComponentFactoryConatiner } from '../../pur/pur-order/ComponentFactoryConatiner';
 import { Subject } from 'rxjs/Rx';
 import { AuthorizeModel } from '../../Models/authorizeModel';
+import { ViewContainerRef } from '@angular/core';
+import { tryGetValue } from '../../untils/type-checker';
 
 @Directive({
     selector: '[keyBinding]'
@@ -27,7 +29,13 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
     }
     constructor(private appStore: AppStoreService,
         @Optional() private container: ComponentFactoryConatiner,
+        private _viewRef: ViewContainerRef,
+
         private elementRef: ElementRef) {
+        // console.log((<any>this._viewRef.injector).view.context);
+        // console.log((<any>this._viewRef.injector).view.component);
+
+        // console.log((<any>this._viewRef));
     }
 
     get target() {
@@ -39,6 +47,8 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
             this._templateId = value;
         }
     }
+    private _parent: any;
+    private _hostRef: any;
     private keyConst = "objectId";
     ngOnChanges(changes: SimpleChanges) {
         for (let key in changes) {
@@ -46,6 +56,9 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
                 let change: SimpleChange = changes[key];
 
                 if (key === this.keyConst && this.target) {
+                    this._parent = tryGetValue(() => (this._viewRef as ViewContainerRefEx)._data.componentView.context).value;
+                    this._hostRef = tryGetValue(() => (this._viewRef.injector as InjectorEx).view.context).value;
+                    console.log(this._viewRef);
                     this.target.id = this.objectId;
                     this.target.objectId = this.objectId;
                     if (change.firstChange) {

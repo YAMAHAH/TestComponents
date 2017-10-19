@@ -6,10 +6,18 @@ import { SideSilderMenuComponent } from './side-silder-menu.component';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TooltipModule } from '../tooltip/tooltip';
+import { OverlayPanelModule } from '../overlaypanel/overlaypanel';
+import { CalendarModule } from '../calendar/calendar';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
     imports: [
-        CommonModule, RouterModule, TooltipModule
+        CommonModule,
+        FormsModule,
+        RouterModule,
+        TooltipModule,
+        OverlayPanelModule,
+        CalendarModule
     ],
     declarations: [
         SideSilderMenuComponent,

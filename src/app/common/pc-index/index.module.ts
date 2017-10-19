@@ -20,11 +20,12 @@ import { SaleComponent } from './sale.component';
         DesktopLayoutContainerModule,
         DesktopItemModule,
         RouterModule.forChild(pcRootRouterConfig),
-        RouterOutletModule,ChromeTabsModule,
+        RouterOutletModule,
+        ChromeTabsModule,
         PageLoadingModule.forRoot()
     ],
     declarations: [
-        IndexComponent, MainComponent,SaleComponent
+        IndexComponent, MainComponent, SaleComponent
     ],
     exports: [
         IndexComponent,

@@ -7,13 +7,13 @@
                 <button (click)="close()">OpenPurList</button>
                 <button (click)="toggle()">toggleToPageViewer</button>
                 <button (click)="invokeReportViewer()">reportViewer</button>
-                <button keyBinding='btn95962343' class="btn btn-default" (click)="op1.toggle($event)">overlayPanel</button>
+                <button class="btn btn-default" (click)="op1.toggle($event)">overlayPanel</button>
                 <button keyBinding='btn95962343243' class="btn btn-default" (click)="alert();">Alert</button>
                 <button keyBinding='btn95234234296' class="btn btn-default" (click)="confirm();">Confirm</button>
                 <button keyBinding='btn9sdfddf596' class="btn btn-default" (click)="prompt();">Prompt</button>
                 <button keyBinding='btn9dfssdswerw596' class="btn btn-default" reTitle="雾里看花" trigger="hover" rePopover="打开模式窗口" placement="top" (click)="openModal();">Open modal!</button>
-                <button keyBinding='btn95dfswerewrer96' class="btn btn-default" (click)="addToast()">Add Toast</button>
-                <x-overlayPanel [style]="{width:'455px'}" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="true" [dismissable]="false" #op1>
+                <button class="btn btn-default" (click)="addToast()">Add Toast</button>
+                <x-overlayPanel position="bottom" [style]="{width:'455px'}" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="true" [dismissable]="true" #op1>
                     <div class="ui-g-12 ui-md-6">
                         <x-calendar [(ngModel)]="date3" [showIcon]="true"></x-calendar>
                         <span style="margin-left:35px">{{date3|date}}</span>

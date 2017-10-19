@@ -1,13 +1,17 @@
-import { NgModule, Component, Input, Output, OnInit, AfterViewInit, OnDestroy, EventEmitter, Renderer, ElementRef, ComponentRef, Type } from '@angular/core';
+import {
+    NgModule, Component, Input, Output, OnInit, AfterViewInit,
+    OnDestroy, EventEmitter, ElementRef, ComponentRef, Type, Renderer2
+} from '@angular/core';
 import { DomHandler } from '../../common/dom/domhandler';
 import { SharedModule } from '../../common/shared/shared-module';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
     selector: 'x-overlayPanel',
     template: `
         <div [ngClass]="'ui-overlaypanel ui-widget ui-widget-content ui-corner-all ui-shadow'" [ngStyle]="style" [class]="styleClass"
-            [style.display]="visible ? 'block' : 'none'" (click)="onPanelClick()">
-            <div class="ui-overlaypanel-content">     
+            [style.display]="visible ? 'block' : 'none'" (click)="onPanelClick($event)">
+            <div [ngClass]="'ui-overlaypanel-content'" [ngStyle]="contentStyle" [class]="contentStyleClass">     
                 <ng-container *jyComponentOutlet="componentOutlet;context: compContext"></ng-container>
                 <ng-template *xyzHostContainer="componentRef;context:compContext"></ng-template>
                 <ng-content></ng-content>
@@ -29,6 +33,9 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
     @Input() style: any;
 
     @Input() styleClass: string;
+
+    @Input() contentStyleClass: string;
+    @Input() contentStyle: any;
 
     @Input() appendTo: any;
 
@@ -53,17 +60,21 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
 
     target: any;
 
-    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer) { }
+    constructor(public el: ElementRef,
+        public domHandler: DomHandler,
+        public renderer: Renderer2,
+        private cd: ChangeDetectorRef
+    ) { }
 
     ngOnInit() {
         if (this.dismissable) {
-            this.documentClickListener = this.renderer.listenGlobal('body', 'click', () => {
+            this.documentClickListener = this.renderer.listen('body', 'click', () => {
                 this.close();
             });
         }
 
         if (this.closeOnEscape) {
-            this.documentEscapeListener = this.renderer.listenGlobal('body', 'keydown', (event: any) => {
+            this.documentEscapeListener = this.renderer.listen('body', 'keydown', (event: any) => {
                 if (event.which == 27) {
                     if (parseInt(this.container.style.zIndex) == DomHandler.zindex) {
                         this.close();
@@ -81,6 +92,8 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
         }
         this.selfClick = false;
         this.targetEvent = false;
+        this.cd.markForCheck();
+
     }
     ngAfterViewInit() {
         this.container = this.el.nativeElement.children[0];
@@ -92,10 +105,12 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    @Input() position: popupDirection = "right";
     @Input() context: any = {};
     @Input() componentRef: ComponentRef<any>;
     @Input() componentOutlet: Type<any>;
     @Output() selectResult: EventEmitter<any> = new EventEmitter<any>();
+
     compContext = () => {
         let _overlayPanel = this;
         return {
@@ -132,21 +147,24 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
         this.onBeforeShow.emit(null);
         let elementTarget = target || event.currentTarget || event.target;
         this.container.style.zIndex = ++DomHandler.zindex;
+
+        this.domHandler.absolutePositionByDirection(this.container, elementTarget, this.position);
         if (this.visible) {
             // let targetEl = (elementTarget as HTMLElement);
             // this.container.style.top = targetEl.offsetTop + targetEl.offsetHeight + 'px';
             // this.container.style.left = targetEl.offsetLeft + 'px';
-            this.domHandler.absolutePosition(this.container, elementTarget);
+            // this.domHandler.absolutePosition(this.container, elementTarget);
         }
         else {
             this.visible = true;
-            this.domHandler.absolutePosition(this.container, elementTarget);
+            // this.domHandler.absolutePosition(this.container, elementTarget);
 
             // let targetEl = (elementTarget as HTMLElement);
             // this.container.style.top = targetEl.offsetTop + targetEl.offsetHeight + 'px';
             // this.container.style.left = targetEl.offsetLeft + 'px';
-            this.domHandler.fadeIn(this.container, 250);
+
         }
+        this.domHandler.fadeIn(this.container, 250);
         this.onAfterShow.emit(null);
     }
 
@@ -158,7 +176,7 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onPanelClick() {
+    onPanelClick(event: any) {
         if (this.dismissable) {
             this.selfClick = true;
         }
@@ -170,7 +188,6 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
         if (this.dismissable) {
             this.selfClick = true;
         }
-
         event.preventDefault();
     }
 
