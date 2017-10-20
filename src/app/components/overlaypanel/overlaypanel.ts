@@ -5,6 +5,7 @@ import {
 import { DomHandler } from '../../common/dom/domhandler';
 import { SharedModule } from '../../common/shared/shared-module';
 import { ChangeDetectorRef } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
     selector: 'x-overlayPanel',
@@ -67,12 +68,17 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
     ) { }
 
     ngOnInit() {
-        if (this.dismissable) {
-            this.documentClickListener = this.renderer.listen('body', 'click', () => {
-                this.close();
-            });
-        }
+        // if (this.dismissable) {
+        //     this.documentClickListener = this.renderer.listen('body', 'click', (event:any) => {
+        //         this.close();
+        //     });
+        // }
 
+        Observable.fromEvent<Event>(this.el.nativeElement, 'click')
+            .subscribe(event => {
+                // event.preventDefault();
+                event.stopPropagation();
+            });
         if (this.closeOnEscape) {
             this.documentEscapeListener = this.renderer.listen('body', 'keydown', (event: any) => {
                 if (event.which == 27) {
@@ -87,9 +93,9 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
         });
     }
     close() {
-        if (!this.selfClick && !this.targetEvent) {
-            this.hide();
-        }
+        //  if (!this.selfClick && !this.targetEvent) {
+        this.hide();
+        // }
         this.selfClick = false;
         this.targetEvent = false;
         this.cd.markForCheck();
@@ -144,6 +150,11 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
             this.targetEvent = true;
         }
 
+        if (this.dismissable && !this.documentClickListener) {
+            this.documentClickListener = this.renderer.listen('body', 'click', (event: any) => {
+                this.close();
+            });
+        }
         this.onBeforeShow.emit(null);
         let elementTarget = target || event.currentTarget || event.target;
         this.container.style.zIndex = ++DomHandler.zindex;
@@ -173,6 +184,10 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
             this.onBeforeHide.emit(null);
             this.visible = false;
             this.onAfterHide.emit(null);
+        }
+        if (this.documentClickListener) {
+            this.documentClickListener();
+            this.documentClickListener = null;
         }
     }
 

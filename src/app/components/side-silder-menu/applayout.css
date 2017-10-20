@@ -1,0 +1,83 @@
+.wrapper {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+}
+
+.header-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.header-brand {
+    flex: none;
+    width: 100px;
+}
+
+.header-title {
+    flex: 1;
+}
+
+.header-search {
+    flex: none;
+    width: 100px;
+}
+
+.header-account {
+    flex: none;
+    width: 200px;
+}
+
+.body-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+}
+
+.panel-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-titlebar {}
+
+.panel-body {
+    flex: 1;
+    position: relative;
+}
+
+.panel-nav {}
+
+.panel-content {
+    position: absolute;
+    overflow: auto;
+}
+
+.main-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.main-navbar {}
+
+.main {
+    position: absolute;
+    overflow: auto;
+}
+
+.footer-wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.footer-left {
+    flex: 1 1 auto;
+}
+
+.footer-right {
+    flex: 1 1 auto;
+}

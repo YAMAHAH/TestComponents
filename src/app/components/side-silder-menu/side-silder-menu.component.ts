@@ -44,25 +44,36 @@ export class SideSilderMenuComponent implements AfterViewInit {
     @ViewChild("popup") itemPopupMenuRef: OverlayPanel;
     menuItems: NodeListOf<Element>;
     ngAfterViewInit(): void {
-        let childElements = this.hostElementRef.nativeElement.querySelectorAll(".side-silder-menu,.side-silder-menu ul>li>a,.side-silder-menu input,.side-silder-menu button");
-        Observable.fromEvent(childElements, 'click').subscribe((event: MouseEvent) => {
-            event.preventDefault();
-            event.stopPropagation();
-        });
+        //let childElements = this.hostElementRef.nativeElement.querySelectorAll(".side-silder-menu,.side-silder-menu ul>li>a,.side-silder-menu input,.side-silder-menu button");
+        Observable.fromEvent(this.hostElementRef.nativeElement, 'click')
+            .subscribe((event: MouseEvent) => {
+                event.preventDefault();
+                event.stopPropagation();
+            });
 
         this.menuItems = this.itemPopupMenuRef.el.nativeElement.querySelectorAll("div.flex-row-col.flex-col-xs");
 
-        Observable.fromEvent(this.menuItems, 'mouseover')
-            .subscribe((event: any) => {
+        Observable.fromEvent<Event>(this.menuItems, 'mouseover')
+            .filter(e => this.hasElement(e.currentTarget))
+            .map(e => {
                 event.preventDefault();
                 event.stopPropagation();
-                this.renderer.addClass(this.foundParentElement(event.target), "menuStandartItemOver_Mouse");
+                return e.currentTarget;
+            })
+            .distinctUntilChanged()
+            .subscribe(el => {
+                this.renderer.addClass(el, "menuStandartItemOver_Mouse");
             });
-        Observable.fromEvent(this.menuItems, 'mouseleave')
-            .subscribe((event: any) => {
+        Observable.fromEvent<Event>(this.menuItems, 'mouseleave')
+            .filter(e => this.hasElement(e.currentTarget))
+            .map(e => {
                 event.preventDefault();
                 event.stopPropagation();
-                this.renderer.removeClass(this.foundParentElement(event.target), "menuStandartItemOver_Mouse");
+                return e.currentTarget;
+            })
+            .distinctUntilChanged()
+            .subscribe((el) => {
+                this.renderer.removeClass(el, "menuStandartItemOver_Mouse");
             });
     }
     private foundParentElement(element: any) {
@@ -74,6 +85,12 @@ export class SideSilderMenuComponent implements AfterViewInit {
             foundEl = foundEl.parentElement;
         }
         return null;
+    }
+    private hasElement(element: any) {
+        for (let index = 0; index < this.menuItems.length; index++) {
+            if (this.menuItems[index] === element) return true;
+        }
+        return false;
     }
     items: SideItem[] = [
         {
@@ -173,6 +190,10 @@ export class SideSilderMenuComponent implements AfterViewInit {
         event.preventDefault();
     }
 
+    testClick(event: any) {
+        console.log(event.target);
+        console.log(event.currentTarget);
+    }
     @Input() expandType: SideExpandControlTypeEnum = SideExpandControlTypeEnum.click;
     @Output() menuHover: EventEmitter<any> = new EventEmitter<any>();
     @Output() menuLeave: EventEmitter<any> = new EventEmitter<any>();

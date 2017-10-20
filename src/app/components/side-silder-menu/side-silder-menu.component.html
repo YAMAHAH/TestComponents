@@ -94,27 +94,12 @@
     </div>
     <div class="flex-row-col flex-col-xs middle-xs" style="height:1px;margin: 5px 0px 5px 0px;background: #c6c6c6">
     </div>
-    <div class="flex-col-row flex-col-xs middle-xs">
-        <div style="padding: 0px 0px 0px 0px;width:100%;vertical-align: middle; text-align: center;line-height:24px; white-space: nowrap;background: #c6c6c6" class="flex-col-xs-12">导航标题栏</div>
-        <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-row-col flex-col-xs start-xs">
-            <div class="flex-col-row flex-col-xs middle-xs" style="height:80px;width:100px;">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
-            </div>
-            <div class="flex-col-row flex-col-xs middle-xs" style="height:80px;width:100px;">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
-            </div>
-            <div class="flex-col-row flex-col-xs middle-xs" style="height:80px;width:100px;">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABOSURBVHjaYnwWbsBACWCB0v/J1M/IxEAhGHgDGECB2NDQ8B8XWLZsGVZxkB6QXqZZmgFkWw7SOwwCcdQAYGYAJgiKMhMsNzKS6wKAAAMA5sk90uFEhAQAAAAASUVORK5CYII=">
-            </div>
-        </div>
-
-    </div>
 </x-overlayPanel>
 
-<x-overlayPanel [contentStyle]="{padding:'0em 0em'}" position="right" [style]="{width:'352px', 'max-height':'350px'}" [showCloseIcon]="false" [dismissable]="true" #bottomPopup>
+<x-overlayPanel (click)="testClick($event)" [contentStyle]="{padding:'0em 0em'}" position="right" [style]="{'max-height':'350px','max-width':'328px'}" [showCloseIcon]="false" [dismissable]="true" #bottomPopup>
     <div style="padding: 0px;width:100%;vertical-align: middle; text-align: center;line-height:24px; white-space: nowrap;background: #eee">导航标题栏</div>
     <div class="flex-row-col start-xs" style="flex-wrap:wrap">
-        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
+        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;padding:3px;flex:none">
             <a><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAABmSURBVHjaYvz//z/DQAImhgEGLCCioqJiQIKho6ODkQWJQ1fLgZ4eHFEw6gAWdAG/5p00tXBTrTt+B6ArGI2C0SgYjYLRKBiNgtEoGI2C0SgYdcDIyQWwjgK9AeOI75wOuAMAAgwA07cpg2jN9E0AAAAASUVORK5CYII=">
                 <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">Text</span>
             </a>
@@ -129,7 +114,7 @@
         <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
             <a>
                 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALxJREFUeNpi/P//P8NAAhZ0gfIVM2jmos6IDEZ0MSaGAQYD7gAWQgqu3bpJtuFaauqUO4BYg8h1+GgaGHUACzUTFE0cQE4OGE0Dow4YftmQGGBjbDawDgCBGxv24pX3LTWirQNAoLS0FKt4d3c3CP8HyjMOWBoAOQ7kCJqGAAgsP3gHhR9prwIPBSgNDwmaOABmIa6ogTmEbiGAz3F0CwG6ZMPREBgeIYCt/0Z0Ucyw9/9oGkAuZIgBAAEGAArhQAyjI5imAAAAAElFTkSuQmCC">
-                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">SubReport</span>
+                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">Sub-Report</span>
             </a>
         </div>
 
@@ -157,10 +142,10 @@
             </a>
 
         </div>
-        <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;flex:none">
+        <div class="" style="height:80px;width:55px;padding: 3px;line-height: 1.1;text-align: center;margin: 5px;flex:none">
             <a>
                 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALxJREFUeNpi/P//P8NAAhZ0gfIVM2jmos6IDEZ0MSaGAQYD7gAWQgqu3bpJtuFaauqUO4BYg8h1+GgaGHUACzUTFE0cQE4OGE0Dow4YftmQGGBjbDawDgCBGxv24pX3LTWirQNAoLS0FKt4d3c3CP8HyjMOWBoAOQ7kCJqGAAgsP3gHhR9prwIPBSgNDwmaOABmIa6ogTmEbiGAz3F0CwG6ZMPREBgeIYCt/0Z0Ucyw9/9oGkAuZIgBAAEGAArhQAyjI5imAAAAAElFTkSuQmCC">
-                <br><span style="padding: 0px 3px 2px; text-align: center; line-height: 1.1; max-width: 90px;">SubReport</span>
+                <br>SubReport
             </a>
         </div>
 
