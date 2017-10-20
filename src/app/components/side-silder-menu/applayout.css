@@ -40,14 +40,18 @@
     flex-direction: column;
 }
 
-.panel-titlebar {}
+.panel-titlebar {
+    text-align: left;
+}
 
 .panel-body {
     flex: 1;
     position: relative;
 }
 
-.panel-nav {}
+.panel-nav {
+    width: 55px;
+}
 
 .panel-content {
     position: absolute;
@@ -61,7 +65,9 @@
     position: relative;
 }
 
-.main-navbar {}
+.main-navbar {
+    height: 55px;
+}
 
 .main {
     position: absolute;
