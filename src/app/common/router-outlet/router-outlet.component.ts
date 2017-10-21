@@ -54,21 +54,6 @@ export class RouterOutletComponent implements AfterViewInit, OnInit, OnDestroy {
                 this.resolver,
                 this.outletName,
                 this.changeDetector);
-            //以下代码可以不要
-            if (!this.auxOutlet.isActivated) {
-                // If the outlet was not instantiated at the time the route got activated we need to populate
-                // the outlet when it is initialized (ie inside a NgIf)
-                const context = this.parentContexts.getContext(this.outletName);
-                if (context && context.route) {
-                    if (context.attachRef) {
-                        // `attachRef` is populated when there is an existing component to mount
-                        this.auxOutlet.attach(context.attachRef, context.route);
-                    } else {
-                        // otherwise the component defined in the configuration is created
-                        this.auxOutlet.activateWith(context.route, context.resolver || null);
-                    }
-                }
-            }
         }
     }
 

@@ -193,6 +193,29 @@ export class DomHandler {
         }
         element.style.top = top + 'px';
         element.style.left = left + 'px';
+
+    }
+
+    private menuPopup(element: any, docPoint: { x: number; y: number }) {
+        let elementDimensions = element.offsetParent ?
+            {
+                width: element.offsetWidth,
+                height: element.offsetHeight
+            } :
+            this.getHiddenElementDimensions(element);
+        let elementOuterHeight = elementDimensions.height;
+        let elementOuterWidth = elementDimensions.width;
+        let windowScrollTop = this.getWindowScrollTop();
+        let windowScrollLeft = this.getWindowScrollLeft();
+        let viewport = this.getViewport();
+        let left = docPoint.x, top = docPoint.y;
+        if (left + elementOuterWidth > viewport.width)
+            left = viewport.width - elementOuterWidth;
+
+        if (top + elementOuterHeight > viewport.height)
+            top = viewport.height - elementOuterHeight;
+        element.style.top = top + 'px';
+        element.style.left = left + 'px';
     }
 
     public getHiddenElementOuterHeight(element: any): number {

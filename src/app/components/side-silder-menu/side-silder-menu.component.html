@@ -10,7 +10,7 @@
     </div>
     <ul style="clear: both">
         <li *ngFor="let item of items">
-            <a [style.width.px]="isExpanded ? 255:55" (click)="bottomPopup.toggle($event)" [routerLink]="item.routerLink" [queryParams]="item.queryParams" [skipLocationChange]="item.skipLocationChange">
+            <a [style.width.px]="isExpanded ? 255:55" (click)="popup.toggle($event)" [routerLink]="item.routerLink" [queryParams]="item.queryParams" [skipLocationChange]="item.skipLocationChange">
                 <i jyTooltip="{{item.title}}" [tooltipDisabled]="isExpanded" tooltipPosition="right" class="{{item.iconCss}}"></i>
                 <span [style.display]="isExpanded ? '':'none'" class="nav-text">{{item.title}}</span>
             </a>

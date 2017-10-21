@@ -12,6 +12,8 @@ import { JYComponentOutlet } from '../directives/component.outlet';
 import { HostViewContainerDirective } from '../directives/host.view.container';
 import { KeyBindingDirective } from '../directives/key-binding';
 import { ImageLazyLoadDirective } from '../directives/img-lazy-load.directive';
+import { FlexContainerDirective } from '../directives/flex-container.directive';
+import { FlexItemDirective } from '../directives/flex-item.directive';
 
 @NgModule({
   imports: [CommonModule],
@@ -24,7 +26,9 @@ import { ImageLazyLoadDirective } from '../directives/img-lazy-load.directive';
     JYComponentOutlet,
     HostViewContainerDirective,
     KeyBindingDirective,
-    ImageLazyLoadDirective
+    ImageLazyLoadDirective,
+    FlexContainerDirective,
+    FlexItemDirective
   ],
   exports: [
     AwesomePipe,
@@ -39,7 +43,9 @@ import { ImageLazyLoadDirective } from '../directives/img-lazy-load.directive';
     HttpModule,
     HostViewContainerDirective,
     KeyBindingDirective,
-    ImageLazyLoadDirective
+    ImageLazyLoadDirective,
+    FlexContainerDirective,
+    FlexItemDirective
   ]
 })
 export class SharedModule {
