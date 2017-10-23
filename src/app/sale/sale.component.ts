@@ -50,6 +50,7 @@ import { tryGetValue } from '../untils/type-checker';
 import { TenantManageTemplate } from './sale.module';
 import { TemplateClassBase } from '../Models/template-class';
 import { ReportManagerService } from '../common/report-viewer/report-manager.service';
+import { flexItem } from '../Models/flex-item';
 
 @Component({
     moduleId: module.id,
@@ -78,6 +79,7 @@ export class SaleComponent extends ComponentFactoryConatiner
             //    action: () => this.modalService.closeAll()
         }]
     };
+    testLg = new flexItem(6);
     constructor(
         protected injector: Injector,
         private loadScript: LoadScriptService,
@@ -96,6 +98,26 @@ export class SaleComponent extends ComponentFactoryConatiner
     ) { //
         super(injector);
         console.log(injector.get(TenantManageTemplate));
+
+        setTimeout(() => {
+            if (this.testLg && this.testLg.span) {
+                this.testLg.span = 8;
+                this.changeDetectorRef.markForCheck();
+            }
+
+        }, 5000);
+        setTimeout(() => {
+            if (this.testLg && this.testLg.span) {
+                this.testLg = new flexItem(9);
+                this.changeDetectorRef.markForCheck();
+            }
+        }, 10000);
+        setTimeout(() => {
+            if (this.testLg && this.testLg.span) {
+                this.testLg.span = 12;
+                this.changeDetectorRef.markForCheck();
+            }
+        }, 15000);
         this.cars = [];
         this.cars.push({ label: 'Audi', value: 'Audi' });
         this.cars.push({ label: 'BMW', value: 'BMW' });

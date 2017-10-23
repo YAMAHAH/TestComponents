@@ -12,7 +12,7 @@ import { JYComponentOutlet } from '../directives/component.outlet';
 import { HostViewContainerDirective } from '../directives/host.view.container';
 import { KeyBindingDirective } from '../directives/key-binding';
 import { ImageLazyLoadDirective } from '../directives/img-lazy-load.directive';
-import { FlexLayoutDirective } from '../directives/flex-container.directive';
+import { FlexLayoutDirective } from '../directives/flex-layout.directive';
 import { FlexItemDirective } from '../directives/flex-item.directive';
 
 @NgModule({

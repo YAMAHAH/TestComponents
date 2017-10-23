@@ -7,12 +7,12 @@ type FlexJustifyContent = 'flex-start' | 'flex-end' | 'center' | 'space-between'
 type FlexAlignItems = 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline';
 
 @Directive({
-    selector: '[flexLayout],flexLayout'
+    selector: '[fxLayout],fxLayout'
 })
 export class FlexLayoutDirective implements OnChanges {
 
     private _flexDirection: FlexDirection;
-    @Input('flexLayout')
+    @Input('fxLayout')
     get direction(): FlexDirection {
         return this._flexDirection || 'row';
     };
@@ -65,7 +65,7 @@ export class FlexLayoutDirective implements OnChanges {
 
     @Input() fxWidth: string;
     @Input() fxHeight: string;
-    @Input() fxClass: string;
+    @Input() fxClass: string | string[] | object;
     @Input() fxStyle: string = '';
     private _forceDisplay: boolean = false;
     @Input()

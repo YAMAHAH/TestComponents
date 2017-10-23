@@ -2,27 +2,23 @@ import {
     Directive, Input, ElementRef, OnChanges, Renderer2, SimpleChanges,
     SimpleChange, HostBinding, Optional, Host, SkipSelf, ViewContainerRef, SecurityContext,
 } from '@angular/core';
-import { FlexLayoutDirective } from './flex-container.directive';
+import { FlexLayoutDirective } from './flex-layout.directive';
 import { tryGetValue } from '../../untils/type-checker';
 import { NgStyleType, NgStyleSanitizer, NgStyleRawList, ngStyleUtils } from '../../untils/style-transforms';
 import { DomSanitizer } from '@angular/platform-browser';
+import { DomHandler } from "../dom/domhandler";
+import { OnInit } from '@angular/core';
+import { flexItem } from '../../Models/flex-item';
 
 type FlexItemAlignSelf = 'auto' | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
-type flexItem = {
-    order?: number;
-    offset?: number;
-    span?: number;
-    show?: boolean,
-    width?: number;
-    height?: number;
-    classes?: string;
-    styles?: any;
-};
 
 @Directive({
-    selector: '[fxItem],fxItemm'
+    selector: '[fxItem],fxItem'
 })
-export class FlexItemDirective implements OnChanges {
+export class FlexItemDirective implements OnInit, OnChanges {
+    ngOnInit(): void {
+        //  settim(() => { this.lg && console.log(this.lg); console.log(this) }, 3000);
+    }
 
     @Input('fxItemOrder') order: number = 0;
     @Input('fxItemGrow') flexGrow: string = '0';
@@ -125,7 +121,30 @@ export class FlexItemDirective implements OnChanges {
     @Input('fxItem.xs') xs: flexItem; //480px
     @Input('fxItem.sm') sm: flexItem; //>=768px 
     @Input('fxItem.md') md: flexItem;//>=992px;
-    @Input('fxItem.lg') lg: flexItem; // >=1200px
+    private _lg: flexItem;
+    @Input('fxItem.lg') // >=1200px
+    get lg(): flexItem {
+        return this._lg;
+    }
+    set lg(value: flexItem) {
+        if (value) {
+            let srcObj = value['data'] || value;
+            if (!this._lg) {
+                this._lg = new flexItem();
+                // this.createTargetProxy(this._lg);
+            }
+            // this._lg = Object.assign(this._lg, srcObj);
+            if (!(srcObj instanceof flexItem)) {
+                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.lg));
+            }
+            this.createTargetProxy(srcObj,
+                (propKey, val) => {
+                    this._lg[propKey] = val;
+                }, () => {
+                    this.itemHandler();
+                });
+        }
+    }
     @Input('fxItem.xl') xl: flexItem; //>=1600px
 
 
@@ -149,25 +168,31 @@ export class FlexItemDirective implements OnChanges {
         this._show = (value === null || value === undefined || value || '' + value === '') ? true : value;
     }
 
-    private _fxItemClass: string;
+    private _fxItemClass: string | string[] | object;
     @Input()
-    get fxItemClass() {
+    get fxItemClass(): string | string[] | object {
         return this._fxItemClass;
     }
 
-    set fxItemClass(value: string) {
+    set fxItemClass(value: string | string[] | object) {
         this._fxItemClass = value;
     }
     @Input() fxItemStyle: string;
 
     private _isFlexContainer: boolean = false;
-    constructor(private elementRef: ElementRef, protected _sanitizer: DomSanitizer,
+    constructor(private elementRef: ElementRef,
+        protected _sanitizer: DomSanitizer,
+        protected domHandler: DomHandler,
         @Optional() @SkipSelf() private _flexContainer: FlexLayoutDirective,
         @Optional() @Host() private _hostFlexContainer: FlexLayoutDirective,
         private renderer: Renderer2) {
         if (this._hostFlexContainer != this._flexContainer) {
             this._isFlexContainer = true;
         }
+        this.createHostProxy(this, null,
+            () => {
+                this.itemHandler();
+            });
     }
     private _fxItemDisplay: string = 'block';
     @Input()
@@ -177,8 +202,77 @@ export class FlexItemDirective implements OnChanges {
     set fxItemDisplay(value: string) {
         this._fxItemDisplay = value || 'block';
     }
-    private sizeKeys: string[] = ['flex', 'order', 'offset', 'fxItemClass', 'fxItemStyle', 'span', 'show', 'xs', 'sm', 'md', 'lg', 'xl'];
+
+    createTargetProxy(target: any,
+        beforeAction?: (propKey?: PropertyKey, value?: any) => void,
+        afterAction?: (propKey?: PropertyKey, value?: any) => void) {
+        let handler = () => {
+            let _self = this;
+            let listenProps = [
+                "order", "offset", "span", "width",
+                "height", "show", "style", "class",
+            ];
+            return {
+                set: function (target: any, propertyKey: PropertyKey, value: any, receiver?: any) {
+                    if (typeof propertyKey === 'string') {
+                        let findIndex = listenProps.contains(propertyKey);
+                        if (findIndex) {
+                            if (beforeAction) beforeAction(propertyKey, value);
+                            let res = Reflect.set(target, propertyKey, value, receiver);
+                            //console.log(`组件检测到了值变化: key: ${propertyKey} value: ${JSON.stringify(value)} `);
+                            if (afterAction) afterAction(propertyKey, value);
+                            return res;
+                        } else {
+                            let res = Reflect.set(target, propertyKey, value, receiver);
+                            return res;
+                        }
+                    } else {
+                        return Reflect.set(target, propertyKey, value, receiver);
+                    }
+                }
+            };
+        };
+        let proxy = new Proxy(Object.getPrototypeOf(target), handler());
+        Object.setPrototypeOf(target, proxy);
+        return proxy;
+    }
+    createHostProxy(target: any,
+        beforeAction?: (propKey?: PropertyKey, value?: any) => void,
+        afterAction?: (propKey?: PropertyKey, value?: any) => void) {
+        let handler = () => {
+            let listenProps = [
+                "lg", "xl", "xs", "sm", "md"
+            ];
+            return {
+                set: function (target: any, propertyKey: PropertyKey, value: any, receiver?: any) {
+                    if (typeof propertyKey === 'string') {
+                        let findIndex = listenProps.contains(propertyKey);
+                        if (findIndex) {
+                            if (beforeAction) beforeAction(propertyKey, value);
+                            let res = Reflect.set(target, propertyKey, value, receiver);
+                            //console.log(`检测到了值变化1: key: ${propertyKey} value: ${JSON.stringify(value)} `);
+                            if (afterAction) afterAction(propertyKey, value);
+                            return res;
+                        }
+                        else {
+                            return Reflect.set(target, propertyKey, value, receiver);
+                        }
+                    } else {
+                        return Reflect.set(target, propertyKey, value, receiver);
+                    }
+                }
+            };
+        };
+        let proxy = new Proxy(Object.getPrototypeOf(target), handler());
+        Object.setPrototypeOf(target, proxy);
+        return proxy;
+    }
+    private sizeKeys: string[] = [
+        'flex', 'order', 'offset', 'fxItemClass', 'fxItemStyle', 'span',
+        'show'
+    ]; //, 'xs', 'sm', 'md', 'lg', 'xl'
     ngOnChanges(changes: SimpleChanges) {
+
         for (let key in changes) {
             if (changes.hasOwnProperty(key)) {
                 let name: string, styleValue: any;
@@ -203,6 +297,7 @@ export class FlexItemDirective implements OnChanges {
                         break;
                 }
                 name && this.renderer.setStyle(this.elementRef.nativeElement, name, value.currentValue);
+
                 if (this.sizeKeys.contains(key)) {
                     // 处理排序
                     this.itemOrderProcess();
@@ -221,6 +316,22 @@ export class FlexItemDirective implements OnChanges {
             }
 
         }
+
+    }
+
+    itemHandler() {
+        // 处理排序
+        this.itemOrderProcess();
+        //处理偏移
+        this.itemOffsetProcess();
+        //处理主轴大小
+        this.itemFlexProcess();
+        //处理显示
+        this.itemShowHideProcess();
+        //样式类处理
+        this.itemClassProcess();
+        //样式处理
+        this.itemStyleProcess();
     }
 
     itemOrderProcess() {
@@ -288,50 +399,72 @@ export class FlexItemDirective implements OnChanges {
 
         this.renderer.setStyle(this.elementRef.nativeElement, 'position', 'relative');
     }
-
+    oldClass = "";
+    getElementClass(currClass: string, classData: any) {
+        if (classData)
+            if (Array.isArray(classData))
+                currClass = (classData.join(' ') + " " + currClass).trim();
+            else if (typeof classData === 'string')
+                currClass = (classData + " " + currClass).trim();
+            else {
+                let addClasses: string[] = [];
+                for (let key in classData) {
+                    if (classData.hasOwnProperty(key)) {
+                        if (classData[key])
+                            addClasses.push(key);
+                        else this.delClasses.push(key);
+                    }
+                }
+                currClass = (addClasses.join(' ') + ' ' + currClass).trim();
+            }
+        return currClass;
+    }
+    delClasses: string[] = [];
     itemClassProcess() {
         let currClass = "";
-        if (screen.width >= 480 && this.xs && this.xs.classes != undefined)
-            currClass = this.xs.classes;
-        if (screen.width >= 768 && this.sm && this.sm.classes != undefined)
-            currClass = this.sm.classes;
-        if (screen.width >= 992 && this.md && this.md.classes != undefined)
-            currClass = this.md.classes;
-        if (screen.width >= 1200 && this.lg && this.lg.classes != undefined)
-            currClass = this.lg.classes;
-        if (screen.width >= 1600 && this.xl && this.xl.classes != undefined) {
-            currClass = this.xl.classes;
-        }
+        this.delClasses = [];
+        if (screen.width >= 480 && this.xs && this.xs.class != undefined)
+            currClass = this.getElementClass(currClass, this.xs.class);
 
-        if (this.fxItemClass)
-            currClass = (this.fxItemClass + " " + currClass).trim();
+        if (screen.width >= 768 && this.sm && this.sm.class != undefined)
+            currClass = this.getElementClass(currClass, this.sm.class);
 
-        if (this._flexContainer.fxClass)
-            currClass = (this._flexContainer.fxClass + ' ' + currClass).trim();
+        if (screen.width >= 992 && this.md && this.md.class != undefined)
+            currClass = this.getElementClass(currClass, this.md.class);
 
-        let classList: string[] = [];
+        if (screen.width >= 1200 && this.lg && this.lg.class != undefined)
+            currClass = this.getElementClass(currClass, this.lg.class);
+
+        if (screen.width >= 1600 && this.xl && this.xl.class != undefined)
+            currClass = this.getElementClass(currClass, this.xl.class);
+
+        currClass = this.getElementClass(currClass, this.fxItemClass);
+
+        currClass = this.getElementClass(currClass, this._flexContainer.fxClass);
 
         if (currClass && currClass.length > 0) {
-            classList = currClass.trim().split(' ');
-            classList.forEach(c => {
-                this.renderer.addClass(this.elementRef.nativeElement, c);
-            });
+            currClass = currClass.replace(/^ +| +$/g, ""); //.split(/ +/g);
+            this.domHandler.addMultipleClasses(this.elementRef.nativeElement, currClass);
         }
-
-
+        if (this.delClasses.length > 0) {
+            for (var index = 0; index < this.delClasses.length; index++) {
+                this.renderer.removeClass(this.elementRef.nativeElement, this.delClasses[index]);
+            }
+            this.delClasses = [];
+        }
     }
     itemStyleProcess() {
         let currStyle = "";
-        if (screen.width >= 480 && this.xs && this.xs.styles != undefined)
-            currStyle = this.xs.styles;
-        if (screen.width >= 768 && this.sm && this.sm.styles != undefined)
-            currStyle = this.sm.styles;
-        if (screen.width >= 992 && this.md && this.md.styles != undefined)
-            currStyle = this.md.styles;
-        if (screen.width >= 1200 && this.lg && this.lg.styles != undefined)
-            currStyle = this.lg.styles;
-        if (screen.width >= 1600 && this.xl && this.xl.styles != undefined) {
-            currStyle = this.xl.styles;
+        if (screen.width >= 480 && this.xs && this.xs.style != undefined)
+            currStyle = this.xs.style;
+        if (screen.width >= 768 && this.sm && this.sm.style != undefined)
+            currStyle = this.sm.style;
+        if (screen.width >= 992 && this.md && this.md.style != undefined)
+            currStyle = this.md.style;
+        if (screen.width >= 1200 && this.lg && this.lg.style != undefined)
+            currStyle = this.lg.style;
+        if (screen.width >= 1600 && this.xl && this.xl.style != undefined) {
+            currStyle = this.xl.style;
         }
         if (this.fxItemStyle)
             currStyle = this.fxItemStyle + ';' + currStyle;

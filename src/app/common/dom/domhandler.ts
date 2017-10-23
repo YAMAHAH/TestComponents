@@ -12,21 +12,40 @@ export class DomHandler {
             element.className += ' ' + className;
     }
 
-    public addMultipleClasses(element: any, className: string): void {
-        if (element.classList) {
-            let styles: string[] = className.split(' ');
-            for (let i = 0; i < styles.length; i++) {
-                element.classList.add(styles[i]);
+    public addMultipleClasses(element: any, className: string | string[]): void {
+        if (typeof className === 'string') {
+            if (element.classList) {
+                let styles: string[] = className.split(' ');
+                for (let i = 0; i < styles.length; i++) {
+                    if (!this.hasClass(element, styles[i]))
+                        element.classList.add(styles[i]);
+                }
             }
+            else {
+                let styles: string[] = className.split(' ');
+                for (let i = 0; i < styles.length; i++) {
+                    if (!this.hasClass(element, styles[i]))
+                        element.className += ' ' + styles[i];
+                }
+            }
+        } else if (Array.isArray(className)) {
+            let styles: string[] = className;
+            if (element.classList) {
+                for (let i = 0; i < styles.length; i++) {
+                    if (!this.hasClass(element, styles[i]))
+                        element.classList.add(styles[i]);
+                }
+            }
+            else {
+                for (let i = 0; i < styles.length; i++) {
+                    if (!this.hasClass(element, styles[i]))
+                        element.className += ' ' + styles[i];
+                }
+            }
+        }
 
-        }
-        else {
-            let styles: string[] = className.split(' ');
-            for (let i = 0; i < styles.length; i++) {
-                element.className += ' ' + styles[i];
-            }
-        }
     }
+
 
     public removeClass(element: any, className: string): void {
         if (element.classList)
