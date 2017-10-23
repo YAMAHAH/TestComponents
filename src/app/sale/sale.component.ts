@@ -80,6 +80,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         }]
     };
     testLg = new flexItem(6);
+    testXL = new flexItem(8);
     constructor(
         protected injector: Injector,
         private loadScript: LoadScriptService,
@@ -102,6 +103,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         setTimeout(() => {
             if (this.testLg && this.testLg.span) {
                 this.testLg.span = 8;
+                this.testXL.span = 9;
                 this.changeDetectorRef.markForCheck();
             }
 
@@ -109,12 +111,14 @@ export class SaleComponent extends ComponentFactoryConatiner
         setTimeout(() => {
             if (this.testLg && this.testLg.span) {
                 this.testLg = new flexItem(9);
+                this.testXL = new flexItem(10);
                 this.changeDetectorRef.markForCheck();
             }
         }, 10000);
         setTimeout(() => {
             if (this.testLg && this.testLg.span) {
                 this.testLg.span = 12;
+                this.testXL.span = 13;
                 this.changeDetectorRef.markForCheck();
             }
         }, 15000);

@@ -4,18 +4,26 @@ import {
 } from '@angular/core';
 import { FlexLayoutDirective } from './flex-layout.directive';
 import { tryGetValue } from '../../untils/type-checker';
-import { NgStyleType, NgStyleSanitizer, NgStyleRawList, ngStyleUtils } from '../../untils/style-transforms';
+import { NgStyleType, NgStyleSanitizer, NgStyleRawList, ngStyleUtils, NgStyleMap } from '../../untils/style-transforms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DomHandler } from "../dom/domhandler";
-import { OnInit } from '@angular/core';
+import { OnInit, KeyValueDiffers, DoCheck, OnDestroy } from '@angular/core';
 import { flexItem } from '../../Models/flex-item';
+import { FxStyle } from './fxstyle';
 
 type FlexItemAlignSelf = 'auto' | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
 
 @Directive({
     selector: '[fxItem],fxItem'
 })
-export class FlexItemDirective implements OnInit, OnChanges {
+export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy {
+    ngOnDestroy(): void {
+        this._fxStyleInstance = null;
+    }
+    private _fxStyleInstance: FxStyle;
+    ngDoCheck(): void {
+        this._fxStyleInstance.ngDoCheck();
+    }
     ngOnInit(): void {
         //  settim(() => { this.lg && console.log(this.lg); console.log(this) }, 3000);
     }
@@ -118,9 +126,77 @@ export class FlexItemDirective implements OnInit, OnChanges {
     //     'min-width': '100%',
     //     'min-height': '100%'
     //   };1 0 0
-    @Input('fxItem.xs') xs: flexItem; //480px
-    @Input('fxItem.sm') sm: flexItem; //>=768px 
-    @Input('fxItem.md') md: flexItem;//>=992px;
+    //@Input('fxItem.xs') xs: flexItem; //480px
+    private _xs: flexItem;
+    @Input('fxItem.xs') //>=480px
+    get xs(): flexItem {
+        return this._xs;
+    }
+    set xs(value: flexItem) {
+        if (value) {
+            let srcObj = value['data'] || value;
+            if (!this.xs)
+                this._xs = new flexItem();
+
+            Object.assign(this.xs, srcObj);
+            if (!(srcObj instanceof flexItem))
+                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.xs));
+
+            this.createTargetProxy(srcObj,
+                (propKey, val) => {
+                    this.xs[propKey] = val;
+                }, () => {
+                    this.itemHandler();
+                });
+        }
+    }
+    private _sm: flexItem;
+    @Input('fxItem.sm') //>=768px 
+    get sm(): flexItem {
+        return this._sm;
+    }
+    set sm(value: flexItem) {
+        if (value) {
+            let srcObj = value['data'] || value;
+            if (!this.sm)
+                this._sm = new flexItem();
+
+            Object.assign(this.sm, srcObj);
+            if (!(srcObj instanceof flexItem))
+                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.sm));
+
+            this.createTargetProxy(srcObj,
+                (propKey, val) => {
+                    this.sm[propKey] = val;
+                }, () => {
+                    this.itemHandler();
+                });
+        }
+    }
+
+    private _md: flexItem;
+    @Input('fxItem.md') //>=992px;
+    get md(): flexItem {
+        return this._md;
+    }
+    set md(value: flexItem) {
+        if (value) {
+            let srcObj = value['data'] || value;
+            if (!this.md)
+                this._md = new flexItem();
+
+            Object.assign(this.md, srcObj);
+            if (!(srcObj instanceof flexItem))
+                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.md));
+
+            this.createTargetProxy(srcObj,
+                (propKey, val) => {
+                    this.md[propKey] = val;
+                }, () => {
+                    this.itemHandler();
+                });
+        }
+    }
     private _lg: flexItem;
     @Input('fxItem.lg') // >=1200px
     get lg(): flexItem {
@@ -129,24 +205,46 @@ export class FlexItemDirective implements OnInit, OnChanges {
     set lg(value: flexItem) {
         if (value) {
             let srcObj = value['data'] || value;
-            if (!this._lg) {
+            if (!this.lg)
                 this._lg = new flexItem();
-                // this.createTargetProxy(this._lg);
-            }
-            // this._lg = Object.assign(this._lg, srcObj);
-            if (!(srcObj instanceof flexItem)) {
+
+            Object.assign(this.lg, srcObj);
+            if (!(srcObj instanceof flexItem))
                 Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.lg));
-            }
+
             this.createTargetProxy(srcObj,
                 (propKey, val) => {
-                    this._lg[propKey] = val;
+                    this.lg[propKey] = val;
                 }, () => {
                     this.itemHandler();
                 });
         }
     }
-    @Input('fxItem.xl') xl: flexItem; //>=1600px
 
+    private _xl: flexItem;
+    @Input('fxItem.xl')
+    get xl(): flexItem //>=1600px
+    {
+        return this._xl;
+    }
+    set xl(value: flexItem) {
+        if (value) {
+            let srcObj = value['data'] || value;
+            if (!this.xl)
+                this._xl = new flexItem();
+
+            Object.assign(this.xl, srcObj);
+            if (!(srcObj instanceof flexItem))
+                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.xl));
+
+            this.createTargetProxy(srcObj,
+                (propKey, val) => {
+                    this.xl[propKey] = val;
+                }, () => {
+                    this.itemHandler();
+                });
+        }
+    }
 
     private _fill: boolean = false;
     @Input('fxItemFill')
@@ -177,12 +275,13 @@ export class FlexItemDirective implements OnInit, OnChanges {
     set fxItemClass(value: string | string[] | object) {
         this._fxItemClass = value;
     }
-    @Input() fxItemStyle: string;
+    @Input() fxItemStyle: NgStyleType;
 
     private _isFlexContainer: boolean = false;
     constructor(private elementRef: ElementRef,
         protected _sanitizer: DomSanitizer,
         protected domHandler: DomHandler,
+        private _differs: KeyValueDiffers,
         @Optional() @SkipSelf() private _flexContainer: FlexLayoutDirective,
         @Optional() @Host() private _hostFlexContainer: FlexLayoutDirective,
         private renderer: Renderer2) {
@@ -193,6 +292,8 @@ export class FlexItemDirective implements OnInit, OnChanges {
             () => {
                 this.itemHandler();
             });
+
+        this._fxStyleInstance = new FxStyle(this._differs, this.elementRef, this.renderer);
     }
     private _fxItemDisplay: string = 'block';
     @Input()
@@ -219,7 +320,7 @@ export class FlexItemDirective implements OnInit, OnChanges {
                         if (findIndex) {
                             if (beforeAction) beforeAction(propertyKey, value);
                             let res = Reflect.set(target, propertyKey, value, receiver);
-                            //console.log(`组件检测到了值变化: key: ${propertyKey} value: ${JSON.stringify(value)} `);
+                            console.log(`绑定对象属性值变化: key: ${propertyKey} value: ${JSON.stringify(value)} `);
                             if (afterAction) afterAction(propertyKey, value);
                             return res;
                         } else {
@@ -250,7 +351,7 @@ export class FlexItemDirective implements OnInit, OnChanges {
                         if (findIndex) {
                             if (beforeAction) beforeAction(propertyKey, value);
                             let res = Reflect.set(target, propertyKey, value, receiver);
-                            //console.log(`检测到了值变化1: key: ${propertyKey} value: ${JSON.stringify(value)} `);
+                            console.log(`绑定对象变化: key: ${propertyKey} value: ${JSON.stringify(value)} `);
                             if (afterAction) afterAction(propertyKey, value);
                             return res;
                         }
@@ -333,7 +434,7 @@ export class FlexItemDirective implements OnInit, OnChanges {
         //样式处理
         this.itemStyleProcess();
     }
-
+    //ngOnChanges ngOnint ngDoCheck ngAfterContentInit ngAfterContentChecked ngAfterViewInit ngAfterViewChecked ngOnDestroy
     itemOrderProcess() {
         let name = 'order';
         let currOrder: number = this.order;
@@ -419,6 +520,16 @@ export class FlexItemDirective implements OnInit, OnChanges {
             }
         return currClass;
     }
+
+    //*     <some-element [ngClass]="'first second'">...</some-element>
+    //*
+    // *     <some-element [ngClass]="['first', 'second']">...</some-element>
+    // *
+    // *     <some-element [ngClass]="{'first': true, 'second': true, 'third': false}">...</some-element>
+    // *
+    // *     <some-element [ngClass]="stringExp|arrayExp|objExp">...</some-element>
+    // *
+    // *     <some-element [ngClass]="{'class1 class2 class3' : true}">...</some-element>
     delClasses: string[] = [];
     itemClassProcess() {
         let currClass = "";
@@ -453,32 +564,44 @@ export class FlexItemDirective implements OnInit, OnChanges {
             this.delClasses = [];
         }
     }
+    /**
+     * [fxItemStyle] = "{color:$thider,'font-size':$font-size}"
+     * [fxItemStyle] = "color:blue;'font-size':18px;"
+     * 
+     */
     itemStyleProcess() {
-        let currStyle = "";
+        let currStyle: NgStyleMap;
         if (screen.width >= 480 && this.xs && this.xs.style != undefined)
-            currStyle = this.xs.style;
+            currStyle = this._buildStyleMap(this.xs.style);
         if (screen.width >= 768 && this.sm && this.sm.style != undefined)
-            currStyle = this.sm.style;
+            currStyle = this._buildStyleMap(this.sm.style);
         if (screen.width >= 992 && this.md && this.md.style != undefined)
-            currStyle = this.md.style;
+            currStyle = this._buildStyleMap(this.md.style);
         if (screen.width >= 1200 && this.lg && this.lg.style != undefined)
-            currStyle = this.lg.style;
+            currStyle = this._buildStyleMap(this.lg.style);
         if (screen.width >= 1600 && this.xl && this.xl.style != undefined) {
-            currStyle = this.xl.style;
+            currStyle = this._buildStyleMap(this.xl.style);
         }
         if (this.fxItemStyle)
-            currStyle = this.fxItemStyle + ';' + currStyle;
+            currStyle = Object.assign(this._buildStyleMap(this.fxItemStyle), currStyle);
 
         if (this._flexContainer.fxStyle)
-            currStyle = this._flexContainer.fxStyle + ';' + currStyle;
-        let styleMap: any = this._buildStyleMap(currStyle);
-        for (let key in styleMap) {
-            if (styleMap.hasOwnProperty(key)) {
-                let value = styleMap[key];
-                this.renderer.setStyle(this.elementRef.nativeElement, key, value);
-            }
-        }
+            currStyle = Object.assign(this._buildStyleMap(this._flexContainer.fxStyle), currStyle);
 
+        this._fxStyleInstance.ngStyle = currStyle;
+        //let styleMap: NgStyleMap = this._buildStyleMap(currStyle);
+        // for (let key in styleMap) {
+        //     if (styleMap.hasOwnProperty(key)) {
+        //         let value = styleMap[key];
+        //         this._setStyle(key, value);
+        //     }
+        // }
+
+    }
+    private _setStyle(nameAndUnit: string, value: string | number | null | undefined): void {
+        const [name, unit] = nameAndUnit.split('.');
+        value = value != null && unit ? `${value}${unit}` : value;
+        this.renderer.setStyle(this.elementRef.nativeElement, name, value as string);
     }
     itemShowHideProcess() {
         let currShow: boolean = this.show;
@@ -502,7 +625,7 @@ export class FlexItemDirective implements OnInit, OnChanges {
             this.renderer.setStyle(this.elementRef.nativeElement, 'display', 'none');
     }
 
-    protected _buildStyleMap(styles: NgStyleType) {
+    protected _buildStyleMap(styles: NgStyleType): NgStyleMap {
         let sanitizer: NgStyleSanitizer = (val: any) => {
             // Always safe-guard (aka sanitize) style property values
             return this._sanitizer.sanitize(SecurityContext.STYLE, val);
@@ -515,7 +638,7 @@ export class FlexItemDirective implements OnInit, OnChanges {
                 default: return ngStyleUtils.buildMapFromSet(styles, sanitizer);
             }
         }
-        return styles;
+        return null;
     }
 
 }

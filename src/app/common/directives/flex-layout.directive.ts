@@ -1,4 +1,5 @@
 import { Directive, Input, ElementRef, OnChanges, Renderer2, SimpleChanges, SimpleChange } from '@angular/core';
+import { NgStyleType } from '../../untils/style-transforms';
 
 
 type FlexDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
@@ -66,7 +67,7 @@ export class FlexLayoutDirective implements OnChanges {
     @Input() fxWidth: string;
     @Input() fxHeight: string;
     @Input() fxClass: string | string[] | object;
-    @Input() fxStyle: string = '';
+    @Input() fxStyle: NgStyleType = '';
     private _forceDisplay: boolean = false;
     @Input()
     get fxforceDispaly(): boolean {

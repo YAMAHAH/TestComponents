@@ -14,6 +14,7 @@ import { KeyBindingDirective } from '../directives/key-binding';
 import { ImageLazyLoadDirective } from '../directives/img-lazy-load.directive';
 import { FlexLayoutDirective } from '../directives/flex-layout.directive';
 import { FlexItemDirective } from '../directives/flex-item.directive';
+import { FxStyle } from '../directives/fxstyle';
 
 @NgModule({
   imports: [CommonModule],
@@ -28,7 +29,8 @@ import { FlexItemDirective } from '../directives/flex-item.directive';
     KeyBindingDirective,
     ImageLazyLoadDirective,
     FlexLayoutDirective,
-    FlexItemDirective
+    FlexItemDirective,
+    FxStyle
   ],
   exports: [
     AwesomePipe,
@@ -45,7 +47,8 @@ import { FlexItemDirective } from '../directives/flex-item.directive';
     KeyBindingDirective,
     ImageLazyLoadDirective,
     FlexLayoutDirective,
-    FlexItemDirective
+    FlexItemDirective,
+    FxStyle
   ]
 })
 export class SharedModule {

@@ -1,3 +1,4 @@
+import { NgStyleType } from '../untils/style-transforms';
 export class flexItem {
     constructor(_span: number = 0, _order: number = 0, offset: number = 0,
         _show: boolean = true, _width: number = 0, _height: number = 0,
@@ -25,5 +26,5 @@ export class flexItem {
     width?: number;
     height?: number;
     class?: string | string[] | object;
-    style?: string;
+    style?: NgStyleType;
 };
