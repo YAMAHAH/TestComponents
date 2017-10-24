@@ -20,13 +20,18 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     private sizeDataMap: Map<string, FlexItem> = new Map<string, FlexItem>();
     ngOnDestroy(): void {
         this._fxStyleInstance = null;
+        this.xsMediaQueryList.removeListener(this.xsMediaQueryHandler);
+        this.smMediaQueryList.removeListener(this.smMediaQueryHandler);
+        this.mdMediaQueryList.removeListener(this.mdMediaQueryHandler);
+        this.lgMediaQueryList.removeListener(this.lgMediaQueryHandler);
+        this.xlMediaQueryList.removeListener(this.xlMediaQueryHandler);
     }
     private _fxStyleInstance: FxStyle;
     ngDoCheck(): void {
         this._fxStyleInstance.ngDoCheck();
     }
     ngOnInit(): void {
-
+        this.getMediaQueryList();
     }
 
     @Input('fxItemOrder') order: number = 0;
@@ -292,7 +297,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             () => {
                 this.itemHandler();
             });
-        this.mediaList = this.getMediaQuery();
+
         this._fxStyleInstance = new FxStyle(this._differs, this.elementRef, this.renderer);
     }
     private _fxItemDisplay: string = 'block';
@@ -442,24 +447,6 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     itemOrderProcess() {
         let name = 'order';
         let currOrder: number = this.order;
-        // if (screen.width >= 480 && this.xs && this.xs.order)
-        //     currOrder = this.xs.order;
-        // if (screen.width >= 768 && this.sm && this.sm.order)
-        //     currOrder = this.sm.order;
-        // if (screen.width >= 992 && this.md && this.md.order)
-        //     currOrder = this.md.order;
-        // if (screen.width >= 1200 && this.lg && this.lg.order)
-        //     currOrder = this.lg.order;
-        // if (screen.width >= 1600 && this.xl && this.xl.order)
-        //     currOrder = this.xl.order;
-        // for (let index = 0; index < this.mediaList.length; index++) {
-        //     let element = this.mediaList[index];
-        //     let entry = this.sizeDataMap.get(element);
-        //     if (entry && entry.order) {
-        //         currOrder = entry.order;
-        //         break;
-        //     }
-        // }
         this.getMediaQueryData(item => {
             if (item.order) {
                 currOrder = item.order;
@@ -479,20 +466,80 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             }
         }
     }
-    getMediaQuery() {
-        let inputMap: string[] = [];
-        let screenWidth = screen.width;
-        if (screenWidth >= 0 && screenWidth <= 599)
-            inputMap.push('xs', 'lt-sm', 'lt-md', 'lt-lg', 'lt-xl');
-        else if (screenWidth >= 600 && screenWidth <= 959)
-            inputMap.push('sm', 'gt-xs', 'lt-md', 'lt-lg', 'lt-xl');
-        else if (screenWidth >= 960 && screenWidth <= 1279)
-            inputMap.push('md', 'gt-xs', 'gt-sm', 'lt-lg', 'lt-xl');
-        else if (screenWidth >= 1280 && screenWidth <= 1919)
-            inputMap.push('lg', 'gt-xs', 'gt-sm', 'gt-md', 'lt-xl');
-        else if (screenWidth >= 1920 && screenWidth <= 5000)
-            inputMap.push('xl', 'gt-xs', 'gt-sm', 'gt-md', 'gt-lg');
-        return inputMap;
+    xsMediaQueryHandler = (mql: MediaQueryList): void => {
+        if (mql.matches) {
+            this.mediaList = [];
+            this.mediaList.push('xs', 'lt-sm', 'lt-md', 'lt-lg', 'lt-xl');
+            this.itemHandler();
+        }
+    }
+    smMediaQueryHandler = (mql: MediaQueryList): void => {
+        if (mql.matches) {
+            this.mediaList = [];
+            this.mediaList.push('sm', 'gt-xs', 'lt-md', 'lt-lg', 'lt-xl');
+            this.itemHandler();
+        }
+    }
+    mdMediaQueryHandler = (mql: MediaQueryList): void => {
+        if (mql.matches) {
+            this.mediaList = [];
+            this.mediaList.push('md', 'gt-xs', 'gt-sm', 'lt-lg', 'lt-xl');
+            this.itemHandler();
+        }
+    }
+    lgMediaQueryHandler = (mql: MediaQueryList): void => {
+        if (mql.matches) {
+            this.mediaList = [];
+            this.mediaList.push('lg', 'gt-xs', 'gt-sm', 'gt-md', 'lt-xl');
+            this.itemHandler();
+        }
+    }
+    xlMediaQueryHandler = (mql: MediaQueryList): void => {
+        if (mql.matches) {
+            this.mediaList = [];
+            this.mediaList.push('xl', 'gt-xs', 'gt-sm', 'gt-md', 'gt-lg');
+            this.itemHandler();
+        }
+    }
+    protected xsMediaQueryList: MediaQueryList;
+    protected smMediaQueryList: MediaQueryList
+    protected mdMediaQueryList: MediaQueryList;
+    protected lgMediaQueryList: MediaQueryList;
+    protected xlMediaQueryList: MediaQueryList;
+    getMediaQueryList() {
+        // let inputMap: string[] = [];
+        // let screenWidth = screen.width;
+
+        this.xsMediaQueryList = window.matchMedia("(min-width: 0px) and (max-width:599px)");
+        this.xsMediaQueryHandler(this.xsMediaQueryList);
+        this.xsMediaQueryList.addListener(this.xsMediaQueryHandler);
+
+        this.smMediaQueryList = window.matchMedia("(min-width: 600px) and (max-width:959px)");
+        this.smMediaQueryHandler(this.smMediaQueryList);
+        this.smMediaQueryList.addListener(this.smMediaQueryHandler);
+
+        this.mdMediaQueryList = window.matchMedia("(min-width: 1920px) and (max-width:5000px)");
+        this.mdMediaQueryHandler(this.mdMediaQueryList);
+        this.mdMediaQueryList.addListener(this.mdMediaQueryHandler);
+
+        this.lgMediaQueryList = window.matchMedia("(min-width: 1280px) and (max-width:1919px)");
+        this.lgMediaQueryHandler(this.lgMediaQueryList);
+        this.lgMediaQueryList.addListener(this.lgMediaQueryHandler);
+
+        this.xlMediaQueryList = window.matchMedia("(min-width: 1920px) and (max-width:5000px)");
+        this.xlMediaQueryHandler(this.xlMediaQueryList);
+        this.xlMediaQueryList.addListener(this.xlMediaQueryHandler);
+        // if (screenWidth >= 0 && screenWidth <= 599)
+        //     inputMap.push('xs', 'lt-sm', 'lt-md', 'lt-lg', 'lt-xl');
+        // else if (screenWidth >= 600 && screenWidth <= 959)
+        //     inputMap.push('sm', 'gt-xs', 'lt-md', 'lt-lg', 'lt-xl');
+        // else if (screenWidth >= 960 && screenWidth <= 1279)
+        //     inputMap.push('md', 'gt-xs', 'gt-sm', 'lt-lg', 'lt-xl');
+        // else if (screenWidth >= 1280 && screenWidth <= 1919)
+        //     inputMap.push('lg', 'gt-xs', 'gt-sm', 'gt-md', 'lt-xl');
+        // else if (screenWidth >= 1920 && screenWidth <= 5000)
+        //     inputMap.push('xl', 'gt-xs', 'gt-sm', 'gt-md', 'gt-lg');
+        // return inputMap;
     }
 
     itemOffsetProcess() {
@@ -506,25 +553,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         else if (this._flexContainer.direction === 'column-reverse')
             name = 'margin-bottom';
         let currOffset: number = this.offset;
-        // if (screen.width >= 480 && this.xs && this.xs.offset)
-        //     currOffset = this.xs.offset;
-        // if (screen.width >= 768 && this.sm && this.sm.offset)
-        //     currOffset = this.sm.offset;
-        // if (screen.width >= 992 && this.md && this.md.offset)
-        //     currOffset = this.md.offset;
-        // if (screen.width >= 1200 && this.lg && this.lg.offset)
-        //     currOffset = this.lg.offset;
-        // if (screen.width >= 1600 && this.xl && this.xl.offset)
-        //     currOffset = this.xl.offset;
 
-        // for (let index = 0; index < this.mediaList.length; index++) {
-        //     let element = this.mediaList[index];
-        //     let entry = this.sizeDataMap.get(element);
-        //     if (entry && entry.offset) {
-        //         currOffset = entry.offset;
-        //         break;
-        //     }
-        // }
         this.getMediaQueryData(entry => {
             if (entry && entry.offset) {
                 currOffset = entry.offset;
