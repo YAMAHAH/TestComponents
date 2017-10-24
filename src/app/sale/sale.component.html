@@ -11,11 +11,9 @@
                 <button keyBinding='btn95962343243' class="btn btn-default" (click)="alert();">Alert</button>
                 <button keyBinding='btn95234234296' class="btn btn-default" (click)="confirm();">Confirm</button>
                 <button keyBinding='btn9sdfddf596' class="btn btn-default" (click)="prompt();">Prompt</button>
-                <button keyBinding='btn9dfssdswerw596' class="btn btn-default" reTitle="雾里看花" trigger="hover" rePopover="打开模式窗口" placement="top"
-                    (click)="openModal();">Open modal!</button>
+                <button keyBinding='btn9dfssdswerw596' class="btn btn-default" reTitle="雾里看花" trigger="hover" rePopover="打开模式窗口" placement="top" (click)="openModal();">Open modal!</button>
                 <button class="btn btn-default" (click)="addToast()">Add Toast</button>
-                <x-overlayPanel position="bottom" [style]="{width:'455px'}" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet"
-                    [context]="{data:'overlayPanel'}" [showCloseIcon]="true" [dismissable]="true" #op1>
+                <x-overlayPanel position="bottom" [style]="{width:'455px'}" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="true" [dismissable]="true" #op1>
                     <div class="ui-g-12 ui-md-6">
                         <x-calendar [(ngModel)]="date3" [showIcon]="true"></x-calendar>
                         <span style="margin-left:35px">{{date3|date}}</span>
@@ -30,31 +28,29 @@
                 <hr>
                 <div keyBinding='div9sdfddf596'>
                     <x-dropdown [options]="cars" [(ngModel)]="selectedCar2" [style]="{'width':'250px'}">
-                        <x-overlayPanel (onFocus)="op2.toggle($event)" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet"
-                            [context]="{data:'overlayPanel'}" [showCloseIcon]="false" [dismissable]="false" #op2>
+                        <x-overlayPanel (onFocus)="op2.toggle($event)" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="false" [dismissable]="false" #op2>
                         </x-overlayPanel>
                         <ng-template let-car pTemplate="item">
                             <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
-                                <img src="https://www.primefaces.org/primeng/showcase/resources/demo/images/car/{{car.label}}.gif" style="width:24px;position:absolute;top:1px;left:5px"
-                                />
+                                <img src="https://www.primefaces.org/primeng/showcase/resources/demo/images/car/{{car.label}}.gif" style="width:24px;position:absolute;top:1px;left:5px" />
                                 <div style="font-size:14px;float:right;margin-top:4px">{{car.label}}</div>
                             </div>
                         </ng-template>
                     </x-dropdown>
                 </div>
-                <div fxLayout="row" fxGutter='16' fxAlignItems='center' fxJustify='center'>
-                    <div fxLayout="row" fxItem='auto' fxFill fxGap=4 fxGutter='16' fxItem='auto' fxItemSpan='12' fxAlignItems='center' fxJustify='center'>
-                        <div fxItem="none" fxItemSpan='6' [fxItem.xl]="{span:5}">
+                <div fxLayout="row" fxGutter='16' fxAlignCross='center' fxAlignMain='center'>
+                    <div fxLayout="row" fxItem='auto' fxFill fxGap=4 fxGutter='16' fxItem='auto' fxItemSpan='12' fxAlignCross='center' fxAlignMain='center'>
+                        <div fxItem="none" fxItemSpan='6' [fxItem.xl]="{span:5}" [fxItem.lg]="{span:8,order:2}">
                             <div style="background: #00A0E9;padding: 5px 0;text-align: center;">fxitem-col-5</div>
                         </div>
                         <div fxItem="auto" fxItemSpan='12'>
                             <div style="background: #00A0E9;padding: 5px 0;text-align: center;">fxitem-col-12</div>
                         </div>
-                        <div fxItem="none" fxItemSpan='6' [fxItem.xl]="{span:7}">
+                        <div fxItem="none" fxItemSpan='4' [fxItem.xl]="{span:7}">
                             <div style="background: #00A0E9;padding: 5px 0;text-align: center;">fxitem-col-7</div>
                         </div>
                     </div>
-                    <div fxLayout="row" fxforceDispaly fxGap=4 fxItem='auto' fxItemSpan='12' fxGutter='18' fxAlignItems='center' fxJustify='center'>
+                    <div fxLayout="row" fxforceDispaly fxGap=4 fxItem='auto' fxItemSpan='12' fxGutter='18' fxAlignCross='center' fxAlignMain='center'>
                         <div fxItem="1 0 0" fxItemSpan='6' [fxItem.xl]="{span:8}">
                             <div style="background: #00A0E9;padding: 5px 0;text-align: center;">fxitem-col-6</div>
                         </div>
@@ -69,7 +65,7 @@
                         </div>
                     </div>
                 </div>
-                <div fxLayout="row" fxFill fxGap=4 fxGutter='16' fxAlignItems='center' fxJustify='center'>
+                <div fxLayout="row" fxFill fxGap=4 fxGutter='16' fxAlignCross='center' fxAlignMain='center'>
                     <div fxItem="1 0 0" fxItemSpan='6' [fxItem.xl]="{span:8}">
                         <div style="background: #00A0E9;padding: 5px 0;text-align: center;">fxitem-col-8</div>
                     </div>
@@ -83,7 +79,7 @@
                         <div style="background: #00A0E9;padding: 5px 0;text-align: center;">fxitem-col-8</div>
                     </div>
                 </div>
-                <div style="height:55px" fxLayout="row" fxFill fxGap=4 fxGutter='16' fxAlignItems='center' fxJustify='center'>
+                <div style="height:55px" fxLayout="row" fxFill fxGap=4 fxGutter='16' fxAlignCross='center' fxAlignMain='center'>
                     <div fxItem="1 0 0" fxItemSpan='2' [fxItem.xl]="{span:4}">
                         <div style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">fxitem-col-4</div>
                     </div>
@@ -103,22 +99,29 @@
                         <div style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">fxitem-col-4</div>
                     </div>
                 </div>
-                <div fxLayout="row" fxStyle="border: 1px solid red;" fxClass="customerOrderHeader customerOrderItems" fxWidth='100px' fxHeight='65px'
-                    fxGap=4 fxGutter='4' fxAlignItems='center' fxJustify='center'>
-                    <div fxItem="none" fxItemStyle="border:1px solid yellow;" [fxItem.lg]="testLg" [fxItem.xl]="testXL">
-                        <div style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">fxitem-col-4</div>
+                <div fxLayout="row" fxStyle="border: 1px solid red;" fxClass="customerOrderHeader customerOrderItems" fxWidth='100px' fxHeight='65px' fxGap=4 fxGutter='4' fxAlignCross='center' fxAlignMain='center'>
+                    <div fxItem="none" fxItemStyle="border:1px solid yellow;" [fxItem.lg]="testLg" [fxItem.gt-md]="{style:'font-size:36px'}" [fxItem.xl]="testXL">
+                        <div style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">
+                            <div fxLayout fxAlignMain='center' fxAlignCross='center' style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">
+                                <div>fxitem-col-4</div>
+                            </div>
+                        </div>
                     </div>
-                    <div fxItem="none" fxItemClass="x-custome-classes x-custome-order" [fxItem.xl]="{span:3,style:{border:'2px solid green'}}">
-                        <div style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">fxitem-col-4</div>
+                    <div fxItem="none" fxItemClass="x-custome-classes x-custome-order" [fxItem.lg]="{span:5,style:{border:'2px solid black'}}" [fxItem.xl]="{span:3,style:{border:'2px solid green'}}">
+                        <div fxLayout fxAlignMain='center' fxAlignCross='center' style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">
+                            <div>fxitem-col-4</div>
+                        </div>
                     </div>
-                    <div fxItem="none" [fxItemClass]="['first', 'second']" fxItemHeight="65px">
+                    <div fxItem="none" [fxItem.lg]="testLg2" [fxItemClass]="['first', 'second']" fxItemHeight="65px">
                         <div style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">fxitem-col-4</div>
                     </div>
                     <div fxItem="none" [fxItemClass]="{'x-custome-classes':true,'x-custome-order':1==2}">
                         <div style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">fxitem-col-4</div>
                     </div>
                     <div fxItem="auto" [fxItemClass]="{'class1 class2 class3' : true}">
-                        <div style=" background: #00A0E9;padding: 5px 0;text-align: center;height:100%; ">fxitem-col-4</div>
+                        <div style="display:flex;justify-content:center;align-items:center;background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">
+                            <div>fxitem-col-4</div>
+                        </div>
                     </div>
                     <div fxItem="none">
                         <div style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%; ">fxitem-col-4</div>
@@ -130,14 +133,12 @@
                         " lazy="true " [rows]="10 " [paginator]="true " [responsive]="false " [pageLinks]="10 " [rowsPerPageOptions]="[5,10,20]
                         " [value]="mycars ">
                         <dt-column [modelRef]="col " keyBinding='col3924234234244{{idx}}' *ngFor="let col of cols;index
-                        as idx " [style]=" { 'overflow': 'visible' } " [editable]="col.editable " [hidden]="!col.visible "
-                            [cellEditor]="col.cellEditor
+                        as idx " [style]=" { 'overflow': 'visible' } " [editable]="col.editable " [hidden]="!col.visible " [cellEditor]="col.cellEditor
                         " [cellComponent]="col.cellComponent " [sortable]="true " [field]="col.field " [header]="col.header "></dt-column>
                     </x-dataTable>
                     <section>
                         <x-autoComplete keyBinding='div9sdfddf596' ([ngModel])="brand " [componentOutlet]="componentOutlet
-                        " [panelStyle]="{ 'width': '260px'} " [style]="{ 'width': '250px'} " [inputStyle]="{ 'width': '232px'} "
-                            [suggestions]="filteredBrands
+                        " [panelStyle]="{ 'width': '260px'} " [style]="{ 'width': '250px'} " [inputStyle]="{ 'width': '232px'} " [suggestions]="filteredBrands
                         " [dropdown]="true " (onDropdownClick)="handleDropdownClick($event) " (completeMethod)="filterBrands($event) ">
                             <ng-template let-brand pTemplate="item ">
                                 <div class="ui-helper-clearfix " style="border-bottom:1px solid #D5D5D5 ">

@@ -1,5 +1,10 @@
 import { NgStyleType } from '../untils/style-transforms';
-export class flexItem {
+export class FlexItem {
+    static create(obj: any) {
+        let item = new FlexItem();
+        Object.assign(item, obj);
+        return item;
+    }
     constructor(_span: number = 0, _order: number = 0, offset: number = 0,
         _show: boolean = true, _width: number = 0, _height: number = 0,
         _elClass: string = null, _style: string = null) {

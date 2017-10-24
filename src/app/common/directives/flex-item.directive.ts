@@ -3,20 +3,21 @@ import {
     SimpleChange, HostBinding, Optional, Host, SkipSelf, ViewContainerRef, SecurityContext,
 } from '@angular/core';
 import { FlexLayoutDirective } from './flex-layout.directive';
-import { tryGetValue } from '../../untils/type-checker';
 import { NgStyleType, NgStyleSanitizer, NgStyleRawList, ngStyleUtils, NgStyleMap } from '../../untils/style-transforms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DomHandler } from "../dom/domhandler";
-import { OnInit, KeyValueDiffers, DoCheck, OnDestroy } from '@angular/core';
-import { flexItem } from '../../Models/flex-item';
+import { OnInit, KeyValueDiffers, DoCheck, OnDestroy, style } from '@angular/core';
+import { FlexItem } from '../../Models/flex-item';
 import { FxStyle } from './fxstyle';
 
 type FlexItemAlignSelf = 'auto' | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
 
 @Directive({
-    selector: '[fxItem],fxItem'
+    selector: '[fxItem]'
 })
 export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy {
+
+    private sizeDataMap: Map<string, FlexItem> = new Map<string, FlexItem>();
     ngOnDestroy(): void {
         this._fxStyleInstance = null;
     }
@@ -25,7 +26,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         this._fxStyleInstance.ngDoCheck();
     }
     ngOnInit(): void {
-        //  settim(() => { this.lg && console.log(this.lg); console.log(this) }, 3000);
+
     }
 
     @Input('fxItemOrder') order: number = 0;
@@ -126,125 +127,124 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     //     'min-width': '100%',
     //     'min-height': '100%'
     //   };1 0 0
-    //@Input('fxItem.xs') xs: flexItem; //480px
-    private _xs: flexItem;
+    private _xs: FlexItem;
     @Input('fxItem.xs') //>=480px
-    get xs(): flexItem {
-        return this._xs;
+    get xs(): FlexItem {
+        return this.sizeDataMap.get('xs'); //   this._xs;
     }
-    set xs(value: flexItem) {
-        if (value) {
-            let srcObj = value['data'] || value;
-            if (!this.xs)
-                this._xs = new flexItem();
-
-            Object.assign(this.xs, srcObj);
-            if (!(srcObj instanceof flexItem))
-                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.xs));
-
-            this.createTargetProxy(srcObj,
-                (propKey, val) => {
-                    this.xs[propKey] = val;
-                }, () => {
-                    this.itemHandler();
-                });
-        }
+    set xs(value: FlexItem) {
+        this.deviceSetterHandler('xs', value);
     }
-    private _sm: flexItem;
+    @Input('fxItem.gt-xs') //>=480px
+    get gtxs(): FlexItem {
+        return this.sizeDataMap.get('gt-xs'); //   this._xs;
+    }
+    set gtxs(value: FlexItem) {
+        this.deviceSetterHandler('gt-xs', value);
+    }
+    @Input('fxItem.lt-sm')
+    get ltsm(): FlexItem {
+        return this.sizeDataMap.get('lt-sm');
+    }
+    set ltsm(value: FlexItem) {
+        this.deviceSetterHandler('lt-sm', value);
+    }
+    private _sm: FlexItem;
     @Input('fxItem.sm') //>=768px 
-    get sm(): flexItem {
-        return this._sm;
+    get sm(): FlexItem {
+        return this.sizeDataMap.get('sm'); //this._sm;
     }
-    set sm(value: flexItem) {
-        if (value) {
-            let srcObj = value['data'] || value;
-            if (!this.sm)
-                this._sm = new flexItem();
+    set sm(value: FlexItem) {
+        this.deviceSetterHandler('sm', value);
+    }
 
-            Object.assign(this.sm, srcObj);
-            if (!(srcObj instanceof flexItem))
-                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.sm));
+    @Input('fxItem.gt-sm')
+    get gtsm(): FlexItem {
+        return this.sizeDataMap.get('gt-sm');
+    }
+    set gtsm(value: FlexItem) {
+        this.deviceSetterHandler('gt-sm', value);
+    }
+
+    deviceSetterHandler(key: string, newValue: FlexItem) {
+        if (newValue) {
+            let srcObj = newValue['data'] || newValue;
+            if (!this.sizeDataMap.has(key))
+                this.sizeDataMap.set(key, new FlexItem());
+            let oldValue2 = this.sizeDataMap.get(key);
+            Object.assign(oldValue2, srcObj);
+            if (!(srcObj instanceof FlexItem))
+                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(oldValue2));
 
             this.createTargetProxy(srcObj,
                 (propKey, val) => {
-                    this.sm[propKey] = val;
+                    oldValue2[propKey] = val;
                 }, () => {
                     this.itemHandler();
                 });
         }
     }
-
-    private _md: flexItem;
+    @Input('fxItem.lt-md') //>=992px;
+    get ltmd(): FlexItem {
+        return this.sizeDataMap.get('lt-md'); //this._md;
+    }
+    set ltmd(value: FlexItem) {
+        this.deviceSetterHandler('lt-md', value);
+    }
+    private _md: FlexItem;
     @Input('fxItem.md') //>=992px;
-    get md(): flexItem {
-        return this._md;
+    get md(): FlexItem {
+        return this.sizeDataMap.get('md'); //this._md;
     }
-    set md(value: flexItem) {
-        if (value) {
-            let srcObj = value['data'] || value;
-            if (!this.md)
-                this._md = new flexItem();
-
-            Object.assign(this.md, srcObj);
-            if (!(srcObj instanceof flexItem))
-                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.md));
-
-            this.createTargetProxy(srcObj,
-                (propKey, val) => {
-                    this.md[propKey] = val;
-                }, () => {
-                    this.itemHandler();
-                });
-        }
+    set md(value: FlexItem) {
+        this.deviceSetterHandler('md', value);
     }
-    private _lg: flexItem;
+    @Input('fxItem.gt-md') //>=992px;
+    get gtmd(): FlexItem {
+        return this.sizeDataMap.get('gt-md'); //this._md;
+    }
+    set gtmd(value: FlexItem) {
+        this.deviceSetterHandler('gt-md', value);
+    }
+    @Input('fxItem.lt-lg') // >=1200px
+    get ltlg(): FlexItem {
+        return this.sizeDataMap.get('lt-lg'); //this._lg;
+    }
+    set ltlg(value: FlexItem) {
+        this.deviceSetterHandler('lt-lg', value);
+    }
+    private _lg: FlexItem;
     @Input('fxItem.lg') // >=1200px
-    get lg(): flexItem {
-        return this._lg;
+    get lg(): FlexItem {
+        return this.sizeDataMap.get('lg'); //this._lg;
     }
-    set lg(value: flexItem) {
-        if (value) {
-            let srcObj = value['data'] || value;
-            if (!this.lg)
-                this._lg = new flexItem();
-
-            Object.assign(this.lg, srcObj);
-            if (!(srcObj instanceof flexItem))
-                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.lg));
-
-            this.createTargetProxy(srcObj,
-                (propKey, val) => {
-                    this.lg[propKey] = val;
-                }, () => {
-                    this.itemHandler();
-                });
-        }
+    set lg(value: FlexItem) {
+        this.deviceSetterHandler('lg', value);
     }
-
-    private _xl: flexItem;
-    @Input('fxItem.xl')
-    get xl(): flexItem //>=1600px
+    @Input('fxItem.gt-lg') // >=1200px
+    get gtlg(): FlexItem {
+        return this.sizeDataMap.get('gt-lg'); //this._lg;
+    }
+    set gtlg(value: FlexItem) {
+        this.deviceSetterHandler('gt-lg', value);
+    }
+    @Input('fxItem.lt-xl')
+    get ltxl(): FlexItem //>=1600px
     {
-        return this._xl;
+        return this.sizeDataMap.get('lt-xl'); //this._xl;
     }
-    set xl(value: flexItem) {
-        if (value) {
-            let srcObj = value['data'] || value;
-            if (!this.xl)
-                this._xl = new flexItem();
-
-            Object.assign(this.xl, srcObj);
-            if (!(srcObj instanceof flexItem))
-                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(this.xl));
-
-            this.createTargetProxy(srcObj,
-                (propKey, val) => {
-                    this.xl[propKey] = val;
-                }, () => {
-                    this.itemHandler();
-                });
-        }
+    set ltxl(value: FlexItem) {
+        this.deviceSetterHandler('ltxl', value);
     }
+    @Input('fxItem.xl')
+    get xl(): FlexItem //>=1600px
+    {
+        return this.sizeDataMap.get('xl'); //this._xl;
+    }
+    set xl(value: FlexItem) {
+        this.deviceSetterHandler('xl', value);
+    }
+
 
     private _fill: boolean = false;
     @Input('fxItemFill')
@@ -292,7 +292,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             () => {
                 this.itemHandler();
             });
-
+        this.mediaList = this.getMediaQuery();
         this._fxStyleInstance = new FxStyle(this._differs, this.elementRef, this.renderer);
     }
     private _fxItemDisplay: string = 'block';
@@ -304,7 +304,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         this._fxItemDisplay = value || 'block';
     }
 
-    createTargetProxy(target: any,
+    private createTargetProxy(target: any,
         beforeAction?: (propKey?: PropertyKey, value?: any) => void,
         afterAction?: (propKey?: PropertyKey, value?: any) => void) {
         let handler = () => {
@@ -337,12 +337,16 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         Object.setPrototypeOf(target, proxy);
         return proxy;
     }
-    createHostProxy(target: any,
+    private createHostProxy(target: any,
         beforeAction?: (propKey?: PropertyKey, value?: any) => void,
         afterAction?: (propKey?: PropertyKey, value?: any) => void) {
         let handler = () => {
             let listenProps = [
-                "lg", "xl", "xs", "sm", "md"
+                "xs", 'gtxs',
+                'ltsm', "sm", 'gtsm',
+                'ltmd', "md", 'gtmd',
+                'ltlg', "lg", 'gtlg',
+                'ltxl', "xl"
             ];
             return {
                 set: function (target: any, propertyKey: PropertyKey, value: any, receiver?: any) {
@@ -371,7 +375,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     private sizeKeys: string[] = [
         'flex', 'order', 'offset', 'fxItemClass', 'fxItemStyle', 'span',
         'show'
-    ]; //, 'xs', 'sm', 'md', 'lg', 'xl'
+    ];
     ngOnChanges(changes: SimpleChanges) {
 
         for (let key in changes) {
@@ -408,10 +412,10 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
                     this.itemFlexProcess();
                     //处理显示
                     this.itemShowHideProcess();
-                    //样式类处理
-                    this.itemClassProcess();
-                    //样式处理
-                    this.itemStyleProcess();
+                    // //样式类处理
+                    // this.itemClassProcess();
+                    // //样式处理
+                    // this.itemStyleProcess();
                 }
 
             }
@@ -438,18 +442,59 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     itemOrderProcess() {
         let name = 'order';
         let currOrder: number = this.order;
-        if (screen.width >= 480 && this.xs && this.xs.order)
-            currOrder = this.xs.order;
-        if (screen.width >= 768 && this.sm && this.sm.order)
-            currOrder = this.sm.order;
-        if (screen.width >= 992 && this.md && this.md.order)
-            currOrder = this.md.order;
-        if (screen.width >= 1200 && this.lg && this.lg.order)
-            currOrder = this.lg.order;
-        if (screen.width >= 1600 && this.xl && this.xl.order)
-            currOrder = this.xl.order;
+        // if (screen.width >= 480 && this.xs && this.xs.order)
+        //     currOrder = this.xs.order;
+        // if (screen.width >= 768 && this.sm && this.sm.order)
+        //     currOrder = this.sm.order;
+        // if (screen.width >= 992 && this.md && this.md.order)
+        //     currOrder = this.md.order;
+        // if (screen.width >= 1200 && this.lg && this.lg.order)
+        //     currOrder = this.lg.order;
+        // if (screen.width >= 1600 && this.xl && this.xl.order)
+        //     currOrder = this.xl.order;
+        // for (let index = 0; index < this.mediaList.length; index++) {
+        //     let element = this.mediaList[index];
+        //     let entry = this.sizeDataMap.get(element);
+        //     if (entry && entry.order) {
+        //         currOrder = entry.order;
+        //         break;
+        //     }
+        // }
+        this.getMediaQueryData(item => {
+            if (item.order) {
+                currOrder = item.order;
+                return true;
+            }
+        });
+
         this.renderer.setStyle(this.elementRef.nativeElement, name, currOrder);
     }
+
+    getMediaQueryData(actionFn: (item: FlexItem) => boolean, autoBreak: boolean = true) {
+        for (let index = 0; index < this.mediaList.length; index++) {
+            let itemKey = this.mediaList[index];
+            let itemEntry = this.sizeDataMap.get(itemKey);
+            if (itemEntry && actionFn) {
+                if (actionFn(itemEntry) && autoBreak) break;
+            }
+        }
+    }
+    getMediaQuery() {
+        let inputMap: string[] = [];
+        let screenWidth = screen.width;
+        if (screenWidth >= 0 && screenWidth <= 599)
+            inputMap.push('xs', 'lt-sm', 'lt-md', 'lt-lg', 'lt-xl');
+        else if (screenWidth >= 600 && screenWidth <= 959)
+            inputMap.push('sm', 'gt-xs', 'lt-md', 'lt-lg', 'lt-xl');
+        else if (screenWidth >= 960 && screenWidth <= 1279)
+            inputMap.push('md', 'gt-xs', 'gt-sm', 'lt-lg', 'lt-xl');
+        else if (screenWidth >= 1280 && screenWidth <= 1919)
+            inputMap.push('lg', 'gt-xs', 'gt-sm', 'gt-md', 'lt-xl');
+        else if (screenWidth >= 1920 && screenWidth <= 5000)
+            inputMap.push('xl', 'gt-xs', 'gt-sm', 'gt-md', 'gt-lg');
+        return inputMap;
+    }
+
     itemOffsetProcess() {
         let name = '';
         if (this._flexContainer.direction === 'row')
@@ -461,32 +506,44 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         else if (this._flexContainer.direction === 'column-reverse')
             name = 'margin-bottom';
         let currOffset: number = this.offset;
-        if (screen.width >= 480 && this.xs && this.xs.offset)
-            currOffset = this.xs.offset;
-        if (screen.width >= 768 && this.sm && this.sm.offset)
-            currOffset = this.sm.offset;
-        if (screen.width >= 992 && this.md && this.md.offset)
-            currOffset = this.md.offset;
-        if (screen.width >= 1200 && this.lg && this.lg.offset)
-            currOffset = this.lg.offset;
-        if (screen.width >= 1600 && this.xl && this.xl.offset)
-            currOffset = this.xl.offset;
+        // if (screen.width >= 480 && this.xs && this.xs.offset)
+        //     currOffset = this.xs.offset;
+        // if (screen.width >= 768 && this.sm && this.sm.offset)
+        //     currOffset = this.sm.offset;
+        // if (screen.width >= 992 && this.md && this.md.offset)
+        //     currOffset = this.md.offset;
+        // if (screen.width >= 1200 && this.lg && this.lg.offset)
+        //     currOffset = this.lg.offset;
+        // if (screen.width >= 1600 && this.xl && this.xl.offset)
+        //     currOffset = this.xl.offset;
+
+        // for (let index = 0; index < this.mediaList.length; index++) {
+        //     let element = this.mediaList[index];
+        //     let entry = this.sizeDataMap.get(element);
+        //     if (entry && entry.offset) {
+        //         currOffset = entry.offset;
+        //         break;
+        //     }
+        // }
+        this.getMediaQueryData(entry => {
+            if (entry && entry.offset) {
+                currOffset = entry.offset;
+                return true;
+            } else return false;
+        });
         this.renderer.setStyle(this.elementRef.nativeElement, name, (currOffset / this._flexContainer.gridColumns) * 100 + '%');
     }
 
     itemFlexProcess() {
         let name = 'flex'; //span ->width ->auto 
         let currSpan: number = this.span;
-        if (screen.width >= 480 && this.xs && this.xs.span)
-            currSpan = this.xs.span;
-        if (screen.width >= 768 && this.sm && this.sm.span)
-            currSpan = this.sm.span;
-        if (screen.width >= 992 && this.md && this.md.span)
-            currSpan = this.md.span;
-        if (screen.width >= 1200 && this.lg && this.lg.span)
-            currSpan = this.lg.span;
-        if (screen.width >= 1600 && this.xl && this.xl.span)
-            currSpan = this.xl.span;
+
+        this.getMediaQueryData(entry => {
+            if (entry && entry.span) {
+                currSpan = entry.span;
+                return true;
+            }
+        });
         if (currSpan > this._flexContainer.gridColumns) currSpan = this._flexContainer.gridColumns;
         if (currSpan > 0)
             this.renderer.setStyle(this.elementRef.nativeElement, name, '0  0 ' + (currSpan / this._flexContainer.gridColumns) * 100 + '%');
@@ -531,23 +588,17 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     // *
     // *     <some-element [ngClass]="{'class1 class2 class3' : true}">...</some-element>
     delClasses: string[] = [];
+    mediaList: string[] = [];
     itemClassProcess() {
         let currClass = "";
         this.delClasses = [];
-        if (screen.width >= 480 && this.xs && this.xs.class != undefined)
-            currClass = this.getElementClass(currClass, this.xs.class);
-
-        if (screen.width >= 768 && this.sm && this.sm.class != undefined)
-            currClass = this.getElementClass(currClass, this.sm.class);
-
-        if (screen.width >= 992 && this.md && this.md.class != undefined)
-            currClass = this.getElementClass(currClass, this.md.class);
-
-        if (screen.width >= 1200 && this.lg && this.lg.class != undefined)
-            currClass = this.getElementClass(currClass, this.lg.class);
-
-        if (screen.width >= 1600 && this.xl && this.xl.class != undefined)
-            currClass = this.getElementClass(currClass, this.xl.class);
+        let mediaList = this.mediaList;
+        for (let index = 0; index < mediaList.length; index++) {
+            let mediaVal = mediaList[index];
+            let entry = this.sizeDataMap.get(mediaVal);
+            if (entry && entry.class)
+                currClass = this.getElementClass(currClass, entry.class);
+        }
 
         currClass = this.getElementClass(currClass, this.fxItemClass);
 
@@ -571,16 +622,15 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
      */
     itemStyleProcess() {
         let currStyle: NgStyleMap;
-        if (screen.width >= 480 && this.xs && this.xs.style != undefined)
-            currStyle = this._buildStyleMap(this.xs.style);
-        if (screen.width >= 768 && this.sm && this.sm.style != undefined)
-            currStyle = this._buildStyleMap(this.sm.style);
-        if (screen.width >= 992 && this.md && this.md.style != undefined)
-            currStyle = this._buildStyleMap(this.md.style);
-        if (screen.width >= 1200 && this.lg && this.lg.style != undefined)
-            currStyle = this._buildStyleMap(this.lg.style);
-        if (screen.width >= 1600 && this.xl && this.xl.style != undefined) {
-            currStyle = this._buildStyleMap(this.xl.style);
+        let mediaList = this.mediaList.reverse();
+        for (let index = 0; index < mediaList.length; index++) {
+            let mediaVal = mediaList[index];
+            let entry = this.sizeDataMap.get(mediaVal);
+            if (entry && entry.style)
+                if (currStyle)
+                    currStyle = Object.assign(currStyle, this._buildStyleMap(entry.style));
+                else
+                    currStyle = this._buildStyleMap(entry.style);
         }
         if (this.fxItemStyle)
             currStyle = Object.assign(this._buildStyleMap(this.fxItemStyle), currStyle);
@@ -589,14 +639,6 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             currStyle = Object.assign(this._buildStyleMap(this._flexContainer.fxStyle), currStyle);
 
         this._fxStyleInstance.ngStyle = currStyle;
-        //let styleMap: NgStyleMap = this._buildStyleMap(currStyle);
-        // for (let key in styleMap) {
-        //     if (styleMap.hasOwnProperty(key)) {
-        //         let value = styleMap[key];
-        //         this._setStyle(key, value);
-        //     }
-        // }
-
     }
     private _setStyle(nameAndUnit: string, value: string | number | null | undefined): void {
         const [name, unit] = nameAndUnit.split('.');
@@ -605,17 +647,31 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     }
     itemShowHideProcess() {
         let currShow: boolean = this.show;
-        if (screen.width >= 480 && this.xs && this.xs.show != undefined)
-            currShow = !!this.xs.show;
-        if (screen.width >= 768 && this.sm && this.sm.show != undefined)
-            currShow = !!this.sm.show;
-        if (screen.width >= 992 && this.md && this.md.show != undefined)
-            currShow = !!this.md.show;
-        if (screen.width >= 1200 && this.lg && this.lg.show != undefined)
-            currShow = !!this.lg.show;
-        if (screen.width >= 1600 && this.xl && this.xl.show != undefined) {
-            currShow = !!this.xl.show;
-        }
+        // if (screen.width >= 480 && this.xs && this.xs.show != undefined)
+        //     currShow = !!this.xs.show;
+        // if (screen.width >= 768 && this.sm && this.sm.show != undefined)
+        //     currShow = !!this.sm.show;
+        // if (screen.width >= 992 && this.md && this.md.show != undefined)
+        //     currShow = !!this.md.show;
+        // if (screen.width >= 1200 && this.lg && this.lg.show != undefined)
+        //     currShow = !!this.lg.show;
+        // if (screen.width >= 1600 && this.xl && this.xl.show != undefined) {
+        //     currShow = !!this.xl.show;
+        // }
+        // for (let index = 0; index < this.mediaList.length; index++) {
+        //     let itemKey = this.mediaList[index];
+        //     let itemEntry = this.sizeDataMap.get(itemKey);
+        //     if (itemEntry && itemEntry.show != undefined) {
+        //         currShow = currShow || !!itemEntry.show;
+        //     }
+        // }
+        this.getMediaQueryData(item => {
+            if (item.show != undefined) {
+                currShow = currShow || !!item.show;
+                return true;
+            } else return false;
+        }, false);
+
         if (currShow)
             if (this._isFlexContainer && !this._hostFlexContainer.fxforceDispaly)
                 this.renderer.setStyle(this.elementRef.nativeElement, 'display', 'flex');

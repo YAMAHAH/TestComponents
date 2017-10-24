@@ -50,7 +50,7 @@ import { tryGetValue } from '../untils/type-checker';
 import { TenantManageTemplate } from './sale.module';
 import { TemplateClassBase } from '../Models/template-class';
 import { ReportManagerService } from '../common/report-viewer/report-manager.service';
-import { flexItem } from '../Models/flex-item';
+import { FlexItem } from '../Models/flex-item';
 
 @Component({
     moduleId: module.id,
@@ -79,8 +79,9 @@ export class SaleComponent extends ComponentFactoryConatiner
             //    action: () => this.modalService.closeAll()
         }]
     };
-    testLg = new flexItem(6);
-    testXL = new flexItem(8);
+    testLg = new FlexItem(6);
+    testXL = new FlexItem(8);
+    testLg2: FlexItem = FlexItem.create({ span: 3 });
     constructor(
         protected injector: Injector,
         private loadScript: LoadScriptService,
@@ -104,21 +105,24 @@ export class SaleComponent extends ComponentFactoryConatiner
             if (this.testLg && this.testLg.span) {
                 this.testLg.span = 8;
                 this.testXL.span = 9;
+                this.testLg2.span = 5;
                 this.changeDetectorRef.markForCheck();
             }
 
         }, 5000);
         setTimeout(() => {
             if (this.testLg && this.testLg.span) {
-                this.testLg = new flexItem(9);
-                this.testXL = new flexItem(10);
+                this.testLg = new FlexItem(9);
+                this.testXL = FlexItem.create({ span: 10 });
+                this.testLg2 = FlexItem.create({ span: 11 });
                 this.changeDetectorRef.markForCheck();
             }
         }, 10000);
         setTimeout(() => {
             if (this.testLg && this.testLg.span) {
-                this.testLg.span = 12;
+                this.testLg.span = 6;
                 this.testXL.span = 13;
+                this.testLg2.span = 6;
                 this.changeDetectorRef.markForCheck();
             }
         }, 15000);

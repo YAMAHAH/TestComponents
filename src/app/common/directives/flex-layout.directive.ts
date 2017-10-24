@@ -8,7 +8,7 @@ type FlexJustifyContent = 'flex-start' | 'flex-end' | 'center' | 'space-between'
 type FlexAlignItems = 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline';
 
 @Directive({
-    selector: '[fxLayout],fxLayout'
+    selector: '[fxLayout],[fxAlignMain]'
 })
 export class FlexLayoutDirective implements OnChanges {
 
@@ -23,9 +23,9 @@ export class FlexLayoutDirective implements OnChanges {
 
     @Input('fxWrap') wrap: FlexWrap = 'nowrap';
 
-    @Input('fxJustify') justifyContent: FlexJustifyContent = 'flex-start';
+    @Input('fxAlignMain') justifyContent: FlexJustifyContent = 'flex-start';
 
-    @Input('fxAlignItems') alignItems: FlexAlignItems = 'stretch';
+    @Input('fxAlignCross') alignItems: FlexAlignItems = 'stretch';
 
     @Input('fxAlignContent') alignContent: FlexAlignItems = 'stretch';
     gridColumns: number = 24;
