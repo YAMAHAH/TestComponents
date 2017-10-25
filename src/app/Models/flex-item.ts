@@ -32,4 +32,9 @@ export class FlexItem {
     height?: number;
     class?: string | string[] | object;
     style?: NgStyleType;
+
+    grow?: number;
+    shrink?: number;
+    basis?: string;
+    flex?: string;
 };

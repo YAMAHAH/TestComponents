@@ -16,6 +16,7 @@ import { WebFormModule } from './components/form/FormModule';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PageViewerModule } from './common/page-viewer/page-viewer.module';
 import { HttpClientModule } from '@angular/common/http';
+import { MediaQueriesModule } from './services/mediaquery/MediaQueriesModule';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { HttpClientModule } from '@angular/common/http';
     XYZUIModule.forRoot(),
     ToastyModule.forRoot(),
     WebFormModule.forRoot(),
-    PageViewerModule.forRoot()
+    PageViewerModule.forRoot(),
+    MediaQueriesModule
   ],
   declarations: [AppComponent, PCLayoutComponent],
   providers: [...appRootProviders]

@@ -12,6 +12,9 @@ import { FormService } from '../components/form/FormService';
 import { DesktopItem } from '../Models/desktop-Item';
 import { PageViewerService } from '../common/page-viewer/page-viewer.service';
 import { TaskQueueManager } from '../untils/taskQueue';
+import { MediaMonitor } from './mediaquery/media-monitor';
+import { MediaChange } from './mediaquery/media-change';
+import { BreakPoint } from './mediaquery/breakpoints/break-point';
 
 @Injectable()
 export class AppStoreService {
@@ -63,10 +66,17 @@ export class AppStoreService {
     public blockUIEvent: EventEmitter<any>;
 
     constructor(public modalService: FormService,
-        public pageViewerService: PageViewerService
+        public pageViewerService: PageViewerService,
+        protected mediaMonitor: MediaMonitor
     ) {
         this.blockUIEvent = new EventEmitter();
         this._appStore = new Subject<IAction>();
+        this.mediaMonitor.observe()
+            .filter(m => m.matches)
+            .distinctUntilChanged()
+            .subscribe(m => {
+                this.activeBreakPoints = this.mediaMonitor.activeBreakPoints;
+            });
     }
 
     public startBlock() {
@@ -78,6 +88,8 @@ export class AppStoreService {
     public taskQueueManager: TaskQueueManager = new TaskQueueManager();
     public taskManager: ChromeTabsComponent;
     public showType: ShowTypeEnum = ShowTypeEnum.tab;
+    //活动breakPoints
+    public activeBreakPoints: BreakPoint[] = [];
 
     OpenedRoutes: Map<string, string> = new Map<string, string>();
 
