@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector, AfterViewInit, ViewChildren, QueryList, forwardRef, Provider, Inject, Optional } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, ComponentFactoryResolver, ViewChild, ComponentRef, Type, ViewContainerRef, ElementRef, EventEmitter, Input, Injector, AfterViewInit, ViewChildren, QueryList, forwardRef, Provider, Inject, Optional, HostListener } from '@angular/core';
 import { AppStoreService } from '../services/app.store.service';
 import { AppTaskBarActions } from '../actions/app-main-tab/app-main-tab-actions'
 import { ActionsBase, AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, SaleComponentFactoryType, PurComponentFactoryType, PurchaseEditComponentType, PurchaseListComponentType } from '../actions/actions-base';
@@ -51,6 +51,7 @@ import { TenantManageTemplate } from './sale.module';
 import { TemplateClassBase } from '../Models/template-class';
 import { ReportManagerService } from '../common/report-viewer/report-manager.service';
 import { FlexItem } from '../Models/flex-item';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     moduleId: module.id,
@@ -71,6 +72,11 @@ export class SaleComponent extends ComponentFactoryConatiner
         this.appStore.rightSubject$.next({ objectId: "div9sdfddf596", templateId: "" });
     }
 
+    ngOnDestroy() {
+        super.ngOnDestroy();
+        this.resizeEventSubscription.unsubscribe();
+    }
+
     subject: ISubject;
     subjectActions: any;
 
@@ -79,8 +85,8 @@ export class SaleComponent extends ComponentFactoryConatiner
             //    action: () => this.modalService.closeAll()
         }]
     };
-    testLg = new FlexItem(6);
-    testXL = new FlexItem(8);
+    testLg = new FlexItem({ span: 6, order: 3 });
+    testXL = new FlexItem({ span: 8 });
     testLg2: FlexItem = FlexItem.create({ span: 3 });
     constructor(
         protected injector: Injector,
@@ -104,6 +110,8 @@ export class SaleComponent extends ComponentFactoryConatiner
         setTimeout(() => {
             if (this.testLg && this.testLg.span) {
                 this.testLg.span = 8;
+                this.testLg.order = 4;
+                this.testLg.style = 'font-size:14px;color:red;';
                 this.testXL.span = 9;
                 this.testLg2.span = 5;
                 this.changeDetectorRef.markForCheck();
@@ -112,7 +120,7 @@ export class SaleComponent extends ComponentFactoryConatiner
         }, 5000);
         setTimeout(() => {
             if (this.testLg && this.testLg.span) {
-                this.testLg = new FlexItem(9);
+                this.testLg = FlexItem.create({ span: 15, order: 1 });
                 this.testXL = FlexItem.create({ span: 10 });
                 this.testLg2 = FlexItem.create({ span: 11 });
                 this.changeDetectorRef.markForCheck();
@@ -121,6 +129,8 @@ export class SaleComponent extends ComponentFactoryConatiner
         setTimeout(() => {
             if (this.testLg && this.testLg.span) {
                 this.testLg.span = 6;
+                this.testLg.order = -1;
+                this.testLg.style = 'font-size:18px;color:white;';
                 this.testXL.span = 13;
                 this.testLg2.span = 6;
                 this.changeDetectorRef.markForCheck();
@@ -167,6 +177,7 @@ export class SaleComponent extends ComponentFactoryConatiner
     // createGroupList(extras?: any): IFormModel {
     //     return this.formModel;
     // }
+
 
     reducer() {
         this.salOrderSubject = this.appStore.select(this.saleOrderActions.key);
@@ -633,7 +644,14 @@ export class SaleComponent extends ComponentFactoryConatiner
     }
 
     pageModel: IPageModel = { title: '销售订单', active: true, childs: [] };
+    resizeEventSubscription: Subscription;
     ngOnInit() {
+        this.resizeEventSubscription = Observable.fromEvent(window, 'resize')
+            .debounceTime(100)
+            .subscribe(e => {
+                this.changeDetectorRef.markForCheck();
+            });
+
         this.activeRouter.data
             .subscribe((data: any) => {
                 console.log(data);

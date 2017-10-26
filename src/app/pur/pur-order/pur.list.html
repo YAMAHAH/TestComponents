@@ -13,7 +13,8 @@
 
         <div #main class="flex-row-col" style="margin:0rem;padding:0rem; flex-grow: 1; background-color: #feeff5;min-width: 30rem;">
             <div class="flex-col-xs">
-                <div class="box">正文内容</div>
+                <div #list style="height:150px;width:100px;overflow: scroll;" [scrollTop]="list.scrollHeight" class="box">正文内容正文内容正文内容正文内容正文内容 正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容
+                </div>
                 <ul>
                     <p>{{pageModel?.title}}</p>
                     <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
