@@ -410,8 +410,8 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     getItemDisplay() {
         let currDisplay = this.display;
         this.getMediaQueryData(entry => {
-            if (entry && entry.dispaly) {
-                currDisplay = entry.dispaly;
+            if (entry && entry.display) {
+                currDisplay = entry.display;
                 return true;
             }
         });
@@ -516,7 +516,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             if (this.fxItemStyle)
                 currStyle = Object.assign(this._buildStyleMap(this.fxItemStyle), currStyle);
 
-            if (this._flexContainer.fxStyle)
+            if (this._flexContainer.style)
                 currStyle = Object.assign(this._buildStyleMap(this._flexContainer.style), currStyle);
 
             this._fxStyleInstance.ngStyle = currStyle;

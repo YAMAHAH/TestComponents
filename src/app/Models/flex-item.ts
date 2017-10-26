@@ -11,7 +11,7 @@ export interface IFlexItem {
     height?: number;
     class?: string | string[] | object;
     style?: NgStyleType;
-    dispaly?: string;
+    display?: string;
     flexGrow?: string;
     flexShrink?: string;
     flexBasis?: string;
