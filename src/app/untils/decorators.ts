@@ -157,3 +157,70 @@ export function makePropDecorator(
     (<any>PropDecoratorFactory).annotationCls = PropDecoratorFactory;
     return PropDecoratorFactory;
 }
+
+export function isDescriptor(desc: PropertyDescriptor) {
+    if (!desc || !desc.hasOwnProperty) {
+        return false;
+    }
+
+    const keys = ['value', 'initializer', 'get', 'set'];
+
+    for (let i = 0, l = keys.length; i < l; i++) {
+        if (desc.hasOwnProperty(keys[i])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+const { defineProperty, getOwnPropertyDescriptor,
+    getOwnPropertyNames, getOwnPropertySymbols } = Object;
+export function decorate(handleDescriptor: any, entryArgs: any[]) {
+    if (isDescriptor(entryArgs[entryArgs.length - 1])) {
+        return handleDescriptor(...entryArgs, []);
+    } else {
+        return function () {
+            return handleDescriptor(...Array.prototype.slice.call(arguments), entryArgs);
+        };
+    }
+}
+
+export const getOwnKeys = getOwnPropertySymbols
+    ? function (obj: any) {
+        let ownPropKeys: any[] = getOwnPropertyNames(obj);
+        return ownPropKeys.concat(getOwnPropertySymbols(obj));
+    }
+    : getOwnPropertyNames;
+export function getOwnPropertyDescriptors(obj: any) {
+    const descs = {};
+
+    getOwnKeys(obj).forEach(
+        (key: string) => (descs[key] = getOwnPropertyDescriptor(obj, key))
+    );
+
+    return descs;
+}
+
+export function createDefaultSetter(key: PropertyKey) {
+    return function set(newValue: any) {
+        Object.defineProperty(this, key, {
+            configurable: true,
+            writable: true,
+            // IS enumerable when reassigned by the outside word
+            enumerable: true,
+            value: newValue
+        });
+
+        return newValue;
+    };
+}
+
+export function bind(fn: Function, context: any) {
+    if (fn.bind) {
+        return fn.bind(context);
+    } else {
+        return function __autobind__() {
+            return fn.apply(context, arguments);
+        };
+    }
+}

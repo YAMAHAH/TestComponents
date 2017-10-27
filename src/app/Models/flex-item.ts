@@ -18,10 +18,10 @@ export interface IFlexItem {
     flex?: string;
     alignSelf?: FlexItemAlignSelf;
 }
-export class FlexItem implements IFlexItem {
-    static create(obj: IFlexItem) {
+export class FlexItem {
+    static create(itemInit?: IFlexItem) {
         let item = new FlexItem();
-        Object.assign(item, obj);
+        if (itemInit) Object.assign(item, itemInit);
         return item;
     }
     constructor(itemInit?: IFlexItem) {
@@ -29,7 +29,7 @@ export class FlexItem implements IFlexItem {
             Object.assign(this, itemInit);
         }
     }
-    private _order: number;
+    private _order?: number;
     get order() { return this._order; }
     set order(value: number) { this._order = value; }
     private _offset: number;

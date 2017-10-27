@@ -50,8 +50,9 @@ import { tryGetValue } from '../untils/type-checker';
 import { TenantManageTemplate } from './sale.module';
 import { TemplateClassBase } from '../Models/template-class';
 import { ReportManagerService } from '../common/report-viewer/report-manager.service';
-import { FlexItem } from '../Models/flex-item';
+import { FlexItem, IFlexItem } from '../Models/flex-item';
 import { Subscription } from 'rxjs/Subscription';
+import { CoreDecorators as decorators } from '../untils/core-decorators';
 
 @Component({
     moduleId: module.id,
@@ -88,6 +89,7 @@ export class SaleComponent extends ComponentFactoryConatiner
     testLg = new FlexItem({ span: 6, order: 3 });
     testXL = new FlexItem({ span: 8 });
     testLg2: FlexItem = FlexItem.create({ span: 3 });
+    testLg3 = { span: 9 };
     constructor(
         protected injector: Injector,
         private loadScript: LoadScriptService,
@@ -114,15 +116,18 @@ export class SaleComponent extends ComponentFactoryConatiner
                 this.testLg.style = 'font-size:14px;color:red;';
                 this.testXL.span = 9;
                 this.testLg2.span = 5;
+                this.testLg3.span = 3;
                 this.changeDetectorRef.markForCheck();
+                this.decoratorTimeout();
             }
 
-        }, 5000);
+        }, 6000);
         setTimeout(() => {
             if (this.testLg && this.testLg.span) {
                 this.testLg = FlexItem.create({ span: 15, order: 1 });
                 this.testXL = FlexItem.create({ span: 10 });
                 this.testLg2 = FlexItem.create({ span: 11 });
+                this.testLg3 = { span: 10 };
                 this.changeDetectorRef.markForCheck();
             }
         }, 10000);
@@ -133,9 +138,16 @@ export class SaleComponent extends ComponentFactoryConatiner
                 this.testLg.style = 'font-size:18px;color:white;';
                 this.testXL.span = 13;
                 this.testLg2.span = 6;
+                this.testLg3.span = 8;
                 this.changeDetectorRef.markForCheck();
             }
         }, 15000);
+        setTimeout(() => {
+            if (this.testLg && this.testLg.span) {
+                this.testLg3.span = 6;
+                this.changeDetectorRef.markForCheck();
+            }
+        }, 25000);
         this.cars = [];
         this.cars.push({ label: 'Audi', value: 'Audi' });
         this.cars.push({ label: 'BMW', value: 'BMW' });
@@ -167,6 +179,14 @@ export class SaleComponent extends ComponentFactoryConatiner
                 }
                 this.componentFactoryDestroyFn = this.appStore.registerComponentFactoryRef(new SaleComponentFactoryType(this.pageModel.key, this));
             }).unsubscribe();
+    }
+
+    @decorators.setTimeout(30000, res => console.log('测试装饰器,是否可以定时执行这个方法呢'))
+    decoratorTimeout() {
+        if (this.testLg && this.testLg.span) {
+            this.testLg3.span = 10;
+            this.changeDetectorRef.markForCheck();
+        }
     }
     saleOrderActions = new SaleOrderActions();
     salOrderSubject: ISubject;

@@ -34,7 +34,7 @@ export interface IFlexLayoutItem {
     gridColumns?: number;
 }
 export class FlexLayoutItem {
-    static create(itemInit: IFlexLayoutItem) {
+    static create(itemInit?: IFlexLayoutItem) {
         let ins = new FlexLayoutItem();
         Object.assign(ins, itemInit);
         return ins;

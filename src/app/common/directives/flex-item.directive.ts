@@ -164,28 +164,97 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     //     'min-width': '100%',
     //     'min-height': '100%'
     //   };1 0 0
+    private createPropertyFromSource(target: any, source: any) {
+
+        let keys = Object.getOwnPropertyNames(source).filter(v => v != 'constructor');
+
+        keys.forEach(key => {
+
+            let _val = target[key];
+
+            let propertyDesc: PropertyDescriptor = Object.getOwnPropertyDescriptor(source, key);
+
+            if (delete target[key]) {
+
+                Object.defineProperty(target, key, propertyDesc);
+
+                if (_val) target[key] = _val;
+            }
+        });
+    }
+    resetPropertyFromSource(target: any, dataKey: any, source: any) {
+        let keys = Object.getOwnPropertyNames(source).filter(v => v != 'constructor');
+        keys.forEach(key => {
+            let _val = target[key];
+            let _insRef = this;
+            let getter = function () {
+                return _val;
+            };
+            let setter = function (newVal: any) {
+                console.log(`Set: ${key} => ${newVal}`);
+                if (_val != newVal) {
+                    let eventArgs: EventArgs = {
+                        target: target,
+                        propertyKey: key,
+                        currentValue: newVal,
+                        oldValue: _val
+                    };
+                    _val = newVal;
+                    let oldValue = _insRef.responsiveDataMap.get(dataKey);
+                    oldValue[key] = newVal;
+                    _insRef._updateWithValue(eventArgs);
+                }
+            };
+
+            if (delete target[key]) {
+                Object.defineProperty(target, key, {
+                    get: getter,
+                    set: setter,
+                    enumerable: true,
+                    configurable: true
+                });
+            }
+        });
+    }
     mediaItemSetterHandler(key: string, newValue: FlexItem) {
         if (newValue) {
-            let srcObj = newValue['data'] || newValue;
+            let target = newValue['data'] || newValue;
             if (!this.responsiveDataMap.has(key))
                 this.responsiveDataMap.set(key, new FlexItem());
             let oldValue = this.responsiveDataMap.get(key);
-            Object.assign(oldValue, srcObj);
-            if (!(srcObj instanceof FlexItem))
-                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(oldValue));
 
-            this.createTargetProxy(srcObj,
-                (e) => {
-                    oldValue[e.propertyKey] = e.currentValue;
-                }, (e) => {
-                    this._updateWithValue(e);
-                });
+            if (!(target instanceof FlexItem)) {
+                // this.createPropertyFromSource(target, FlexItem.prototype);
+                // this.resetPropertyFromSource(target, key, FlexItem.prototype);
+                let temp = FlexItem.create();
+                Object.assign(temp, target);
+                let proxy = this.createTargetProxy(temp,
+                    (e) => {
+                        oldValue[e.propertyKey] = e.currentValue;
+                    }, (e) => {
+                        this._updateWithValue(e);
+                    }, false);
+                for (let key in target) { //删除原来的属性值
+                    if (target.hasOwnProperty(key)) {
+                        delete target[key];
+                    }
+                }
+                Object.setPrototypeOf(target, proxy);
+            } else {
+                Object.assign(oldValue, target);
+                this.createTargetProxy(target,
+                    (e) => {
+                        oldValue[e.propertyKey] = e.currentValue;
+                    }, (e) => {
+                        this._updateWithValue(e);
+                    });
+            }
         }
     }
 
     private createTargetProxy(target: any,
         beforeAction?: (eventArgs?: EventArgs) => void,
-        afterAction?: (eventArgs?: EventArgs) => void) {
+        afterAction?: (eventArgs?: EventArgs) => void, setTargetPrototype: boolean = true) {
         let handler = () => {
             let _self = this;
             let listenProps = [
@@ -204,7 +273,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
                             if (oldValue != value) {
                                 if (beforeAction) beforeAction(eArgs);
                                 let res = Reflect.set(target, propertyKey, value, receiver);
-                                console.log(`绑定对象属性值变化: key: ${propertyKey} value: ${JSON.stringify(value)} `);
+                                // console.log(`绑定对象属性值变化2: key: ${propertyKey} value: ${JSON.stringify(value)} `);
                                 if (afterAction) afterAction(eArgs);
                                 return res;
                             }
@@ -218,7 +287,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             };
         };
         let proxy = new Proxy(Object.getPrototypeOf(target), handler());
-        Object.setPrototypeOf(target, proxy);
+        if (setTargetPrototype) Object.setPrototypeOf(target, proxy);
         return proxy;
     }
     private createHostProxy(target: any,
@@ -245,7 +314,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
                             if (oldValue != value) {
                                 if (beforeAction) beforeAction(eArgs);
                                 let res = Reflect.set(target, propertyKey, value, receiver);
-                                console.log(`绑定对象变化: key: ${propertyKey} value: ${JSON.stringify(value)} `);
+                                // console.log(`绑定对象变化: key: ${propertyKey} value: ${JSON.stringify(value)} `);
                                 if (afterAction) afterAction(eArgs);
                                 return res;
                             }
@@ -368,8 +437,8 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
                     return true;
                 }
             });
-
-            this.renderer.setStyle(this.elementRef.nativeElement, name, currOrder);
+            if (currOrder != undefined)
+                this.renderer.setStyle(this.elementRef.nativeElement, name, currOrder);
         }
 
     }
@@ -559,7 +628,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         }
         return null;
     }
-    @Input('fxItemOrder') order: number = 0;
+    @Input('fxItemOrder') order: number;
     @Input('fxItemGrow') flexGrow: string = '0';
     @Input('fxItemShrink') flexShrink: string = '1';
     @Input('fxItemBasis') flexBasis: string = "auto";
