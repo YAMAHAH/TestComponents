@@ -1,4 +1,4 @@
-<div class="flex-col-row flex-col-xs full-height" style=" margin: 0rem;padding: 0rem; width: 100%; height: 100%;">
+<!-- <div class="flex-col-row flex-col-xs full-height" style=" margin: 0rem;padding: 0rem; width: 100%; height: 100%;">
     <div #header class="flex-row-col" style=" margin:0px;flex: none; height: 5rem;line-height: 5rem;background-color:#f7629e">
 
     </div>
@@ -13,8 +13,6 @@
 
         <div #main class="flex-row-col" style="margin:0rem;padding:0rem; flex-grow: 1; background-color: #feeff5;min-width: 30rem;">
             <div class="flex-col-xs">
-                <div #list style="height:150px;width:100px;overflow: scroll;" [scrollTop]="list.scrollHeight" class="box">正文内容正文内容正文内容正文内容正文内容 正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容正文内容
-                </div>
                 <ul>
                     <p>{{pageModel?.title}}</p>
                     <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
@@ -32,5 +30,58 @@
     </div>
 
     <div #footer class="flex-row-col" style="margin:0rem;padding:0rem;flex: none; height: 5rem;line-height: 5rem;background-color:#fa90ba"></div>
+</div> -->
+<div fxLayout="column" fxFill style="margin: 0rem;padding: 0rem; width: 100%; height: 100%;">
+    <div #header fxItem="0 0 5rem" fxItemHeight="5rem" fxItemStyle=" margin:0px;line-height: 5rem;background-color:#f7629e">
+    </div>
+    <div #center fxLayout fxItem="fill" FxItemStyle="margin:0px;padding:0px;">
+        <div #left fxItem="0 0 20rem" fxItemStyle="margin:0px; width: 20rem;min-width:0rem;max-width:20rem;padding: 0px; border-right: #3747a0 3px solid;
+            min-width: 0px;max-width: 20rem;background-color:#f5317f">
+            <div class="col-xs" style="padding:0px;flex:1 1 100%;">
+                <div class="box">left</div>
+            </div>
+        </div>
+
+        <div #main fxLayout fxItemFill fxItem="fill" fxItemStyle="margin:0rem;padding:0rem; background-color: #feeff5;min-width: 30rem;">
+            <div fxItem="fill">
+                <ul>
+                    <p>{{pageModel?.title}}</p>
+                    <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
+                </ul>
+                <pre>{{pageModel?.resolve | json}}</pre>
+                <pre>{{context | json}}</pre>
+                <div fxLayout="column">
+                    <div fxLayout="row" fxItem="fill" fxAlignMain='flex-start' fxAlignCross='center' height="30px" fxWidth="80px" fxHeight="30px" fxStyle="border:1px solid blue; background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">
+                        <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                            <div fxItem>第一列</div>
+                        </div>
+                        <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                            <div fxItem>第二列</div>
+                        </div>
+                        <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                            <div fxItem>第三列</div>
+                        </div>
+                        <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                            <div fxItem>第四列</div>
+                        </div>
+                        <div fxLayout fxItem="fill" fxItemHeight="30px" fxAlignMain='center' fxAlignCross='center'>
+                            <div fxItem>第五列</div>
+                        </div>
+                    </div>
+                    <div fxLayout="column" fxItem="fill" fxItemFill>Col-2
+
+                    </div>
+                    <div fxLayout="row" fxItem="fill" fxItemFill>Col-3</div>
+                    <div fxLayout="row" fxItem="fill" fxItemFill>Col-4</div>
+                </div>
+            </div>
+        </div>
+
+        <div #right fxItem="0 0 20rem " fxItemStyle="margin:0px;padding:0rem; width: 20rem;min-width:0rem;max-width:20rem;background-color:#dc277d ">
+            <div class="flex-col-xs " style="padding:0rem;flex:1 1 100%; ">
+                <div class="box ">right</div>
+            </div>
+        </div>
+    </div>
+    <div #footer fxItem="0 0 5rem " fxItemStyle="margin:0rem;padding:0rem;line-height: 5rem;background-color:#fa90ba "></div>
 </div>
-<!-- style="padding:0rem;flex:1 1 100%;" -->

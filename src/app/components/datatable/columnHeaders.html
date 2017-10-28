@@ -9,7 +9,7 @@
         <span class="ui-column-title" *ngIf="col.headerTemplate"><dt-columnHeaderTemplateLoader [column]="col"></dt-columnHeaderTemplateLoader></span>
 
         <span class="ui-column-title" *ngIf="col.headerComponent">
-             <ng-container *jyComponentOutlet="col.headerComponent;context:{ 'col': col,'datatable':dt} "></ng-container>
+             <ng-container *gxComponentOutlet="col.headerComponent;context:{ 'col': col,'datatable':dt} "></ng-container>
         </span>
         <span class="ui-sortable-column-icon fa fa-fw fa-sort" *ngIf="col.sortable" [ngClass]="{'fa-sort-desc': (dt.getSortOrder(col) == -1),'fa-sort-asc': (dt.getSortOrder(col) == 1)}"></span>
 
@@ -17,7 +17,7 @@
         />
         <dt-columnFilterTemplateLoader [column]="col" *ngIf="col.filterTemplate"></dt-columnFilterTemplateLoader>
 
-        <ng-container *jyComponentOutlet="col.filterComponent;context:{ 'col': col,'datatable':dt} "></ng-container>
+        <ng-container *gxComponentOutlet="col.filterComponent;context:{ 'col': col,'datatable':dt} "></ng-container>
 
         <x-dtCheckbox *ngIf="col.selectionMode=='multiple'" (onChange)="dt.toggleRowsWithCheckbox($event)" [checked]="dt.allSelected" [disabled]="dt.isEmpty()"></x-dtCheckbox>
     </th>

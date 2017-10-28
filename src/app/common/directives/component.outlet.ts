@@ -66,13 +66,13 @@ import {
  *
  * @experimental
  */
-@Directive({ selector: '[jyComponentOutlet]' })
-export class JYComponentOutlet implements OnChanges, OnDestroy {
-    @Input() jyComponentOutlet: Type<any>;
-    @Input() jyComponentOutletInjector: Injector;
-    @Input() jyComponentOutletContent: any[][];
-    @Input() jyComponentOutletContext: any;
-    @Input() jyComponentOutletNgModuleFactory: NgModuleFactory<any>;
+@Directive({ selector: '[gxComponentOutlet]' })
+export class ComponentOutlet implements OnChanges, OnDestroy {
+    @Input() gxComponentOutlet: Type<any>;
+    @Input() gxComponentOutletInjector: Injector;
+    @Input() gxComponentOutletContent: any[][];
+    @Input() gxComponentOutletContext: any;
+    @Input() gxComponentOutletNgModuleFactory: NgModuleFactory<any>;
 
     private _componentRef: ComponentRef<any> = null;
     private _moduleRef: NgModuleRef<any> = null;
@@ -86,13 +86,13 @@ export class JYComponentOutlet implements OnChanges, OnDestroy {
         this._viewContainerRef.clear();
         this._componentRef = null;
 
-        if (this.jyComponentOutlet) {
-            let injector = this.jyComponentOutletInjector || this._viewContainerRef.parentInjector;
+        if (this.gxComponentOutlet) {
+            let injector = this.gxComponentOutletInjector || this._viewContainerRef.parentInjector;
 
             if ((changes as any).ngComponentOutletNgModuleFactory) {
                 if (this._moduleRef) this._moduleRef.destroy();
-                if (this.jyComponentOutletNgModuleFactory) {
-                    this._moduleRef = this.jyComponentOutletNgModuleFactory.create(injector);
+                if (this.gxComponentOutletNgModuleFactory) {
+                    this._moduleRef = this.gxComponentOutletNgModuleFactory.create(injector);
                 } else {
                     this._moduleRef = null;
                 }
@@ -102,15 +102,15 @@ export class JYComponentOutlet implements OnChanges, OnDestroy {
             }
 
             let componentFactory =
-                injector.get(ComponentFactoryResolver).resolveComponentFactory(this.jyComponentOutlet);
+                injector.get(ComponentFactoryResolver).resolveComponentFactory(this.gxComponentOutlet);
 
             this._componentRef = this._viewContainerRef.createComponent(
-                componentFactory, this._viewContainerRef.length, injector, this.jyComponentOutletContent);
+                componentFactory, this._viewContainerRef.length, injector, this.gxComponentOutletContent);
 
         }
 
-        if (this.jyComponentOutlet && this.jyComponentOutletContext) {
-            let parseObject = this.jyComponentOutletContext;
+        if (this.gxComponentOutlet && this.gxComponentOutletContext) {
+            let parseObject = this.gxComponentOutletContext;
             if (isFunction(parseObject)) {
                 parseObject = parseObject();
             }

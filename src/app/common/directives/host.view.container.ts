@@ -2,12 +2,12 @@ import { Directive, ViewContainerRef, OnChanges, Input, SimpleChanges, Component
 import { isFunction } from '../toasty/toasty.utils';
 
 @Directive({
-    selector: '[xyzHostContainer]'
+    selector: '[gxHostContainer]'
 })
 
 export class HostViewContainerDirective implements OnChanges {
-    @Input("xyzHostContainer") xyzComponentRef: ComponentRef<any> = null;
-    @Input() xyzHostContainerContext: any = null;
+    @Input("gxHostContainer") xyzComponentRef: ComponentRef<any> = null;
+    @Input() gxHostContainerContext: any = null;
     constructor(public viewContainerRef: ViewContainerRef) { }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -15,8 +15,8 @@ export class HostViewContainerDirective implements OnChanges {
             this.viewContainerRef.remove(this.viewContainerRef.indexOf(this.xyzComponentRef.hostView));
 
             this.viewContainerRef.clear();
-            if (this.xyzHostContainerContext) {
-                let parseObject = this.xyzHostContainerContext;
+            if (this.gxHostContainerContext) {
+                let parseObject = this.gxHostContainerContext;
                 if (isFunction(parseObject)) {
                     parseObject = parseObject();
                 }

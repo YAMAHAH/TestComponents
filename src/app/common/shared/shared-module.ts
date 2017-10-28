@@ -8,13 +8,13 @@ import { AwesomePipe } from './awesome-pipe';
 import { UserService } from '../shared';
 import { FilterPipe } from './filter.pipe';
 import { FocusDirective } from '../directives/focus.directive';
-import { JYComponentOutlet } from '../directives/component.outlet';
+import { ComponentOutlet } from '../directives/component.outlet';
 import { HostViewContainerDirective } from '../directives/host.view.container';
-import { KeyBindingDirective } from '../directives/key-binding';
 import { ImageLazyLoadDirective } from '../directives/img-lazy-load.directive';
 import { FlexLayoutDirective } from '../directives/flex-layout.directive';
 import { FlexItemDirective } from '../directives/flex-item.directive';
 import { FxStyle } from '../directives/fxstyle';
+import { KeyBindingDirective } from '../directives/key-binding';
 
 @NgModule({
   imports: [CommonModule],
@@ -24,7 +24,7 @@ import { FxStyle } from '../directives/fxstyle';
     HighlightDirective,
     TitleComponent,
     FocusDirective,
-    JYComponentOutlet,
+    ComponentOutlet,
     HostViewContainerDirective,
     KeyBindingDirective,
     ImageLazyLoadDirective,
@@ -37,7 +37,7 @@ import { FxStyle } from '../directives/fxstyle';
     FilterPipe,
     HighlightDirective,
     FocusDirective,
-    JYComponentOutlet,
+    ComponentOutlet,
     TitleComponent,
     CommonModule,
     FormsModule,
@@ -51,18 +51,18 @@ import { FxStyle } from '../directives/fxstyle';
     FxStyle
   ]
 })
-export class SharedModule {
+export class CoreModule {
 
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: SharedModule,
+      ngModule: CoreModule,
       providers: [UserService]
     };
   }
 }
 
 @NgModule({
-  exports: [SharedModule],
+  exports: [CoreModule],
   providers: [UserService]
 })
 export class SharedRootModule { }

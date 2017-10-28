@@ -26,7 +26,7 @@ export type ImageSrcType = string | object;
     img[src.gt-xs], img[src.gt-sm], img[src.gt-md], img[src.gt-lg]
   `
 })
-export class ImgSrcDirective implements OnInit, OnChanges {
+export class ImageSrcDirective implements OnInit, OnChanges {
 
     private _cacheInput: Map<string, any> = new Map<string, any>();
 

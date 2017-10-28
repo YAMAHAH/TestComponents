@@ -3,15 +3,15 @@
     <div style="display:flex;flex:1;flex-direction: column; width:100%">
         <div [ngClass]="getClass(pageModel)" style="display:flex;flex-direction: column;height: 100%; margin: 5px; background-color: #f2f2f2">
             <div>
-                <button [keyBinding]="td.dataFields.Tenant_Name.objectId" (click)="open()">OpenPurOrder</button>
+                <button [gxKeyBinding]="td.dataFields.Tenant_Name.objectId" (click)="open()">OpenPurOrder</button>
                 <button (click)="close()">OpenPurList</button>
                 <button (click)="toggle()">toggleToPageViewer</button>
                 <button (click)="invokeReportViewer()">reportViewer</button>
                 <button class="btn btn-default" (click)="op1.toggle($event)">overlayPanel</button>
-                <button keyBinding='btn95962343243' class="btn btn-default" (click)="alert();">Alert</button>
-                <button keyBinding='btn95234234296' class="btn btn-default" (click)="confirm();">Confirm</button>
-                <button keyBinding='btn9sdfddf596' class="btn btn-default" (click)="prompt();">Prompt</button>
-                <button keyBinding='btn9dfssdswerw596' class="btn btn-default" reTitle="雾里看花" trigger="hover" rePopover="打开模式窗口" placement="top" (click)="openModal();">Open modal!</button>
+                <button gxKeyBinding='btn95962343243' class="btn btn-default" (click)="alert();">Alert</button>
+                <button gxKeyBinding='btn95234234296' class="btn btn-default" (click)="confirm();">Confirm</button>
+                <button gxKeyBinding='btn9sdfddf596' class="btn btn-default" (click)="prompt();">Prompt</button>
+                <button gxKeyBinding='btn9dfssdswerw596' class="btn btn-default" reTitle="雾里看花" trigger="hover" rePopover="打开模式窗口" placement="top" (click)="openModal();">Open modal!</button>
                 <button class="btn btn-default" (click)="addToast()">Add Toast</button>
                 <x-overlayPanel position="bottom" [style]="{width:'455px'}" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="true" [dismissable]="true" #op1>
                     <div class="ui-g-12 ui-md-6">
@@ -26,7 +26,7 @@
                     </div>
                 </x-overlayPanel>
                 <hr>
-                <div keyBinding='div9sdfddf596'>
+                <div gxKeyBinding='div9sdfddf596'>
                     <x-dropdown [options]="cars" [(ngModel)]="selectedCar2" [style]="{'width':'250px'}">
                         <x-overlayPanel (onFocus)="op2.toggle($event)" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="false" [dismissable]="false" #op2>
                         </x-overlayPanel>
@@ -132,12 +132,12 @@
                     <x-dataTable [editable]="true " [totalRecords]="totalRecords " (onLazyLoad)="loadCarsLazy($event)
                         " lazy="true " [rows]="10 " [paginator]="true " [responsive]="false " [pageLinks]="10 " [rowsPerPageOptions]="[5,10,20]
                         " [value]="mycars ">
-                        <dt-column [modelRef]="col " keyBinding='col3924234234244{{idx}}' *ngFor="let col of cols;index
+                        <dt-column [modelRef]="col " gxKeyBinding='col3924234234244{{idx}}' *ngFor="let col of cols;index
                         as idx " [style]=" { 'overflow': 'visible' } " [editable]="col.editable " [hidden]="!col.visible " [cellEditor]="col.cellEditor
                         " [cellComponent]="col.cellComponent " [sortable]="true " [field]="col.field " [header]="col.header "></dt-column>
                     </x-dataTable>
                     <section>
-                        <x-autoComplete keyBinding='div9sdfddf596' ([ngModel])="brand " [componentOutlet]="componentOutlet
+                        <x-autoComplete gxKeyBinding='div9sdfddf596' ([ngModel])="brand " [componentOutlet]="componentOutlet
                         " [panelStyle]="{ 'width': '260px'} " [style]="{ 'width': '250px'} " [inputStyle]="{ 'width': '232px'} " [suggestions]="filteredBrands
                         " [dropdown]="true " (onDropdownClick)="handleDropdownClick($event) " (completeMethod)="filterBrands($event) ">
                             <ng-template let-brand pTemplate="item ">
@@ -152,8 +152,8 @@
                 </div>
             </div>
         </div>
-        <div *xyzHostContainer></div>
+        <div *gxHostContainer></div>
 
     </div>
 </div>
-<!-- *xyzHostContainer <x-iframe #pdfReport style="display:flex;flex:1 0 100%;width:100% "></x-iframe>-->
+<!-- *gxHostContainer <x-iframe #pdfReport style="display:flex;flex:1 0 100%;width:100% "></x-iframe>-->

@@ -1,19 +1,16 @@
 // Angular Imports
-import { NgModule, getModuleFactory } from '@angular/core';
-
-// This Module's Components
-import { PurOrderComponent } from './pur-order.component';
-import { PurDetailComponent } from './pur.detail.component';
-import { PurListComponent } from './pur.list.component';
-import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { FormsModule, ControlValueAccessor } from '@angular/forms';
+import { PurOrderComponent } from './pur-order.component';
+import { CoreModule } from '../../common/shared/shared-module';
+import { NavTreeViewModule } from '../../components/nav-tree-view/nav-tree-view.module';
+import { XYZDialogModule } from '../../common/dialog/dialog.module';
 import { BadgeModule } from '../../common/badge/badge.module';
 import { AlertBoxModule } from '../../common/alert-box/alert-box.module';
-import { XYZDialogModule } from '../../common/dialog/dialog.module';
-import { NavTreeViewModule } from '../../components/nav-tree-view/nav-tree-view.module';
 import { SideSilderMenuModule } from '../../components/side-silder-menu/side-silder-menu.module';
 import { AccordionMenuModule } from '../../components/accordion-menu/accordion-menu.module';
+import { PurDetailComponent } from './pur.detail.component';
+import { PurListComponent } from './pur.list.component';
 import { PurOrderService } from './purOrderService';
 
 
@@ -23,13 +20,19 @@ export const purRouteConfig: Routes = [
 
 @NgModule({
     imports: [
-        CommonModule, FormsModule,
+        CoreModule,
         RouterModule.forChild(purRouteConfig),
         XYZDialogModule,
-        NavTreeViewModule, BadgeModule, AlertBoxModule, SideSilderMenuModule, AccordionMenuModule
+        NavTreeViewModule,
+        BadgeModule,
+        AlertBoxModule,
+        SideSilderMenuModule,
+        AccordionMenuModule
     ],
     declarations: [
-        PurOrderComponent, PurDetailComponent, PurListComponent
+        PurOrderComponent,
+        PurDetailComponent,
+        PurListComponent
     ],
     exports: [
         PurOrderComponent

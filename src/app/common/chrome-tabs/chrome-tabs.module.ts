@@ -7,7 +7,7 @@ import { ChromeTabComponent } from './chrome-tab.component';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { RouterOutletModule } from '../router-outlet/router-outlet.module';
-import { SharedModule } from '../shared/shared-module';
+import { CoreModule } from '../shared/shared-module';
 import { ToastyModule } from '../toasty/index';
 import { ReportViewerModule } from '../report-viewer/report.viewer.module';
 import { ReportViewer } from '../report-viewer/report.viewer';
@@ -17,7 +17,7 @@ import { ReportViewer } from '../report-viewer/report.viewer';
         CommonModule,
         RouterOutletModule,
         RouterModule,
-        SharedModule,
+        CoreModule,
         ToastyModule,
         ReportViewerModule.forRoot()
     ],

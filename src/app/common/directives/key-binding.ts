@@ -11,11 +11,11 @@ import { ViewContainerRef } from '@angular/core';
 import { tryGetValue } from '../../untils/type-checker';
 
 @Directive({
-    selector: '[keyBinding]'
+    selector: '[gxKeyBinding]'
 })
 export class KeyBindingDirective implements OnChanges, OnDestroy {
 
-    @Input("keyBinding") objectId: string;
+    @Input("gxKeyBinding") objectId: string;
 
     @Input() modelRef: AuthorizeModel;
     @Input() get templateId(): string {

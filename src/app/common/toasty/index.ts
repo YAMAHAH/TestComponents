@@ -11,7 +11,7 @@ export * from './toasty.component';
 import { ToastyComponent } from './toasty.component';
 import { ToastComponent } from './toast.component';
 import { ToastyService, ToastyConfig, toastyServiceFactory } from './toasty.service';
-import { SharedModule } from '../shared/shared-module';
+import { CoreModule } from '../shared/shared-module';
 import { DomHandler } from '../dom/domhandler';
 
 export let providers = [
@@ -20,7 +20,7 @@ export let providers = [
 ];
 
 @NgModule({
-    imports: [SharedModule],
+    imports: [CoreModule],
     declarations: [ToastComponent, ToastyComponent],
     exports: [ToastComponent, ToastyComponent],
     // providers: providers

@@ -4,13 +4,13 @@ import { CommonModule } from '@angular/common';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 import { PromptDialogComponent } from './prompt-dialog.component';
 import { FormsModule } from '@angular/forms';
-import { SharedModule } from '../shared/shared-module';
+import { CoreModule } from '../shared/shared-module';
 import { UISharedModule } from '../shared/shared';
 
 
 @NgModule({
   imports: [
-    CommonModule, FormsModule, SharedModule
+    CommonModule, FormsModule, CoreModule
   ],
   exports: [UISharedModule],
   declarations: [

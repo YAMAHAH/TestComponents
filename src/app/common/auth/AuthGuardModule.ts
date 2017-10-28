@@ -1,6 +1,6 @@
 import { ModuleWithProviders, NgModule } from '@angular/core';
 import { AuthSelfGuard } from './auth.Self.guard';
-import { SharedModule } from '../shared/shared-module';
+import { CoreModule } from '../shared/shared-module';
 import { authRouterConfig } from './auth.router';
 import { RouterModule } from '@angular/router';
 @NgModule({

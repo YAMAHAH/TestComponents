@@ -5,12 +5,12 @@ import { NgModule } from '@angular/core';
 import { DesktopItemComponent } from './desktop-item.component';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { SharedModule } from '../../shared/shared-module';
+import { CoreModule } from '../../shared/shared-module';
 
 @NgModule({
     imports: [
         CommonModule,
-        SharedModule,
+        CoreModule,
         RouterModule
     ],
     declarations: [

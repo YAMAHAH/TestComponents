@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { IndexComponent } from './index.component';
 import { RouterModule } from '@angular/router';
 import { pcRootRouterConfig } from './index.router';
-import { SharedModule } from '../shared/shared-module';
+import { CoreModule } from '../shared/shared-module';
 import { PageLoadingModule } from '../page-loading/page-loading-module';
 import { AuthModule } from '../auth/auth.module';
 import { LayoutModule } from '../layout/layout-module';
@@ -16,7 +16,7 @@ import { ChromeTabsModule } from '../chrome-tabs/chrome-tabs.module';
 import { SaleComponent } from './sale.component';
 @NgModule({
     imports: [
-        SharedModule.forRoot(),
+        CoreModule.forRoot(),
         DesktopLayoutContainerModule,
         DesktopItemModule,
         RouterModule.forChild(pcRootRouterConfig),

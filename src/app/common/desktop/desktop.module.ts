@@ -9,15 +9,15 @@ import { DesktopLayoutContainerModule } from '../layout/desktop-layout-container
 import { desktopRouterConfig } from './desktop.router';
 import { DesktopComponent } from './desktop.component';
 import { DesktopItemModule } from './desktop-item/desktop-item.module';
-import { SharedModule } from '../shared/shared-module';
+import { CoreModule } from '../shared/shared-module';
 
 @NgModule({
     imports: [
-        CommonModule,SharedModule,
+        CommonModule,CoreModule,
         RouterModule.forChild(desktopRouterConfig),
         DesktopLayoutContainerModule,
         DesktopItemModule,
-        SharedModule
+        CoreModule
     ],
     declarations: [
         DesktopComponent,

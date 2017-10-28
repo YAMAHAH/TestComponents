@@ -1,12 +1,12 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Form } from './form';
-import { SharedModule } from '../../common/shared/shared-module';
+import { CoreModule } from '../../common/shared/shared-module';
 import { FormService } from './FormService';
 
 @NgModule({
   imports: [
-    CommonModule, SharedModule
+    CommonModule, CoreModule
   ],
   exports: [Form],
   declarations: [

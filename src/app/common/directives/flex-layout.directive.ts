@@ -8,7 +8,7 @@ import { AppStoreService } from '../../services/app.store.service';
 type EventArgs = { target: any, propertyKey?: PropertyKey, currentValue?: any, oldValue?: any };
 
 @Directive({
-    selector: '[fxLayout]'
+    selector: '[fxLayout],fxLayout'
 })
 export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
     ngOnDestroy(): void {
@@ -167,79 +167,96 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
     fxLayoutDirectionProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'direction' || !!!event) {
             let name = 'flex-direction';
-            let currDir = this.direction;
+            let currValue = this.direction;
             this.getMediaQueryData(item => {
                 if (item.direction) {
-                    currDir = item.direction;
+                    currValue = item.direction;
                     return true;
                 }
             });
-            this.renderer.setStyle(this.targetEl, name, currDir);
+            let srcStyleValue = this.targetEl.style.flexDirection;
+            if (this.hasDefaultOrEqual(srcStyleValue, currValue, 'row')) return;
+            this.renderer.setStyle(this.targetEl, name, currValue);
         }
     }
     fxLayoutWrapProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'wrap' || !!!event) {
             let name = 'flex-wrap';
-            let currWrap = this.wrap;
+            let currValue = this.wrap;
             this.getMediaQueryData(item => {
                 if (item.wrap) {
-                    currWrap = item.wrap;
+                    currValue = item.wrap;
                     return true;
                 }
             });
-            this.renderer.setStyle(this.targetEl, name, currWrap);
+            let srcStyleValue = this.targetEl.style.flexWrap;
+            if (this.hasDefaultOrEqual(srcStyleValue, currValue, 'nowrap')) return;
+            this.renderer.setStyle(this.targetEl, name, currValue);
         }
     }
     fxLayoutJustifyContentProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'justifyContent' || !!!event) {
             let name = 'justify-content';
-            let currWrap = this.justifyContent;
+            let currValue = this.justifyContent;
             this.getMediaQueryData(item => {
                 if (item.justifyContent) {
-                    currWrap = item.justifyContent;
+                    currValue = item.justifyContent;
                     return true;
                 }
             });
-            this.renderer.setStyle(this.targetEl, name, currWrap);
+            let srcStyle = this.targetEl.style.justifyContent;
+            if (this.hasDefaultOrEqual(srcStyle, currValue, 'flex-start')) return;
+            this.renderer.setStyle(this.targetEl, name, currValue);
         }
     }
     fxLayoutFlowProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'flow' || !!!event) {
             let name = 'flex-flow';
-            let currFlow = this.flow;
+            let currValue = this.flow;
             this.getMediaQueryData(item => {
                 if (item.flow) {
-                    currFlow = item.flow;
+                    currValue = item.flow;
                     return true;
                 }
             });
-            this.renderer.setStyle(this.targetEl, name, currFlow);
+            let srcStyleValue = this.targetEl.style.flexFlow;
+            if (this.hasDefaultOrEqual(srcStyleValue, currValue, 'row nowrap')) return;
+            this.renderer.setStyle(this.targetEl, name, currValue);
         }
     }
     fxLayoutAlignItemsProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'alignItems' || !!!event) {
             let name = 'align-items';
-            let currAlignItem = this.alignItems;
+            let currValue = this.alignItems;
             this.getMediaQueryData(item => {
                 if (item.alignItems) {
-                    currAlignItem = item.alignItems;
+                    currValue = item.alignItems;
                     return true;
                 }
             });
-            this.renderer.setStyle(this.targetEl, name, currAlignItem);
+            let srcStyleValue = this.targetEl.style.alignItems;
+            if (this.hasDefaultOrEqual(srcStyleValue, currValue, 'stretch')) return;
+            this.renderer.setStyle(this.targetEl, name, currValue);
         }
+    }
+    private hasDefaultOrEqual(srcValue: any, currValue: any, defaultValue: any) {
+        if (srcValue === '' && (currValue && currValue.trim() === defaultValue || currValue == undefined || currValue == null || currValue == '')) return true;
+        if (srcValue === currValue) return true;
+        return false;
     }
     fxLayoutAlignContentProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'alignContent' || !!!event) {
             let name = 'align-content';
-            let currAlignContent = this.alignContent;
+            let currValue = this.alignContent;
             this.getMediaQueryData(item => {
                 if (item.alignContent) {
-                    currAlignContent = item.alignContent;
+                    currValue = item.alignContent;
                     return true;
                 }
             });
-            this.renderer.setStyle(this.targetEl, name, currAlignContent);
+            let srcValue = this.targetEl.style.alignContent;
+            if (this.hasDefaultOrEqual(srcValue, currValue, 'stretch')) return;
+            this.renderer.setStyle(this.targetEl, name, currValue);
         }
     }
     getCurrentDirection() {
@@ -254,13 +271,6 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
     }
     fxLayoutGutterProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'gutter' || !!!event) {
-            // let currGutter = this.gutter;
-            // this.getMediaQueryData(item => {
-            //     if (item.gutter) {
-            //         currGutter = item.gutter;
-            //         return true;
-            //     }
-            // });
             let currGutter = this.getItemGutter(event);
             let currDir = this.getCurrentDirection();
             if (['row', 'row-reverse'].contains(currDir)) {

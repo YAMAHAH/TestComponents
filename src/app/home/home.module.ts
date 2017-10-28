@@ -14,10 +14,10 @@ import { AppListComponent } from './list/applist.component';
 import { HomeDetailComponent } from './detail/homedetail.component';
 import { AboutComponent } from './about/about.component';
 import { ContactComponent } from './contact/contact.component';
-import { SharedModule } from '../common/shared/shared-module';
+import { CoreModule } from '../common/shared/shared-module';
 import { HomeService } from '../services/home/home.service';
 @NgModule({
-  imports: [SharedModule.forRoot(),
+  imports: [CoreModule.forRoot(),
   RouterModule.forChild(rootRouterConfig)
   ],
   declarations: [HomeComponent, AppHomeComponent, AboutComponent, ContactComponent,

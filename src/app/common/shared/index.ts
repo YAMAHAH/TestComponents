@@ -1,4 +1,4 @@
-import { SharedModule } from './shared-module';
+import { CoreModule } from './shared-module';
 
 export { UserService } from './user-service';
-export { SharedModule };
+export { CoreModule };

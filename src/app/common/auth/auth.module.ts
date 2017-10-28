@@ -6,7 +6,7 @@ import { RouterModule } from '@angular/router';
 import { authRouterConfig } from './auth.router';
 import { Signup } from './signup';
 import { AuthService2 } from './auth.service';
-import { SharedModule } from '../shared/shared-module';
+import { CoreModule } from '../shared/shared-module';
 import { LoginComponent } from './login.component';
 import { AuthGuard } from './auth.guard';
 import { AService } from './AService';
@@ -15,7 +15,7 @@ import { AuthGuardModule } from './AuthGuardModule';
 
 @NgModule({
     imports: [
-        SharedModule.forRoot(), RouterModule,
+        CoreModule.forRoot(), RouterModule,
 
         AuthGuardModule.forRoot()
     ],

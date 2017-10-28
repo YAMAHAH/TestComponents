@@ -6,7 +6,7 @@
                 <span class="fa fa-fw" [ngClass]="{'fa-chevron-circle-down':dt.isRowGroupExpanded(rowData), 'fa-chevron-circle-right': !dt.isRowGroupExpanded(rowData)}"></span>
             </a>
             <p-templateLoader [template]="dt.rowGroupHeaderTemplate" [data]="rowData"></p-templateLoader>
-            <ng-container *jyComponentOutlet="dt.rowGroupHeaderComponent;context:{ 'datatable':dt,'col': col,'rowData': rowData, 'rowIndex': rowIndex + dt.first} "></ng-container>
+            <ng-container *gxComponentOutlet="dt.rowGroupHeaderComponent;context:{ 'datatable':dt,'col': col,'rowData': rowData, 'rowIndex': rowIndex + dt.first} "></ng-container>
         </td>
     </tr>
     <tr #rowElement *ngIf="!dt.expandableRowGroups||dt.isRowGroupExpanded(rowData)" [class]="dt.getRowStyleClass(rowData,rowIndex)" (click)="dt.handleRowClick($event, rowData)" (dblclick)="dt.rowDblclick($event,rowData)" (contextmenu)="dt.onRowRightClick($event,rowData)"
@@ -23,13 +23,13 @@
                       <dt-columnBodyTemplateLoader *ngIf="col.bodyTemplate" [column]="col" [rowData]="rowData" [rowIndex]="rowIndex + dt.first"></dt-columnBodyTemplateLoader>
                 </span>
                 <span class="ui-cell-data" *ngIf="col.cellComponent">
-                    <ng-container *jyComponentOutlet="col.cellComponent;context:{ 'col': col,'rowData': rowData, 'rowIndex': rowIndex + dt.first} "></ng-container>
+                    <ng-container *gxComponentOutlet="col.cellComponent;context:{ 'col': col,'rowData': rowData, 'rowIndex': rowIndex + dt.first} "></ng-container>
                 </span>
 
                 <div class="ui-cell-editor" *ngIf="col.editable">
                     <input *ngIf="!col.editorTemplate && !col.cellEditor" type="text" jyInputText [(ngModel)]="rowData[col.field]" required="true" (keydown)="dt.onCellEditorKeydown($event, col, rowData, colIndex)" />
                     <dt-columnEditorTemplateLoader *ngIf="col.editorTemplate" [column]="col" [rowData]="rowData"></dt-columnEditorTemplateLoader>
-                    <ng-container *jyComponentOutlet="col.cellEditor;context: {'col': col,'rowData': rowData, 'rowIndex': rowIndex + dt.first}"></ng-container>
+                    <ng-container *gxComponentOutlet="col.cellEditor;context: {'col': col,'rowData': rowData, 'rowIndex': rowIndex + dt.first}"></ng-container>
                 </div>
 
                 <a href="#" *ngIf="col.expander" (click)="dt.toggleRow(rowData,$event)">
@@ -46,13 +46,13 @@
 
     <tr class="ui-widget-header" *ngIf="dt.rowGroupFooterComponent && dt.rowGroupMode=='subheader' && ((rowIndex === dt.dataToRender.length - 1)||(dt.resolveFieldData(rowData,dt.groupField) !== dt.resolveFieldData(dt.dataToRender[rowIndex + 1],dt.groupField))) && (!dt.expandableRowGroups || dt.isRowGroupExpanded(rowData))">
 
-        <ng-container class="ui-helper-hidden" *jyComponentOutlet="dt.rowGroupFooterComponent;context: { 'datatable':dt,'cols': columns,'rowData': rowData, 'rowIndex': rowIndex + dt.first}"></ng-container>
+        <ng-container class="ui-helper-hidden" *gxComponentOutlet="dt.rowGroupFooterComponent;context: { 'datatable':dt,'cols': columns,'rowData': rowData, 'rowIndex': rowIndex + dt.first}"></ng-container>
     </tr>
 
     <tr *ngIf="dt.expandableRows && dt.isRowExpanded(rowData)">
         <td [attr.colspan]="dt.visibleColumns().length">
             <x-rowExpansionLoader [rowData]="rowData" [template]="dt.rowExpansionTemplate"></x-rowExpansionLoader>
-            <ng-container *jyComponentOutlet="rowExpansionComponent;context: { 'datatable':dt,'cols': columns,'rowData': rowData, 'rowIndex': rowIndex + dt.first}"></ng-container>
+            <ng-container *gxComponentOutlet="rowExpansionComponent;context: { 'datatable':dt,'cols': columns,'rowData': rowData, 'rowIndex': rowIndex + dt.first}"></ng-container>
         </td>
     </tr>
 </ng-template>

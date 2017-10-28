@@ -4,11 +4,11 @@ import { RouterModule } from '@angular/router';
 import { rootRouterConfig } from './news.router';
 import { NewsComponent } from './news.component';
 import { AuxNewsComponent } from './auxnews.component';
-import { SharedModule } from '../common/shared/shared-module';
+import { CoreModule } from '../common/shared/shared-module';
 import { NewsService } from '../services/news/news.service';
 
 @NgModule({
-  imports: [SharedModule.forRoot(), RouterModule.forChild(rootRouterConfig)],
+  imports: [CoreModule.forRoot(), RouterModule.forChild(rootRouterConfig)],
   declarations: [NewsComponent, AuxNewsComponent],
   exports: [NewsComponent],
   providers: [NewsService]

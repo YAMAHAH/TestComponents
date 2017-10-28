@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs/Subscription';
 type EventArgs = { target: any, propertyKey?: PropertyKey, currentValue?: any, oldValue?: any };
 
 @Directive({
-    selector: '[fxItem]'
+    selector: '[fxItem],fxItem'
 })
 export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy {
 
@@ -31,33 +31,35 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         this._fxStyleInstance.ngDoCheck();
     }
     private mediaMonitorSubscribtion: Subscription;
-    ngOnInit(): void {
 
+    private first: boolean;
+    ngOnInit(): void {
         this.mediaMonitorSubscribtion = this.mediaMonitor.observe()
             .filter(c => c.matches)
             .distinctUntilChanged()
             .subscribe(c => {
                 this.activeMedials = this.globalService.activeBreakPoints.map(bp => bp.alias) || [];
-                this._updateWithValue();
+                if (!this.first) this._updateWithValue();
             });
     }
     ngOnChanges(changes: SimpleChanges) {
+        this.first = true;
         for (let key in changes) {
             if (changes.hasOwnProperty(key)) {
-
                 let name: string, styleValue: any;
-                let value: SimpleChange = changes[key];
+                let change: SimpleChange = changes[key];
                 if (this.changeKeys.contains(key)) {
                     let eventArgs: EventArgs = {
                         target: this,
                         propertyKey: key,
-                        currentValue: value.currentValue,
-                        oldValue: value.previousValue
+                        currentValue: change.currentValue,
+                        oldValue: change.previousValue
                     };
                     this._updateWithValue(eventArgs);
                 }
             }
         }
+
     }
 
     constructor(private elementRef: ElementRef,
@@ -81,77 +83,78 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
 
         this._fxStyleInstance = new FxStyle(this._differs, this.elementRef, this.renderer);
     }
-
+    private _rowKeys = ['row', 'row-reverse'];
+    private _colKeys = ['column', 'column-reverse'];
     @HostBinding('style.padding-left.px')
     get paddingLeft() {
-        if (this._flexContainer && (this._flexContainer.direction === 'row' || this._flexContainer.direction === 'row-reverse'))
+        if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
             return this._flexContainer && this._flexContainer.itemGutter / 2;
     }
 
     @HostBinding('style.padding-right.px')
     get paddingRight() {
-        if (this._flexContainer && (this._flexContainer.direction === 'row' || this._flexContainer.direction === 'row-reverse'))
+        if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
             return this._flexContainer && this._flexContainer.itemGutter / 2;
 
     }
 
     @HostBinding('style.padding-top.px')
     get paddingTop() {
-        if (this._flexContainer && (this._flexContainer.direction === 'column' || this._flexContainer.direction === 'column-reverse'))
+        if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
             return this._flexContainer && this._flexContainer.itemGutter / 2;
     }
 
     @HostBinding('style.padding-bottom.px')
     get paddingBottom() {
-        if (this._flexContainer && (this._flexContainer.direction === 'column' || this._flexContainer.direction === 'column-reverse'))
+        if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
             return this._flexContainer && this._flexContainer.itemGutter / 2;
     }
 
     @HostBinding('style.margin-left.px')
     get marginLeft() {
-        if (this._flexContainer && (this._flexContainer.direction === 'column' || this._flexContainer.direction === 'column-reverse'))
+        if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
             return this._flexContainer && this._flexContainer.itemGap;
     }
 
     @HostBinding('style.margin-right.px')
     get marginRight() {
-        if (this._flexContainer && (this._flexContainer.direction === 'column' || this._flexContainer.direction === 'column-reverse'))
+        if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
             return this._flexContainer && this._flexContainer.itemGap;
     }
 
     @HostBinding('style.margin-top.px')
     get marginTop() {
-        if (this._flexContainer && (this._flexContainer.direction === 'row' || this._flexContainer.direction === 'row-reverse'))
+        if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
             return this._flexContainer && this._flexContainer.itemGap;
     }
 
     @HostBinding('style.margin-bottom.px')
     get marginBottom() {
-        if (this._flexContainer && (this._flexContainer.direction === 'row' || this._flexContainer.direction === 'row-reverse'))
+        if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
             return this._flexContainer && this._flexContainer.itemGap;
     }
 
     @HostBinding('style.min-width')
     get minWidth() {
-        if ((this.fill || this._flexContainer && this._flexContainer.itemFill) && this._flexContainer && (this._flexContainer.direction === 'column' || this._flexContainer.direction === 'column-reverse'))
+        if ((this.fill || this._flexContainer && this._flexContainer.itemFill) && this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
             return '100%';
     }
 
     @HostBinding('style.min-height')
     get minHeight() {
-        if ((this.fill || this._flexContainer && this._flexContainer.itemFill) && this._flexContainer && (this._flexContainer.direction === 'row' || this._flexContainer.direction === 'row-reverse'))
+        if ((this.fill || this._flexContainer && this._flexContainer.itemFill) && this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
             return '100%';
     }
     @HostBinding('style.width')
     get fillWidth() {
-        if ((this.fill || this._flexContainer && this._flexContainer.itemFill) && this._flexContainer && (this._flexContainer.direction === 'column' || this._flexContainer.direction === 'column-reverse'))
+        if ((this.fill || this._flexContainer && this._flexContainer.itemFill) && this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
             return '100%';
         if ((this.fxItemWidth || this._flexContainer && this._flexContainer.itemWidth) && this.span <= 0)
             return this.fxItemWidth || this._flexContainer.itemWidth;
     }
     @HostBinding('style.height')
     get fillHeight() {
-        if ((this.fill || this._flexContainer && this._flexContainer.itemFill) && this._flexContainer && (this._flexContainer.direction === 'row' || this._flexContainer.direction === 'row-reverse'))
+        if ((this.fill || this._flexContainer && this._flexContainer.itemFill) && this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
             return '100%';
         if ((this.fxItemHeight || this._flexContainer && this._flexContainer.itemHeight) && this.span <= 0)
             return this.fxItemHeight || this._flexContainer.itemHeight;
@@ -216,45 +219,45 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             }
         });
     }
-    mediaItemSetterHandler(key: string, newValue: FlexItem) {
-        if (newValue) {
+    mediaItemSetterHandler(dataKey: string, newValue: FlexItem) {
+        let storeValue = this.responsiveDataMap.get(dataKey);
+        if (newValue && newValue != storeValue) {
             let target = newValue['data'] || newValue;
-            if (!this.responsiveDataMap.has(key))
-                this.responsiveDataMap.set(key, new FlexItem());
-            let oldValue = this.responsiveDataMap.get(key);
+            if (!storeValue) {
+                storeValue = new FlexItem();
+                this.responsiveDataMap.set(dataKey, storeValue);
+            }
 
             if (!(target instanceof FlexItem)) {
-                // this.createPropertyFromSource(target, FlexItem.prototype);
-                // this.resetPropertyFromSource(target, key, FlexItem.prototype);
-                let temp = FlexItem.create();
-                Object.assign(temp, target);
-                let proxy = this.createTargetProxy(temp,
-                    (e) => {
-                        oldValue[e.propertyKey] = e.currentValue;
-                    }, (e) => {
-                        this._updateWithValue(e);
-                    }, false);
-                for (let key in target) { //删除原来的属性值
-                    if (target.hasOwnProperty(key)) {
-                        delete target[key];
-                    }
-                }
-                Object.setPrototypeOf(target, proxy);
+                let temp = FlexItem.create(target);
+                this.CreateInstanceProxy(temp, storeValue, target);
+                this.deleteTargetProperty(target);
             } else {
-                Object.assign(oldValue, target);
-                this.createTargetProxy(target,
-                    (e) => {
-                        oldValue[e.propertyKey] = e.currentValue;
-                    }, (e) => {
-                        this._updateWithValue(e);
-                    });
+                this.CreateInstanceProxy(target, storeValue);
+            }
+        }
+    }
+    private CreateInstanceProxy(target: any, storeValue: any, prototypeTarget: any = null) {
+        Object.assign(storeValue, target);
+        this.createTargetProxy(target,
+            (e) => {
+                storeValue[e.propertyKey] = e.currentValue;
+            }, (e) => {
+                this._updateWithValue(e);
+            }, prototypeTarget);
+    }
+    private deleteTargetProperty(target: any) {
+        if (!target) return;
+        for (let key in target) {
+            if (target.hasOwnProperty(key)) {
+                delete target[key];
             }
         }
     }
 
     private createTargetProxy(target: any,
         beforeAction?: (eventArgs?: EventArgs) => void,
-        afterAction?: (eventArgs?: EventArgs) => void, setTargetPrototype: boolean = true) {
+        afterAction?: (eventArgs?: EventArgs) => void, prototypeTarget: any = null) {
         let handler = () => {
             let _self = this;
             let listenProps = [
@@ -273,7 +276,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
                             if (oldValue != value) {
                                 if (beforeAction) beforeAction(eArgs);
                                 let res = Reflect.set(target, propertyKey, value, receiver);
-                                // console.log(`绑定对象属性值变化2: key: ${propertyKey} value: ${JSON.stringify(value)} `);
+                                //console.log(`绑定对象属性值变化2: key: ${propertyKey} value: ${JSON.stringify(value)} `);
                                 if (afterAction) afterAction(eArgs);
                                 return res;
                             }
@@ -287,7 +290,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             };
         };
         let proxy = new Proxy(Object.getPrototypeOf(target), handler());
-        if (setTargetPrototype) Object.setPrototypeOf(target, proxy);
+        prototypeTarget ? Object.setPrototypeOf(prototypeTarget, proxy) : Object.setPrototypeOf(target, proxy);
         return proxy;
     }
     private createHostProxy(target: any,
@@ -355,6 +358,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         this.itemClassProcess(event);
         //样式处理
         this.itemStyleProcess(event);
+        if (this.first) this.first = false;
     }
     itemFlexgrowProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'flexGrow' || !!!event) {
@@ -394,7 +398,6 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
                     return true;
                 }
             });
-
             this.renderer.setStyle(this.elementRef.nativeElement, name, currBasis);
         }
     }
@@ -411,9 +414,11 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             this.renderer.setStyle(this.elementRef.nativeElement, name, currAlignself);
         }
     }
+
     itemFlexProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'flex' || !!!event) {
             let name = 'flex';
+            if (this.flex.toLowerCase() === 'fill') this.flex = '1 1 100%';
             let currFlex = this.flex;
             this.getMediaQueryData(item => {
                 if (item.flex) {
@@ -421,8 +426,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
                     return true;
                 }
             });
-
-            this.renderer.setStyle(this.elementRef.nativeElement, name, currFlex);
+            currFlex && this.renderer.setStyle(this.elementRef.nativeElement, name, currFlex);
         }
     }
 
@@ -501,8 +505,9 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             if (currSpan > this._flexContainer.gridColumns) currSpan = this._flexContainer.gridColumns;
             if (currSpan > 0)
                 this.renderer.setStyle(this.elementRef.nativeElement, name, '0  0 ' + (currSpan / this._flexContainer.gridColumns) * 100 + '%');
-            else
-                this.renderer.setStyle(this.elementRef.nativeElement, name, 'none');
+            // else
+            //     this.itemFlexProcess();
+            // this.renderer.setStyle(this.elementRef.nativeElement, name, 'none');
 
             if (this._isFlexContainer && !this._hostFlexContainer.fxforceFlex)
                 this.renderer.setStyle(this.elementRef.nativeElement, 'display', 'flex');

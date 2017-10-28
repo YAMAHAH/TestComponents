@@ -25,7 +25,7 @@ import { ColumnBodyComponent } from './columnBody';
 import { DateColumnBodyComponent } from './dateColumnBody';
 import { CellEditorComponent } from './cellEditor';
 import { NavTreeViewModule } from '../components/nav-tree-view/nav-tree-view.module';
-import { SharedModule } from '../common/shared/shared-module';
+import { CoreModule } from '../common/shared/shared-module';
 import { ReportViewerModule } from '../common/report-viewer/report.viewer.module';
 import { TemplateClassBase } from '../Models/template-class';
 import { extend } from '../untils/proxy';
@@ -118,9 +118,8 @@ export class TenantManageTemplate2 extends TemplateClassBase {
 
 @NgModule({
     imports: [
+        CoreModule,
         RouterModule.forChild(saleRouteConfig),
-        FormsModule,
-        CommonModule, SharedModule,
         XYZDialogModule, NavTreeViewModule,
         XYZUIModule,
         PopoverModule,

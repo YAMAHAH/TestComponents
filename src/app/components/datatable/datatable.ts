@@ -13,7 +13,7 @@ import { DomHandler } from '../dom/domhandler';
 import { ObjectUtils } from '../utils/ObjectUtils';
 import { Subscription } from 'rxjs/Subscription';
 import { BlockableUI } from '../common/api';
-import { SharedModule } from '../../common/shared/shared-module';
+import { CoreModule } from '../../common/shared/shared-module';
 import { Type } from '@angular/core';
 
 @Component({
@@ -1922,7 +1922,7 @@ export class DataTable implements AfterViewChecked, AfterViewInit, AfterContentI
         CommonModule,
         UISharedModule,
         PaginatorModule,
-        FormsModule, SharedModule,
+        FormsModule, CoreModule,
         InputTextModule],
     exports: [DataTable, UISharedModule],
     declarations: [DataTable,

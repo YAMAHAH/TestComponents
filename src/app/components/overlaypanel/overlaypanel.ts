@@ -3,7 +3,7 @@ import {
     OnDestroy, EventEmitter, ElementRef, ComponentRef, Type, Renderer2
 } from '@angular/core';
 import { DomHandler } from '../../common/dom/domhandler';
-import { SharedModule } from '../../common/shared/shared-module';
+import { CoreModule } from '../../common/shared/shared-module';
 import { ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
@@ -13,8 +13,8 @@ import { Observable } from 'rxjs/Observable';
         <div [ngClass]="'ui-overlaypanel ui-widget ui-widget-content ui-corner-all ui-shadow'" [ngStyle]="style" [class]="styleClass"
             [style.display]="visible ? 'block' : 'none'" (click)="onPanelClick($event)">
             <div [ngClass]="'ui-overlaypanel-content'" [ngStyle]="contentStyle" [class]="contentStyleClass">     
-                <ng-container *jyComponentOutlet="componentOutlet;context: compContext"></ng-container>
-                <ng-template *xyzHostContainer="componentRef;context:compContext"></ng-template>
+                <ng-container *gxComponentOutlet="componentOutlet;context: compContext"></ng-container>
+                <ng-template *gxHostContainer="componentRef;context:compContext"></ng-template>
                 <ng-content></ng-content>
             </div>
             <a href="#" *ngIf="showCloseIcon" class="ui-overlaypanel-close ui-state-default" (click)="onCloseClick($event)">
@@ -220,7 +220,7 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
 }
 
 @NgModule({
-    imports: [SharedModule],
+    imports: [CoreModule],
     exports: [OverlayPanel],
     declarations: [OverlayPanel]
 })

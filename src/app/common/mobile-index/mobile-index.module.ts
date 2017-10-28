@@ -5,13 +5,13 @@ import { NgModule } from '@angular/core';
 import { MobileIndexComponent } from './mobile-index.component';
 import { RouterModule, Router } from '@angular/router';
 import { mobileIndexRouterConfig } from './mobile.index.router';
-import { SharedModule } from '../shared/shared-module';
+import { CoreModule } from '../shared/shared-module';
 import { PageLoadingModule } from '../page-loading/page-loading-module';
 import { AuthModule } from '../auth/auth.module';
 
 @NgModule({
     imports: [
-        SharedModule.forRoot(),
+        CoreModule.forRoot(),
         RouterModule.forChild(mobileIndexRouterConfig),
         PageLoadingModule.forRoot()
     ],

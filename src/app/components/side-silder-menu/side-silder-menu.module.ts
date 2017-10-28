@@ -9,11 +9,11 @@ import { TooltipModule } from '../tooltip/tooltip';
 import { OverlayPanelModule } from '../overlaypanel/overlaypanel';
 import { CalendarModule } from '../calendar/calendar';
 import { FormsModule } from '@angular/forms';
-import { SharedModule } from '../../common/shared/shared-module';
+import { CoreModule } from '../../common/shared/shared-module';
 
 @NgModule({
     imports: [
-        SharedModule,
+        CoreModule,
         CommonModule,
         FormsModule,
         RouterModule,
