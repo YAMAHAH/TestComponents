@@ -5,11 +5,11 @@
                 <span style="width:16px; flex: 0 0 16px;" [class.bbit-tree-elbow-line]="! identNode.isLast" *ngFor="let identNode of node.getParents()"></span>
             </span>
             <span style="display: flex;">
-            <span class="item-link" (click)="node.expand()" style="width:16px;" [ngClass]="getHitArea(node)"></span>
-            <span (click)="node.checkBoxClick()" [ngClass]="getCheckBoxState(node)"></span>
-            <span (click)="onClick(node)" style="cursor: pointer;" [ngClass]="getItemIcon(node)"></span>
-            <span (click)="onClick(node)" class="item-link"> {{node.name}} </span>
-            <span (click)="onItemCloseClick(node)" [ngClass]="{'item-close':true}"></span>
+                <span class="item-link" (click)="node.expand()" style="width:16px;" [ngClass]="getHitArea(node)"></span>
+                <span (click)="node.checkBoxClick()" [ngClass]="getCheckBoxState(node)"></span>
+                <span (click)="onClick(node)" style="cursor: pointer;" [ngClass]="getItemIcon(node)"></span>
+                <span (click)="onClick(node)" class="item-link"> {{node.name}} </span>
+                <span (click)="onItemCloseClick(node)" [ngClass]="{'item-close':true}"></span>
             </span>
         </div>
         <div *ngIf="node.expanded">

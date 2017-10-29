@@ -31,11 +31,11 @@
 
     <div #footer class="flex-row-col" style="margin:0rem;padding:0rem;flex: none; height: 5rem;line-height: 5rem;background-color:#fa90ba"></div>
 </div> -->
-<div fxLayout="column" fxFill style="margin: 0rem;padding: 0rem; width: 100%; height: 100%;">
+<!-- <div fxLayout="column" fxFill style="margin: 0rem;padding: 0rem; width: 100%; height: 100%;">
     <div #header fxItem="0 0 5rem" fxItemHeight="5rem" fxItemStyle=" margin:0px;line-height: 5rem;background-color:#f7629e">
     </div>
     <div #center fxLayout fxItem="fill" FxItemStyle="margin:0px;padding:0px;">
-        <div #left fxItem="0 0 20rem" fxItemStyle="margin:0px; width: 20rem;min-width:0rem;max-width:20rem;padding: 0px; border-right: #3747a0 3px solid;
+        <div #left fxItem="0 0 15rem" fxItemStyle="margin:0px; width: 20rem;min-width:0rem;max-width:20rem;padding: 0px; border-right: #3747a0 3px solid;
             min-width: 0px;max-width: 20rem;background-color:#f5317f">
             <div class="col-xs" style="padding:0px;flex:1 1 100%;">
                 <div class="box">left</div>
@@ -43,15 +43,13 @@
         </div>
 
         <div #main fxLayout fxItemFill fxItem="fill" fxItemStyle="margin:0rem;padding:0rem; background-color: #feeff5;min-width: 30rem;">
-            <div fxItem="fill">
-                <ul>
-                    <p>{{pageModel?.title}}</p>
-                    <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
-                </ul>
-                <pre>{{pageModel?.resolve | json}}</pre>
-                <pre>{{context | json}}</pre>
-                <div fxLayout="column">
-                    <div fxLayout="row" fxItem="fill" fxAlignMain='flex-start' fxAlignCross='center' height="30px" fxWidth="80px" fxHeight="30px" fxStyle="border:1px solid blue; background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">
+            <div fxItem="fill" fxLayout='column' fxItemHeight='100%'>
+                <div fxItem='none'>
+
+                </div>
+                <div fxLayout="column" fxItem='auto' fxItemFill style="height: 100%; overflow: auto;"> -->
+<!-- <div fxLayout="row" fxItem="fill" fxAlignMain='flex-start' fxAlignCross='center' height="30px" fxWidth="80px" fxHeight="30px"
+                        fxStyle="border:1px solid blue; background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">
                         <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
                             <div fxItem>第一列</div>
                         </div>
@@ -67,21 +65,114 @@
                         <div fxLayout fxItem="fill" fxItemHeight="30px" fxAlignMain='center' fxAlignCross='center'>
                             <div fxItem>第五列</div>
                         </div>
-                    </div>
-                    <div fxLayout="column" fxItem="fill" fxItemFill>Col-2
-
-                    </div>
-                    <div fxLayout="row" fxItem="fill" fxItemFill>Col-3</div>
-                    <div fxLayout="row" fxItem="fill" fxItemFill>Col-4</div>
-                </div>
+                    </div> -->
+<!-- <div #wrapper fxLayout="column" style=" background: skyblue;" fxItem="fill" fxItemFill fxItemStyle="border: 1px solid blue;">
+                        <div #headerWrapper fxLayout fxAlignCross='center' fxHeight='55px' fxItem="none" fxStyle="border-bottom: 1px solid blue;">
+                            <div #headerBrand fxItem='none' fxItemWidth='100px'>
+                                <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                                    <div fxItem>HeaderBrand</div>
+                                </div>
+                            </div>
+                            <div #headerTitle fxItem='fill'>
+                                <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                                    <div fxItem>HeaderTitle</div>
+                                </div>
+                            </div>
+                            <div #headerSearch fxItem='none' fxItemWidth='200px'>
+                                <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                                    <div fxItem>HeaderSearch</div>
+                                </div>
+                            </div>
+                            <div #headerAccount fxItem='none' fxItemWidth='200px'>
+                                <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                                    <div fxItem>HeaderAccout</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div #bodyWrapper fxLayout fxItem='fill' fxItemStyle="border-bottom: 1px solid blue;overflow: auto;">
+                            <div #panelWrapper fxLayout='column' fxItem='none' fxItemWidth='200px' fxItemStyle="border-right: 1px solid blue;">
+                                <div #panelTitlebar fxItem='0 0 35px' fxItemFill fxItemStyle='text-align:left;border-bottom: 1px solid blue;'>panelTitlebar</div>
+                                <div #panelBody fxLayout fxItem='fill' fxItemFill>
+                                    <div #panelNav fxItem='none' fxItemWidth='65px' fxItemStyle="border-right: 1px solid blue;">panelNav</div>
+                                    <div #panelContent fxItemFill fxItem='fill'>PanelContent</div>
+                                </div>
+                            </div>
+                            <div #mainWrapper fxLayout='column' fxFill fxItem='fill'>
+                                <div #mainNavbar fxItem='0 0 35px' fxItemHeight='35px' fxItemStyle="border-bottom: 1px solid blue;">mainNavbar</div>
+                                <div #main fxItem='fill'>
+                                    <ul>
+                                        <p>{{pageModel?.title}}</p>
+                                        <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
+                                    </ul>
+                                    <pre>{{pageModel?.resolve | json}}</pre>
+                                    <pre>{{context | json}}</pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div #footerWrapper fxLayout fxAlignCross='center' fxItem="none" fxItemStyle="max-height: 55px;">
+                            <div #footerLeft fxItem='fill'>footerLeft</div>
+                            <div #footerRight fxItem='fill'>footerRight</div>
+                        </div>
+                    </div> -->
+<!-- <div fxLayout="row" fxItem="fill" fxItemFill>Col-3</div>
+                    <div fxLayout="row" fxItem="fill" fxItemFill>Col-4</div> -->
+<!-- </div>
             </div>
         </div>
 
-        <div #right fxItem="0 0 20rem " fxItemStyle="margin:0px;padding:0rem; width: 20rem;min-width:0rem;max-width:20rem;background-color:#dc277d ">
+        <div #right fxItem="0 0 15rem " fxItemStyle="margin:0px;padding:0rem; width: 20rem;min-width:0rem;max-width:20rem;background-color:#dc277d ">
             <div class="flex-col-xs " style="padding:0rem;flex:1 1 100%; ">
                 <div class="box ">right</div>
             </div>
         </div>
     </div>
     <div #footer fxItem="0 0 5rem " fxItemStyle="margin:0rem;padding:0rem;line-height: 5rem;background-color:#fa90ba "></div>
+</div> -->
+<div #wrapper fxLayout="column" style="margin: 0rem;padding: 0rem; width: 100%; height: 100%;border: 1px solid blue;">
+    <div #headerWrapper fxLayout fxAlignCross='center' fxHeight='55px' fxItem="none" fxStyle="border-bottom: 1px solid blue;">
+        <div #headerBrand fxItem='none' fxItemWidth='100px'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderBrand</div>
+            </div>
+        </div>
+        <div #headerTitle fxItem='fill'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderTitle</div>
+            </div>
+        </div>
+        <div #headerSearch fxItem='none' fxItemWidth='200px'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderSearch</div>
+            </div>
+        </div>
+        <div #headerAccount fxItem='none' fxItemWidth='200px'>
+            <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
+                <div fxItem>HeaderAccout</div>
+            </div>
+        </div>
+    </div>
+    <div #bodyWrapper fxLayout fxItem='fill' fxItemStyle="border-bottom: 1px solid blue;overflow: auto;">
+        <div #panelWrapper fxLayout='column' fxItem='none' fxItemWidth='200px' fxItemStyle="border-right: 1px solid blue;">
+            <div #panelTitlebar fxItem='0 0 35px' fxItemFill fxItemStyle='text-align:left;border-bottom: 1px solid blue;'>panelTitlebar</div>
+            <div #panelBody fxLayout fxItem='fill' fxItemFill>
+                <div #panelNav fxItem='none' fxItemWidth='65px' fxItemStyle="border-right: 1px solid blue;">panelNav</div>
+                <div #panelContent fxItemFill fxItem='fill'>PanelContent</div>
+            </div>
+        </div>
+        <div #mainWrapper fxLayout='column' fxFill fxItem='fill'>
+            <div #mainNavbar fxItem='0 0 35px' fxItemHeight='35px' fxItemStyle="border-bottom: 1px solid blue;">mainNavbar</div>
+            <div #main fxItem='fill'>
+                <ul>
+                    <p>{{pageModel?.title}}</p>
+                    <li (dblclick)="onDblClick(item)" *ngFor="let item of purListData">{{item.pono}}</li>
+                </ul>
+                <pre>{{pageModel?.resolve | json}}</pre>
+                <pre>{{context | json}}</pre>
+            </div>
+        </div>
+    </div>
+    <div #footerWrapper fxLayout fxAlignCross='center' fxItem="none" fxItemStyle="max-height: 55px;">
+        <div #footerLeft fxItem='fill'>footerLeft</div>
+        <div #footerRight fxItem='fill'>footerRight</div>
+    </div>
 </div>
