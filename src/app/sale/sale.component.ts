@@ -107,7 +107,7 @@ export class SaleComponent extends ComponentFactoryConatiner
 
     ) { //
         super(injector);
-        console.log(injector.get(TenantManageTemplate));
+        // console.log(injector.get(TenantManageTemplate));
 
         setTimeout(() => {
             if (this.testLg && this.testLg.span) {

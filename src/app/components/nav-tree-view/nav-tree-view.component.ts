@@ -4,8 +4,8 @@ import { NavTreeNode } from './nav-tree-node';
 
 
 @Component({
-    selector: 'x-nav-tree-view',
-    template: `<x-nav-treeview-item  (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)" [root]="root"></x-nav-treeview-item>`,
+    selector: 'gx-nav-tree-view',
+    template: `<gx-nav-treeview-item (itemMouseLeave)="onItemMouseLeave($event)" (itemMouseOver)="onItemMouseHover($event)"  (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)" [root]="root"></gx-nav-treeview-item>`,
     styleUrls: ['nav-tree-view.component.css']
 })
 export class NavTreeViewComponent implements OnInit {
@@ -23,11 +23,17 @@ export class NavTreeViewComponent implements OnInit {
         this.setCurrent(navNode);
         this.itemClick.next(navNode);
         this.selectChanged.emit(navNode);
-        console.log(this.toList());
     }
 
     onItemCloseClick(navNode: NavTreeNode) {
         this.itemCloseClick.next(navNode);
+    }
+
+    onItemMouseLeave(navNode: NavTreeNode) {
+        navNode.hover = false;
+    }
+    onItemMouseHover(navNode: NavTreeNode) {
+        navNode.hover = true;
     }
     ngOnInit() {
 

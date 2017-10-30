@@ -1,6 +1,6 @@
-<div class="flex-row-container-item">
-    <x-nav-tree-view (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)"></x-nav-tree-view>
-    <div class="flex-column-container-item11">
+<div fxLayout="row" style="height:100%;flex:1 0 100%">
+    <gx-nav-tree-view fxItem='none' fxItemOrder=2 (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)"></gx-nav-tree-view>
+    <div fxLayout='column' fxItem="fill" fxItemFill>
         <ng-container *ngFor="let grp of formGroups">
             <x-pur-list *ngFor="let list of getLists(grp)" [pageModel]="list"></x-pur-list>
             <x-pur-detail *ngFor="let item of getDetails(grp)" [pageModel]="item"></x-pur-detail>
@@ -8,3 +8,14 @@
         <ng-template gxHostContainer></ng-template>
     </div>
 </div>
+
+<!-- <div class="flex-row-container-item">
+    <gx-nav-tree-view (itemClick)="onItemClick($event)" (itemCloseClick)="onItemCloseClick($event)"></gx-nav-tree-view>
+    <div class="flex-column-container-item11">
+        <ng-container *ngFor="let grp of formGroups">
+            <x-pur-list *ngFor="let list of getLists(grp)" [pageModel]="list"></x-pur-list>
+            <x-pur-detail *ngFor="let item of getDetails(grp)" [pageModel]="item"></x-pur-detail>
+        </ng-container>
+        <ng-template gxHostContainer></ng-template>
+    </div>
+</div> -->

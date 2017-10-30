@@ -22,8 +22,8 @@ export class StaticNewsComponent implements OnInit {
     }
 
     //   <div style="display:flex;" >
-    //         <x-nav-tree-view></x-nav-tree-view>
-    //         <x-nav-tree-view2 style="display:none;"></x-nav-tree-view2>
+    //         <gx-nav-tree-view></gx-nav-tree-view>
+    //         <gx-nav-tree-view2 style="display:none;"></gx-nav-tree-view2>
     //         <div style="display:flex;flex-direction:column; justify-content: space-between">
     //             <nav-dropdown-menu ></nav-dropdown-menu>
     //             <x-nav-menu></x-nav-menu>

@@ -227,7 +227,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
                 storeValue = new FlexItem();
                 this.responsiveDataMap.set(dataKey, storeValue);
             }
-
+            Object.assign(storeValue, target);
             if (!(target instanceof FlexItem)) {
                 let temp = FlexItem.create(target);
                 this.CreateInstanceProxy(temp, storeValue, target);
@@ -238,7 +238,6 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         }
     }
     private CreateInstanceProxy(target: any, storeValue: any, prototypeTarget: any = null) {
-        Object.assign(storeValue, target);
         this.createTargetProxy(target,
             (e) => {
                 storeValue[e.propertyKey] = e.currentValue;
@@ -460,23 +459,26 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     itemOffsetProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'offset' || !!!event) {
             let name = '';
-            if (this._flexContainer.direction === 'row')
-                name = 'margin-left';
-            else if (this._flexContainer.direction === 'row-reverse')
-                name = 'margin-right';
-            else if (this._flexContainer.direction === 'column')
-                name = 'margin-top';
-            else if (this._flexContainer.direction === 'column-reverse')
-                name = 'margin-bottom';
-            let currOffset: number = this.offset;
+            if (this._flexContainer) {
+                if (this._flexContainer.direction === 'row')
+                    name = 'margin-left';
+                else if (this._flexContainer.direction === 'row-reverse')
+                    name = 'margin-right';
+                else if (this._flexContainer.direction === 'column')
+                    name = 'margin-top';
+                else if (this._flexContainer.direction === 'column-reverse')
+                    name = 'margin-bottom';
 
-            this.getMediaQueryData(entry => {
-                if (entry && entry.offset) {
-                    currOffset = entry.offset;
-                    return true;
-                } else return false;
-            });
-            this.renderer.setStyle(this.elementRef.nativeElement, name, (currOffset / this._flexContainer.gridColumns) * 100 + '%');
+                let currOffset: number = this.offset;
+
+                this.getMediaQueryData(entry => {
+                    if (entry && entry.offset) {
+                        currOffset = entry.offset;
+                        return true;
+                    } else return false;
+                });
+                this.renderer.setStyle(this.elementRef.nativeElement, name, (currOffset / this._flexContainer.gridColumns) * 100 + '%');
+            }
         }
     }
 
@@ -509,7 +511,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             //     this.itemFlexProcess();
             // this.renderer.setStyle(this.elementRef.nativeElement, name, 'none');
 
-            if (this._isFlexContainer && !this._hostFlexContainer.fxforceFlex)
+            if (this._isFlexContainer && !this._hostFlexContainer.fxForceFlex)
                 this.renderer.setStyle(this.elementRef.nativeElement, 'display', 'flex');
             else {
                 let currDisplay = this.getItemDisplay();
@@ -607,7 +609,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             }, false);
 
             if (currShow)
-                if (this._isFlexContainer && !this._hostFlexContainer.fxforceFlex)
+                if (this._isFlexContainer && !this._hostFlexContainer.fxForceFlex)
                     this.renderer.setStyle(this.elementRef.nativeElement, 'display', 'flex');
                 else {
                     let currDisplay = this.getItemDisplay();

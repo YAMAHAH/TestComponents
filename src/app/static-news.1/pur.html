@@ -1,5 +1,5 @@
 <div style="display:flex;height: 100%">
-    <x-nav-tree-view (itemClick)="onItemClick($event)"></x-nav-tree-view>
+    <gx-nav-tree-view (itemClick)="onItemClick($event)"></gx-nav-tree-view>
     <div style="display:flex;flex:1;flex-direction: column; height:100%">
         <x-pur-list [ngClass]="getClass(list)" style="flex-direction: column;height: 100%; margin: 5px; background-color: rosybrown" *ngFor="let list of purLists" [purList]="list"></x-pur-list>
     </div>

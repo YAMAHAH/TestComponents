@@ -2,6 +2,7 @@ export class NavTreeNode {
     showIcon = false;
     expanded = true;
     selected = false;
+    hover: boolean = false;
     checked = false;
     isSemi = false;
     icon: string = null;

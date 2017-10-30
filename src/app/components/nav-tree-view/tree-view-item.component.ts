@@ -1,12 +1,13 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter, ElementRef, Renderer2 } from '@angular/core';
 
 import { NavTreeNode } from './nav-tree-node';
 import { AppStoreService } from '../../services/app.store.service';
 import { AppTaskBarActions } from '../../actions/app-main-tab/app-main-tab-actions';
+import { Observable } from 'rxjs/Observable';
 
 
 @Component({
-    selector: 'x-nav-treeview-item',
+    selector: 'gx-nav-treeview-item',
     templateUrl: 'nav-tree-view-item.html',
     styleUrls: ['./nav-tree-view-item.css']
 })
@@ -15,10 +16,16 @@ export class NavTreeViewItemComponent {
     @Output() itemClick: EventEmitter<NavTreeNode> = new EventEmitter<NavTreeNode>();
 
     @Output() itemCloseClick: EventEmitter<NavTreeNode> = new EventEmitter<NavTreeNode>();
-    constructor(private appStore: AppStoreService) {
+
+    @Output() itemMouseLeave: EventEmitter<NavTreeNode> = new EventEmitter<NavTreeNode>();
+    @Output() itemMouseOver: EventEmitter<NavTreeNode> = new EventEmitter<NavTreeNode>();
+    constructor(private appStore: AppStoreService,
+        private elRef: ElementRef,
+        private renderer: Renderer2) {
     }
     ngOnInit() {
     }
+
 
     onClick(node: NavTreeNode) {
         this.itemClick.emit(node);
@@ -26,6 +33,12 @@ export class NavTreeViewItemComponent {
 
     onItemCloseClick(node: NavTreeNode) {
         this.itemCloseClick.emit(node);
+    }
+    onItemMouseLeave(node: NavTreeNode) {
+        this.itemMouseLeave.next(node);
+    }
+    onItemMouseOver(node: NavTreeNode) {
+        this.itemMouseOver.next(node);
     }
 
     getChilds(root: NavTreeNode) {

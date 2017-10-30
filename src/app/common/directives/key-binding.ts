@@ -58,7 +58,7 @@ export class KeyBindingDirective implements OnChanges, OnDestroy {
                 if (key === this.keyConst && this.target) {
                     this._parent = tryGetValue(() => (this._viewRef as ViewContainerRefEx)._data.componentView.context).value;
                     this._hostRef = tryGetValue(() => (this._viewRef.injector as InjectorEx).view.context).value;
-                    console.log(this._viewRef);
+                    //console.log(this._viewRef);
                     this.target.id = this.objectId;
                     this.target.objectId = this.objectId;
                     if (change.firstChange) {

@@ -446,10 +446,10 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
     @Input('fxStyle') style: NgStyleType = '';
     private _forceFlex: boolean = false;
     @Input()
-    get fxforceFlex(): boolean {
+    get fxForceFlex(): boolean {
         return this._forceFlex;
     }
-    set fxforceFlex(value: boolean) {
+    set fxForceFlex(value: boolean) {
         this._forceFlex = (value === null || value === undefined || value || '' + value === '') ? true : value;
     }
 

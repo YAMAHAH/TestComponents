@@ -1,19 +1,22 @@
 <ul class="item-wrap">
     <li *ngFor="let node of getChilds(root)" [ngClass]="itemClass(node)">
-        <div class="item-border" style="display: flex;">
-            <span style="display: flex;" [style.width.px]="node.level*16">
-                <span style="width:16px; flex: 0 0 16px;" [class.bbit-tree-elbow-line]="! identNode.isLast" *ngFor="let identNode of node.getParents()"></span>
-            </span>
-            <span style="display: flex;">
-                <span class="item-link" (click)="node.expand()" style="width:16px;" [ngClass]="getHitArea(node)"></span>
-                <span (click)="node.checkBoxClick()" [ngClass]="getCheckBoxState(node)"></span>
-                <span (click)="onClick(node)" style="cursor: pointer;" [ngClass]="getItemIcon(node)"></span>
-                <span (click)="onClick(node)" class="item-link"> {{node.name}} </span>
-                <span (click)="onItemCloseClick(node)" [ngClass]="{'item-close':true}"></span>
-            </span>
+        <div fxLayout (mouseover)="onItemMouseOver(node)" (mouseleave)="onItemMouseLeave(node)" class="item-border">
+            <div fxLayout [style.width.px]="node.level*16">
+                <div fxItem="0 0 16px" fxItemWidth='16px' [class.bbit-tree-elbow-line]="! identNode.isLast" *ngFor="let identNode of node.getParents()"></div>
+            </div>
+            <div fxLayout>
+                <div fxItem class="item-link" (click)="node.expand()" fxItem="0 0 16px" fxItemWidth="16px" [ngClass]="getHitArea(node)"></div>
+                <div fxItem (click)="node.checkBoxClick()" [ngClass]="getCheckBoxState(node)"></div>
+                <div fxItem (click)="onClick(node)" style="cursor: pointer;" [ngClass]="getItemIcon(node)"></div>
+                <div fxItem (click)="onClick(node)" class="item-link"> {{node.name}} </div>
+                <div [style.display]="node.hover ? 'flex' : 'none'" fxItem fxLayout fxAlignMain="center" fxAlignCross="center">
+                    <div (click)="onItemCloseClick(node)" class="item-close"></div>
+                </div>
+            </div>
         </div>
         <div *ngIf="node.expanded">
-            <x-nav-treeview-item (itemCloseClick)="onItemCloseClick($event)" (itemClick)="onClick($event)" [root]="node"></x-nav-treeview-item>
+            <gx-nav-treeview-item (itemMouseOver)="onItemMouseOver($event)" (itemMouseLeave)="onItemMouseLeave($event)" (itemCloseClick)="onItemCloseClick($event)" (itemClick)="onClick($event)" [root]="node">
+            </gx-nav-treeview-item>
         </div>
     </li>
 </ul>
@@ -30,7 +33,7 @@
         </div>
     </li>
     <div *ngIf="node.expanded">
-        <x-nav-treeview-item [root]="node"></x-nav-treeview-item>
+        <gx-nav-treeview-item [root]="node"></gx-nav-treeview-item>
     </div>
 </ul>-->
 

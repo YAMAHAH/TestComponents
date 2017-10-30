@@ -1,15 +1,15 @@
-x-nav-tree-view:host {
-    display: flex;
+gx-nav-tree-view:host {
+    /* display: flex;
     flex-flow: column wrap;
-    justify-content: flex-start;
-    overflow: scroll;
+    justify-content: flex-start; */
+    overflow: auto;
 }
 
-x-nav-treeview-item {
+gx-nav-treeview-item {
     flex: 0 0 35px;
 }
 
-x-nav-treeview-item>li:hover {
+gx-nav-treeview-item>li:hover {
     cursor: pointer;
     background-color: skyblue;
 }
