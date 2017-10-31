@@ -1,10 +1,11 @@
 <div (resize)="layoutTabs()" style="display:flex;flex-direction: column;flex: 1 0 auto;">
-    <div #tabs class="chrome-tabs" style="flex:0 0 50px;height: 50px;min-height: 50px;">
+    <div #tabs class="chrome-tabs" style="flex:0 0 45px;height: 45px;min-height: 45px;">
         <div #tabContentEl class="chrome-tabs-content">
             <x-chrome-tab (click)="onTabClick($event,tab)" (mousedown)="onTabMouseDown($event,tab)" [style.zIndex]="tab.active ? tabCount + 2 : tabCount - idx " class="chrome-tab" [class.chrome-tab-just-added]="isJustAdded" [class.chrome-tab-current]='tab.active'
-                *ngFor="let tab of tabHeaders let idx = index" [tabModel]="tab"> </x-chrome-tab>
+                *ngFor="let tab of tabHeaders let idx = index" [tabModel]="tab">
+            </x-chrome-tab>
         </div>
-        <div #bottomBarEl [style.zIndex]="tabCount + 1 " class="chrome-tabs-bottom-bar"></div>
+        <div #bottomBarEl style="display:none" [style.zIndex]="tabCount + 1 " class="chrome-tabs-bottom-bar"></div>
     </div>
     <div style="display:flex;flex:1;">
         <div *ngFor="let tabcontent of tabModels" [ngClass]="getContentClass(tabcontent)">

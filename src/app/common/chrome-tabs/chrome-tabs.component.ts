@@ -82,7 +82,7 @@ let instanceId = 0;
         './toasty/style-bootstrap.css',
         './toasty/style-material.css'
     ],
-    encapsulation: ViewEncapsulation.Native
+    encapsulation: ViewEncapsulation.None
 })
 export class ChromeTabsComponent implements OnInit, AfterViewInit {
     @ViewChild("tabs") mytabs: ElementRef;

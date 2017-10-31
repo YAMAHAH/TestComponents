@@ -33,7 +33,7 @@ import { HostViewContainerDirective } from '../../common/directives/host.view.co
     host: {
         '[class.flex-column-container-item]': 'true',
         '[class.el-hide]': '!visible',
-        '[class.el-flex-show]': 'visible',
+        '[class.el-flex-show]': 'visible'
     },
     templateUrl: './pur-order.component.html',
     styles: []

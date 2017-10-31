@@ -178,19 +178,24 @@
 </div> -->
 
 <div #wrapper fxLayout="column" style="margin: 0rem;padding: 0rem; width: 100%; height: 100%;border: 1px solid blue;">
-    <div #toolbarWrapper fxLayout fxAlignCross='center' fxHeight='36px' fxItem="none" fxItemStyle="border-bottom: 1px solid blue;">
+    <div #toolbarWrapper fxLayout fxAlignCross='center' fxGap="0px 0px 0px 5px" fxHeight='36px' fxItem="none" fxItemStyle="border-bottom: 1px solid blue;">
+
         <div #headerBrand fxItem='none'>
             <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
                 <div fxItem>Action-A</div>
             </div>
         </div>
-        <div fxItem='none' fxItemWidth='1px' fxItemStyle="margin: 0px 5px 0px 5px;background: #c6c6c6"></div>
+
+        <div fxItem='none' fxItemWidth='1px' [fxItemGap]="{left:'5px'}" fxItemStyle="margin: 0px 5px 0px 5px;background: #c6c6c6"></div>
+
         <div #headerBrand fxItem='none'>
             <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
-                <div fxItem>Action-B</div>
+                <div fxItem><a>Action-B</a></div>
             </div>
         </div>
-        <div fxItem='none' fxItemWidth='1px' fxItemStyle="margin: 0px 5px 0px 5px;background: #c6c6c6"></div>
+
+        <div fxItem='none' fxItemWidth='1px' fxItemGap="0px 0px 0px 5px" fxItemStyle="margin: 0px 5px 0px 5px;background: #c6c6c6"></div>
+
         <div #headerBrand fxItem='none'>
             <div fxLayout fxItem fxAlignMain='center' fxAlignCross='center'>
                 <div fxItem>Action-C</div>
@@ -237,13 +242,12 @@
             <span fxItem><a>审批</a></span>
             <span fxItem><a>审核</a></span>
         </div>
-        <div #footerRight fxItem='fill' fxLayout fxAlignMain='flex-end' fxAlignCross="center" fxHeight="36px">
+        <div #footerRight fxItem='fill' fxLayout fxAlignMain='flex-end' fxAlignCross="center" fxMinHeight="36px">
             <button fxItem>联络函</button>
             <button fxItem>数据更新</button>
             <button fxItem>账务挂账</button>
             <button fxItem>订单导入</button>
             <button fxItem>红字冲单</button>
-
         </div>
     </div>
 </div>

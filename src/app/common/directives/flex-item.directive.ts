@@ -12,6 +12,7 @@ import { FxStyle } from './fxstyle';
 import { MediaMonitor } from '../../services/mediaquery/media-monitor';
 import { AppStoreService } from '../../services/app.store.service';
 import { Subscription } from 'rxjs/Subscription';
+import { isNumber } from '../toasty/toasty.utils';
 
 
 type EventArgs = { target: any, propertyKey?: PropertyKey, currentValue?: any, oldValue?: any };
@@ -85,65 +86,139 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     }
     private _rowKeys = ['row', 'row-reverse'];
     private _colKeys = ['column', 'column-reverse'];
-    @HostBinding('style.padding-left.px')
-    get paddingLeft() {
-        if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
-            return this._flexContainer && this._flexContainer.itemGutter / 2;
+    // @HostBinding('style.padding-left.px')
+    // get paddingLeft() {
+    //     if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
+    //         return this._flexContainer && this._flexContainer.itemGutter / 2;
+    //     return;
+    // }
+
+    // @HostBinding('style.padding-right.px')
+    // get paddingRight() {
+    //     if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
+    //         return this._flexContainer && this._flexContainer.itemGutter / 2;
+    //     return;
+    // }
+
+    // @HostBinding('style.padding-top.px')
+    // get paddingTop() {
+    //     if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
+    //         return this._flexContainer && this._flexContainer.itemGutter / 2;
+    //     return;
+    // }
+
+    // @HostBinding('style.padding-bottom.px')
+    // get paddingBottom() {
+    //     if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
+    //         return this._flexContainer && this._flexContainer.itemGutter / 2;
+    //     return;
+    // }
+
+    @HostBinding('style.padding')
+    get padding() {
+        let paddingValue = { left: '0px', right: '0px', top: '0px', bottom: '0px' };
+
+        let currValue = this._flexContainer && this._flexContainer.itemGutter;
+        let re = /^[0-9]+.?[0-9]*$/;
+        if (typeof currValue === 'number' || currValue && re.test(currValue.toString())) {
+            if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction)) {
+                paddingValue.top = paddingValue.bottom = <number>currValue / 2 + 'px';
+                return `${paddingValue.top} ${paddingValue.left}`;
+            }
+
+            if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction)) {
+                paddingValue.left = paddingValue.right = <number>currValue / 2 + 'px';
+                return `${paddingValue.top} ${paddingValue.left}`;
+            }
+        } else if (typeof currValue === 'string') {
+            return currValue;
+        } else if (typeof currValue === 'object') {
+            Object.assign(paddingValue, currValue);
+            return `${paddingValue.top} ${paddingValue.right} ${paddingValue.bottom} ${paddingValue.left}`;
+        }
     }
 
-    @HostBinding('style.padding-right.px')
-    get paddingRight() {
-        if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
-            return this._flexContainer && this._flexContainer.itemGutter / 2;
+    // @HostBinding('style.margin-left')
+    // get marginLeft() {
+    //     if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction)) {
+    //         return this._flexContainer && this._flexContainer.itemGap;
+    //     } else {
+    //         let currValue = this.getItemGap() || this._flexContainer.itemGap;
+    //         let splitValue = currValue && currValue.split(" ") || [];
+    //         return splitValue[0];
+    //     }
 
-    }
+    // }
 
-    @HostBinding('style.padding-top.px')
-    get paddingTop() {
-        if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
-            return this._flexContainer && this._flexContainer.itemGutter / 2;
-    }
+    // @HostBinding('style.margin-right')
+    // get marginRight() {
 
-    @HostBinding('style.padding-bottom.px')
-    get paddingBottom() {
-        if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
-            return this._flexContainer && this._flexContainer.itemGutter / 2;
-    }
+    //     if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction)) {
+    //         return this._flexContainer && this._flexContainer.itemGap;
+    //     } else {
+    //         let currValue = this.getItemGap() || this._flexContainer.itemGap;
+    //         let splitValue = currValue && currValue.split(" ") || [];
+    //         return splitValue[1] || splitValue[0];
+    //     }
+    // }
 
-    @HostBinding('style.margin-left.px')
-    get marginLeft() {
-        if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
-            return this._flexContainer && this._flexContainer.itemGap;
-    }
+    // @HostBinding('style.margin-top.px')
+    // get marginTop() {
+    //     if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction)) {
+    //         return this._flexContainer && this._flexContainer.itemGap;
+    //     }
+    //     return;
+    // }
 
-    @HostBinding('style.margin-right.px')
-    get marginRight() {
-        if (this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
-            return this._flexContainer && this._flexContainer.itemGap;
-    }
+    // @HostBinding('style.margin-bottom.px')
+    // get marginBottom() {
+    //     if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
+    //         return this._flexContainer && this._flexContainer.itemGap;
+    //     return;
+    // }
 
-    @HostBinding('style.margin-top.px')
-    get marginTop() {
-        if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
-            return this._flexContainer && this._flexContainer.itemGap;
-    }
-
-    @HostBinding('style.margin-bottom.px')
-    get marginBottom() {
-        if (this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
-            return this._flexContainer && this._flexContainer.itemGap;
+    @HostBinding('style.margin')
+    get margin() {
+        let currValue = this.getItemGap() || this._flexContainer && this._flexContainer.itemGap;
+        if (!currValue) return;
+        if (typeof currValue === 'string') {
+            if (currValue) return currValue;
+        } else {
+            let margin = { left: '0px', right: '0px', top: '0px', bottom: '0px' };
+            Object.assign(margin, currValue);
+            return `${margin.top} ${margin.right} ${margin.bottom} ${margin.left}`
+        }
     }
 
     @HostBinding('style.min-width')
     get minWidth() {
         if ((this.fill || this._flexContainer && this._flexContainer.itemFill) && this._flexContainer && this._colKeys.contains(this._flexContainer.direction))
             return '100%';
+        if ((this.fxItemMinWidth || this._flexContainer && this._flexContainer.itemMinWidth) && this.span <= 0)
+            return this.fxItemMinWidth || this._flexContainer.itemMinWidth;
+        return;
+    }
+
+    @HostBinding('style.max-width')
+    get maxWidth() {
+        if ((this.fxItemMaxWidth || this._flexContainer && this._flexContainer.itemMaxWidth))
+            return this.fxItemMaxWidth || this._flexContainer.itemMaxWidth;
+        return;
     }
 
     @HostBinding('style.min-height')
     get minHeight() {
         if ((this.fill || this._flexContainer && this._flexContainer.itemFill) && this._flexContainer && this._rowKeys.contains(this._flexContainer.direction))
             return '100%';
+        if ((this.fxItemMinHeight || this._flexContainer && this._flexContainer.minHeight) && this.span <= 0)
+            return this.fxItemMinHeight || this._flexContainer.itemMinHeight;
+        return;
+    }
+    @HostBinding('style.max-height')
+    get maxHeight() {
+        if ((this.fxItemMaxHeight || this._flexContainer && this._flexContainer.itemMaxHeight))
+            return this.fxItemMaxHeight || this._flexContainer.itemMaxHeight;
+        return;
     }
     @HostBinding('style.width')
     get fillWidth() {
@@ -151,6 +226,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             return '100%';
         if ((this.fxItemWidth || this._flexContainer && this._flexContainer.itemWidth) && this.span <= 0)
             return this.fxItemWidth || this._flexContainer.itemWidth;
+        return;
     }
     @HostBinding('style.height')
     get fillHeight() {
@@ -158,6 +234,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             return '100%';
         if ((this.fxItemHeight || this._flexContainer && this._flexContainer.itemHeight) && this.span <= 0)
             return this.fxItemHeight || this._flexContainer.itemHeight;
+        return;
     }
 
     // const FLEX_FILL_CSS = {
@@ -260,8 +337,8 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         let handler = () => {
             let _self = this;
             let listenProps = [
-                "order", "offset", "span", "width",
-                "height", "show", "style", "class",
+                "order", "offset", "span", "width", "minWidth", "minHeight", "maxWidth", "maxHeight",
+                "height", "show", "style", "class", "gap",
                 'display', 'flexGrow', 'flexShrink', 'flexBasis',
                 'flex', 'alignSelf'
             ];
@@ -335,7 +412,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
         return proxy;
     }
     private changeKeys: string[] = [
-        'flex', 'order', 'offset', 'fxItemClass', 'fxItemStyle', 'span',
+        'flex', 'order', 'offset', 'fxItemClass', 'fxItemStyle', 'span', 'gap',
         'show', 'flexGrow', 'flexShrink', 'flexBasis', 'alignSelf', 'display'
     ];
 
@@ -447,15 +524,25 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
     }
 
     getMediaQueryData(actionFn: (item: FlexItem) => boolean, autoBreak: boolean = true) {
-        for (let index = 0; index < this.activeMedials.length; index++) {
-            let itemKey = this.activeMedials[index];
-            let itemEntry = this.responsiveDataMap.get(itemKey);
-            if (itemEntry && actionFn) {
-                if (actionFn(itemEntry) && autoBreak) break;
+        if (this.activeMedials) {
+            for (let index = 0; index < this.activeMedials.length; index++) {
+                let itemKey = this.activeMedials[index];
+                let itemEntry = this.responsiveDataMap.get(itemKey);
+                if (itemEntry && actionFn) {
+                    if (actionFn(itemEntry) && autoBreak) break;
+                }
             }
         }
     }
+    private hasDefaultOrEqual(srcValue: any, currValue: any, defaultValue: any) {
+        if (srcValue === '' && (currValue && currValue.trim() === defaultValue || currValue == undefined || currValue == null || currValue == '')) return true;
+        if (srcValue === currValue) return true;
+        return false;
+    }
 
+    private get targetEl() {
+        return this.elementRef.nativeElement;
+    }
     itemOffsetProcess(event?: EventArgs) {
         if (event && event.propertyKey === 'offset' || !!!event) {
             let name = '';
@@ -468,20 +555,34 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
                     name = 'margin-top';
                 else if (this._flexContainer.direction === 'column-reverse')
                     name = 'margin-bottom';
+            } else name = 'margin-left';
+            let currOffset: number = this.offset;
 
-                let currOffset: number = this.offset;
+            this.getMediaQueryData(entry => {
+                if (entry && entry.offset) {
+                    currOffset = entry.offset;
+                    return true;
+                } else return false;
+            });
+            let gridColumns = 24;
+            if (this._flexContainer && this._flexContainer.gridColumns) gridColumns = this._flexContainer.gridColumns;
 
-                this.getMediaQueryData(entry => {
-                    if (entry && entry.offset) {
-                        currOffset = entry.offset;
-                        return true;
-                    } else return false;
-                });
-                this.renderer.setStyle(this.elementRef.nativeElement, name, (currOffset / this._flexContainer.gridColumns) * 100 + '%');
-            }
+            // let srcValue = this.targetEl.style[name.replace('-', '')];
+            // if (this.hasDefaultOrEqual(srcValue, currValue, 'stretch')) return;
+            this.renderer.setStyle(this.elementRef.nativeElement, name, (currOffset / gridColumns) * 100 + '%');
         }
     }
 
+    getItemGap() {
+        let currValue = this.fxItemGap;
+        this.getMediaQueryData(entry => {
+            if (entry && entry.gap) {
+                currValue = entry.gap;
+                return true;
+            }
+        });
+        return currValue;
+    }
     getItemDisplay() {
         let currDisplay = this.display;
         this.getMediaQueryData(entry => {
@@ -504,9 +605,11 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
                     return true;
                 }
             });
-            if (currSpan > this._flexContainer.gridColumns) currSpan = this._flexContainer.gridColumns;
+            let gridColumns = 24;
+            if (this._flexContainer && this._flexContainer.gridColumns) gridColumns = this._flexContainer.gridColumns;
+            if (currSpan > gridColumns) currSpan = gridColumns;
             if (currSpan > 0)
-                this.renderer.setStyle(this.elementRef.nativeElement, name, '0  0 ' + (currSpan / this._flexContainer.gridColumns) * 100 + '%');
+                this.renderer.setStyle(this.elementRef.nativeElement, name, '0  0 ' + (currSpan / gridColumns) * 100 + '%');
             // else
             //     this.itemFlexProcess();
             // this.renderer.setStyle(this.elementRef.nativeElement, name, 'none');
@@ -557,7 +660,8 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
 
             currClass = this.getElementClass(currClass, this.fxItemClass);
 
-            currClass = this.getElementClass(currClass, this._flexContainer.class);
+            if (this._flexContainer && this._flexContainer.class)
+                currClass = this.getElementClass(currClass, this._flexContainer.class);
 
             if (currClass && currClass.length > 0) {
                 currClass = currClass.replace(/^ +| +$/g, ""); //.split(/ +/g);
@@ -592,7 +696,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             if (this.fxItemStyle)
                 currStyle = Object.assign(this._buildStyleMap(this.fxItemStyle), currStyle);
 
-            if (this._flexContainer.style)
+            if (this._flexContainer && this._flexContainer.style)
                 currStyle = Object.assign(this._buildStyleMap(this._flexContainer.style), currStyle);
 
             this._fxStyleInstance.ngStyle = currStyle;
@@ -650,7 +754,9 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
      * 主轴偏移
      */
     @Input('fxItemOffset') offset: number;
-    @Input('fxItem.xs') //>=480px
+
+
+    @Input('fxItem.xs')
     get xs(): FlexItem {
         if (this.responsiveDataMap)
             return this.responsiveDataMap.get('xs');
@@ -786,6 +892,11 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
 
     @Input() fxItemHeight: string;
     @Input() fxItemWidth: string;
+    @Input() fxItemMaxHeight: string;
+    @Input() fxItemMaxWidth: string;
+    @Input() fxItemMinHeight: string;
+    @Input() fxItemMinWidth: string;
+    @Input() fxItemGap: string | object;
     private _show: boolean = true;
     @Input('fxItemShow')
     get show(): boolean {

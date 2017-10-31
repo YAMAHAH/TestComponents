@@ -59,6 +59,35 @@ export class FlexLayoutItem {
     set height(value: string) {
         this._height = value;
     }
+    private _minHeight?: string;
+    get minHeight() {
+        return this._minHeight;
+    }
+    set minHeight(value: string) {
+        this._minHeight = value;
+    }
+    private _maxHeight: string;
+    get maxHeight() {
+        return this._maxHeight;
+    }
+    set maxHeight(value: string) {
+        this._maxHeight = value;
+    }
+    private _minWidth: string;
+    get minWidth() {
+        return this._minWidth;
+    }
+    set minWidth(value: string) {
+        this._minWidth = value;
+    }
+
+    private _maxWidth: string;
+    get maxWidth() {
+        return this._maxWidth;
+    }
+    set maxWidth(value: string) {
+        this._maxWidth = value;
+    }
     private _class: string;
     get class() {
         return this._class;
@@ -73,11 +102,11 @@ export class FlexLayoutItem {
     set style(value: string) {
         this._style = value;
     }
-    private _gap: number;
-    set gGap(value: number) {
+    private _gap: string | object;
+    set gap(value: string | object) {
         this._gap = value;
     }
-    get gap(): number {
+    get gap(): string | object {
         return this._gap;
     }
 
@@ -129,8 +158,8 @@ export class FlexLayoutItem {
     set alignContent(value: FlexAlignItems) {
         this._alignContent = value;
     }
-    private _gutter: number
-    set gutter(value: number) {
+    private _gutter: number | string | object
+    set gutter(value: number | string | object) {
         this._gutter = value;
     }
     get gutter() {

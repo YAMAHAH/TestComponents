@@ -69,7 +69,7 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
     }
     private createTargetProxy(target: any,
         beforeAction?: (eventArgs?: EventArgs) => void,
-        afterAction?: (eventArgs?: EventArgs) => void) {
+        afterAction?: (eventArgs?: EventArgs) => void, prototypeTarget: any = null) {
         let handler = () => {
             let _self = this;
             let listenProps = [
@@ -100,7 +100,7 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
             };
         };
         let proxy = new Proxy(Object.getPrototypeOf(target), handler());
-        Object.setPrototypeOf(target, proxy);
+        prototypeTarget ? Object.setPrototypeOf(prototypeTarget, proxy) : Object.setPrototypeOf(target, proxy);
         return proxy;
     }
     private createHostProxy(target: any,
@@ -146,21 +146,53 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
         return proxy;
     }
     mediaItemSetterHandler(key: string, newValue: FlexLayoutItem) {
-        if (newValue) {
-            let srcObj = newValue['data'] || newValue;
-            if (!this.responsiveDataMap.has(key))
-                this.responsiveDataMap.set(key, new FlexLayoutItem());
-            let oldValue = this.responsiveDataMap.get(key);
-            Object.assign(oldValue, srcObj);
-            if (!(srcObj instanceof FlexLayoutItem))
-                Object.setPrototypeOf(srcObj, Object.getPrototypeOf(oldValue));
+        // if (newValue) {
+        //     let srcObj = newValue['data'] || newValue;
+        //     if (!this.responsiveDataMap.has(key))
+        //         this.responsiveDataMap.set(key, new FlexLayoutItem());
+        //     let oldValue = this.responsiveDataMap.get(key);
+        //     Object.assign(oldValue, srcObj);
+        //     if (!(srcObj instanceof FlexLayoutItem))
+        //         Object.setPrototypeOf(srcObj, Object.getPrototypeOf(oldValue));
 
-            this.createTargetProxy(srcObj,
-                (e) => {
-                    oldValue[e.propertyKey] = e.currentValue;
-                }, (e) => {
-                    this._updateWithValue(e);
-                });
+        //     this.createTargetProxy(srcObj,
+        //         (e) => {
+        //             oldValue[e.propertyKey] = e.currentValue;
+        //         }, (e) => {
+        //             this._updateWithValue(e);
+        //         });
+        // }
+        let storeValue = this.responsiveDataMap.get(key);
+        if (newValue && newValue != storeValue) {
+            let target = newValue['data'] || newValue;
+            if (!storeValue) {
+                storeValue = new FlexLayoutItem();
+                this.responsiveDataMap.set(key, storeValue);
+            }
+            Object.assign(storeValue, target);
+            if (!(target instanceof FlexLayoutItem)) {
+                let temp = FlexLayoutItem.create(target);
+                this.CreateInstanceProxy(temp, storeValue, target);
+                this.deleteTargetProperty(target);
+            } else {
+                this.CreateInstanceProxy(target, storeValue);
+            }
+        }
+    }
+    private CreateInstanceProxy(target: any, storeValue: any, prototypeTarget: any = null) {
+        this.createTargetProxy(target,
+            (e) => {
+                storeValue[e.propertyKey] = e.currentValue;
+            }, (e) => {
+                this._updateWithValue(e);
+            }, prototypeTarget);
+    }
+    private deleteTargetProperty(target: any) {
+        if (!target) return;
+        for (let key in target) {
+            if (target.hasOwnProperty(key)) {
+                delete target[key];
+            }
         }
     }
 
@@ -273,13 +305,16 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
         if (event && event.propertyKey === 'gutter' || !!!event) {
             let currGutter = this.getItemGutter(event);
             let currDir = this.getCurrentDirection();
-            if (['row', 'row-reverse'].contains(currDir)) {
-                this.renderer.setStyle(this.targetEl, 'margin-left', `-${currGutter / 2}px`);
-                this.renderer.setStyle(this.targetEl, 'margin-right', `-${currGutter / 2}px`);
-            } else if (['column', 'column-reverse'].contains(currDir)) {
-                this.renderer.setStyle(this.targetEl, 'margin-top', `-${currGutter / 2}px`);
-                this.renderer.setStyle(this.targetEl, 'margin-bottom', `-${currGutter / 2}px`);
-            }
+            if (typeof currGutter === 'number')
+                if (['row', 'row-reverse'].contains(currDir)) {
+                    //this.renderer.setStyle(this.targetEl, 'margin', `0px -${currGutter / 2}px`);
+                    this.renderer.setStyle(this.targetEl, 'margin-left', `-${currGutter / 2}px`);
+                    this.renderer.setStyle(this.targetEl, 'margin-right', `-${currGutter / 2}px`);
+                } else if (['column', 'column-reverse'].contains(currDir)) {
+                    //this.renderer.setStyle(this.targetEl, 'margin', `-${currGutter / 2}px 0px`);
+                    this.renderer.setStyle(this.targetEl, 'margin-top', `-${currGutter / 2}px`);
+                    this.renderer.setStyle(this.targetEl, 'margin-bottom', `-${currGutter / 2}px`);
+                }
         }
     }
 
@@ -293,8 +328,12 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
         this.fxLayoutGutterProcess(event);
         this.getItemGap(event);
         this.getItemFill(event);
+        this.getItemMinWidth(event);
         this.getItemWidth(event);
+        this.getItemMaxWidth(event);
+        this.getItemMinHeight(event);
         this.getItemHeight(event);
+        this.getItemMaxHeight(event);
         this.getItemGridColumns(event);
     }
     private getItemGutter(event?: EventArgs) {
@@ -323,6 +362,19 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
             return currGap;
         }
     }
+    private getItemMinWidth(event?: EventArgs) {
+        if (event && event.propertyKey === 'minWidth' || !!!event) {
+            let currValue = this.minWidth;
+            this.getMediaQueryData(item => {
+                if (item.minWidth) {
+                    currValue = item.minWidth;
+                    return true;
+                }
+            });
+            this._itemMinWidth = currValue;
+            return currValue;
+        }
+    }
     private getItemWidth(event?: EventArgs) {
         if (event && event.propertyKey === 'width' || !!!event) {
             let currWidth = this.width;
@@ -336,6 +388,19 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
             return currWidth;
         }
     }
+    private getItemMaxWidth(event?: EventArgs) {
+        if (event && event.propertyKey === 'maxWidth' || !!!event) {
+            let currValue = this.maxWidth;
+            this.getMediaQueryData(item => {
+                if (item.maxWidth) {
+                    currValue = item.maxWidth;
+                    return true;
+                }
+            });
+            this._itemMaxWidth = currValue;
+            return currValue;
+        }
+    }
     private getItemHeight(event?: EventArgs) {
         if (event && event.propertyKey === 'height' || !!!event) {
             let currHeight = this.height;
@@ -347,6 +412,32 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
             });
             this._itemHeight = currHeight;
             return currHeight;
+        }
+    }
+    private getItemMinHeight(event?: EventArgs) {
+        if (event && event.propertyKey === 'minHeight' || !!!event) {
+            let currValue = this.minHeight;
+            this.getMediaQueryData(item => {
+                if (item.minHeight) {
+                    currValue = item.minHeight;
+                    return true;
+                }
+            });
+            this._itemMinHeight = currValue;
+            return currValue;
+        }
+    }
+    private getItemMaxHeight(event?: EventArgs) {
+        if (event && event.propertyKey === 'maxHeight' || !!!event) {
+            let currValue = this.maxHeight;
+            this.getMediaQueryData(item => {
+                if (item.maxHeight) {
+                    currValue = item.maxHeight;
+                    return true;
+                }
+            });
+            this._itemMaxHeight = currValue;
+            return currValue;
         }
     }
     private getItemFill(event?: EventArgs) {
@@ -386,11 +477,11 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
     set direction(value: FlexDirection) {
         this._flexDirection = value;
     }
-    private _itemGutter: number;
+    private _itemGutter: number | string | object;
     get itemGutter() {
         return this._itemGutter;
     }
-    private _itemGap: number;
+    private _itemGap: string | object;
     get itemGap() {
         return this._itemGap;
     }
@@ -398,13 +489,29 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
     get itemFill() {
         return this._itemFill;
     }
+    private _itemMinWidth: string;
+    get itemMinWidth() {
+        return this._itemMinWidth;
+    }
     private _itemWidth: string;
     get itemWidth() {
         return this._itemWidth;
     }
+    private _itemMaxWidth: string;
+    get itemMaxWidth() {
+        return this._itemMaxWidth;
+    }
     private _itemHeight: string;
     get itemHeight() {
         return this._itemHeight;
+    }
+    private _itemMinHeight: string;
+    get itemMinHeight() {
+        return this._itemMinHeight;
+    }
+    private _itemMaxHeight: string;
+    get itemMaxHeight() {
+        return this._itemMaxHeight;
     }
     private _itemGridColumns: number;
     get itemGridColumns() {
@@ -420,18 +527,18 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
     @Input('fxAlignContent') alignContent: FlexAlignItems = 'stretch';
     @Input() gridColumns: number = 24;
 
-    @Input('fxGutter') gutter: number;
+    @Input('fxGutter') gutter: number | string | object;
 
     setStyle() {
-        if (this.direction === 'row' || this.direction === 'row-reverse') {
-            this.renderer.setStyle(this.elementRef.nativeElement, 'margin-left', `-${this.gutter / 2}px`);
-            this.renderer.setStyle(this.elementRef.nativeElement, 'margin-right', `-${this.gutter / 2}px`);
-        } else if (this.direction === 'column' || this.direction === 'column-reverse') {
-            this.renderer.setStyle(this.elementRef.nativeElement, 'margin-top', `-${this.gutter / 2}px`);
-            this.renderer.setStyle(this.elementRef.nativeElement, 'margin-bottom', `-${this.gutter / 2}px`);
-        }
+        // if (this.direction === 'row' || this.direction === 'row-reverse') {
+        //     this.renderer.setStyle(this.elementRef.nativeElement, 'margin-left', `-${this.gutter / 2}px`);
+        //     this.renderer.setStyle(this.elementRef.nativeElement, 'margin-right', `-${this.gutter / 2}px`);
+        // } else if (this.direction === 'column' || this.direction === 'column-reverse') {
+        //     this.renderer.setStyle(this.elementRef.nativeElement, 'margin-top', `-${this.gutter / 2}px`);
+        //     this.renderer.setStyle(this.elementRef.nativeElement, 'margin-bottom', `-${this.gutter / 2}px`);
+        // }
     }
-    @Input('fxGap') gap: number = 0;
+    @Input('fxGap') gap: string | object;
     private _fill: boolean = false;
     @Input('fxFill')
     get fill(): boolean {
@@ -442,8 +549,13 @@ export class FlexLayoutDirective implements OnChanges, OnInit, OnDestroy {
     }
     @Input('fxWidth') width: string;
     @Input('fxHeight') height: string;
+    @Input('fxMinHeight') minHeight: string;
+    @Input('fxMinWidth') minWidth: string;
+    @Input('fxMaxHeight') maxHeight: string;
+    @Input('fxMaxWidth') maxWidth: string;
     @Input('fxClass') class: string | string[] | object;
     @Input('fxStyle') style: NgStyleType = '';
+
     private _forceFlex: boolean = false;
     @Input()
     get fxForceFlex(): boolean {

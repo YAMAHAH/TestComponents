@@ -47,6 +47,14 @@ export class FlexItem {
     set span(value: number) {
         this._span = value;
     }
+    private _gap?: string | object;
+    get gap(): string | object {
+        return this._gap;
+    }
+    set gap(value: string | object) {
+        this._gap = value;
+    }
+
     private _show: boolean;
     get show() {
         return this._show;
@@ -69,6 +77,37 @@ export class FlexItem {
     set height(value: number) {
         this._height = value;
     }
+
+    private _minHeight?: number;
+    get minHeight() {
+        return this._minHeight;
+    }
+    set minHeight(value: number) {
+        this._minHeight = value;
+    }
+    private _maxHeight: number;
+    get maxHeight() {
+        return this._maxHeight;
+    }
+    set maxHeight(value: number) {
+        this._maxHeight = value;
+    }
+    private _minWidth: number;
+    get minWidth() {
+        return this._minWidth;
+    }
+    set minWidth(value: number) {
+        this._minWidth = value;
+    }
+
+    private _maxWidth: number;
+    get maxWidth() {
+        return this._maxWidth;
+    }
+    set maxWidth(value: number) {
+        this._maxWidth = value;
+    }
+
 
     private _class?: string | string[] | object;
     get class() { return this._class; }
