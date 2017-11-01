@@ -127,7 +127,6 @@ export class OverlayPanel implements OnInit, AfterViewInit, OnDestroy {
 
     toggle(event: Event, target?: Element) {
         let currentTarget = (target || event.currentTarget || event.target);
-
         if (!this.target || this.target == currentTarget) {
             if (this.visible)
                 this.hide();

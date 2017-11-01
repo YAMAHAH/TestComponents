@@ -209,8 +209,8 @@ export class PageViewer implements AfterViewInit, AfterViewChecked, OnChanges, O
             if (this.pageModel && this.pageModel.componentFactoryRef) {
                 if (this.pageModel.formType == PageTypeEnum.container)
                     this.pageModel.globalManager &&
-                        this.pageModel.globalManager.taskManager &&
-                        this.pageModel.globalManager.taskManager.closeTaskGroup(() => this.pageModel.key);
+                        this.pageModel.globalManager.navTabManager &&
+                        this.pageModel.globalManager.navTabManager.closeNavTab(() => this.pageModel.key);
                 else
                     this.pageModel.componentFactoryRef.removePageModel(this.pageModel);
             }

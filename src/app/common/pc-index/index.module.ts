@@ -12,7 +12,7 @@ import { DesktopItemModule } from '../desktop/desktop-item/desktop-item.module';
 import { LeftSidebarModule } from '../layout/left-sidebar/left-sidebar.module';
 import { MainComponent } from './main.component';
 import { RouterOutletModule } from '../router-outlet/router-outlet.module';
-import { ChromeTabsModule } from '../chrome-tabs/chrome-tabs.module';
+import { NavTabsModule } from '../nav-tabs/nav-tabs.module';
 import { SaleComponent } from './sale.component';
 @NgModule({
     imports: [
@@ -21,7 +21,7 @@ import { SaleComponent } from './sale.component';
         DesktopItemModule,
         RouterModule.forChild(pcRootRouterConfig),
         RouterOutletModule,
-        ChromeTabsModule,
+        NavTabsModule,
         PageLoadingModule.forRoot()
     ],
     declarations: [

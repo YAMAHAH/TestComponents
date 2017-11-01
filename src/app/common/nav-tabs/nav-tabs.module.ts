@@ -2,8 +2,8 @@
 import { NgModule } from '@angular/core';
 
 // This Module's Components
-import { ChromeTabsComponent } from './chrome-tabs.component';
-import { ChromeTabComponent } from './chrome-tab.component';
+import { NavTabsComponent } from './nav-tabs.component';
+import { NavTabComponent } from './nav-tab.component';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { RouterOutletModule } from '../router-outlet/router-outlet.module';
@@ -11,6 +11,7 @@ import { CoreModule } from '../shared/shared-module';
 import { ToastyModule } from '../toasty/index';
 import { ReportViewerModule } from '../report-viewer/report.viewer.module';
 import { ReportViewer } from '../report-viewer/report.viewer';
+import { OverlayPanelModule } from '../../components/overlaypanel/overlaypanel';
 
 @NgModule({
     imports: [
@@ -19,17 +20,18 @@ import { ReportViewer } from '../report-viewer/report.viewer';
         RouterModule,
         CoreModule,
         ToastyModule,
-        ReportViewerModule.forRoot()
+        ReportViewerModule.forRoot(),
+        OverlayPanelModule
     ],
     declarations: [
-        ChromeTabsComponent,
-        ChromeTabComponent
+        NavTabsComponent,
+        NavTabComponent
     ],
     exports: [
-        ChromeTabsComponent
+        NavTabsComponent
     ],
     entryComponents: [ReportViewer]
 })
-export class ChromeTabsModule {
+export class NavTabsModule {
 
 }

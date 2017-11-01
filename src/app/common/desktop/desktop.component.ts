@@ -6,7 +6,7 @@ import { AppStoreService } from '../../services/app.store.service';
 import { AppTaskBarActions } from '../../actions/app-main-tab/app-main-tab-actions';
 import { UUID } from '../../untils/uuid';
 import { ShowTypeEnum } from '../../basic/show-type-enum';
-import { TabModel } from '../chrome-tabs/chrome-tabs.component';
+import { NavTabModel } from '../nav-tabs/NavTabModel';
 
 @Component({
     selector: 'x-desktop',
@@ -81,7 +81,7 @@ export class DesktopComponent implements OnInit, AfterViewInit {
         if (navItem.key.length < 8) {
             navItem.key = UUID.uuid(10, 10).toString();
         }
-        let taskGrp: TabModel = {
+        let taskGrp: NavTabModel = {
             key: navItem.key,
             name: navItem.key,
             title: navItem.title,
@@ -92,7 +92,7 @@ export class DesktopComponent implements OnInit, AfterViewInit {
             path: navItem.path,
             daemon: false
         };
-        var result = await this.appStore.taskManager.createTaskGroup(taskGrp);
+        var result = await this.appStore.navTabManager.createNavTab(taskGrp);
         result && result.createGroupList({
             showType: this.appStore.showType || ShowTypeEnum.showForm,
             resolve: { data: 'resolve data' }

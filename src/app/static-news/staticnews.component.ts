@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
     selector: 'staticnews',
     template: `
         <div style="display:flex;flex:1;height:100%;">
-            <x-chrome-tabs style="display:flex;flex:1"></x-chrome-tabs>
+            <gx-nav-tabs style="display:flex;flex:1"></gx-nav-tabs>
         </div>
        
         <x-router-outlet></x-router-outlet>
@@ -15,9 +15,9 @@ import { Router } from '@angular/router';
     `
 })
 export class StaticNewsComponent implements OnInit {
-    // test$: Observable<number>; <router-outlet></router-outlet><x-chrome-tabs style="width:750px;"></x-chrome-tabs>
+    // test$: Observable<number>; <router-outlet></router-outlet><gx-nav-tabs style="width:750px;"></gx-nav-tabs>
     constructor(private router: Router, private elementRef: ElementRef) {
-        // this.test$ = Observable.timer(1000, 1000);<x-chrome-tabs style="flex:0 ;width:750px;"></x-chrome-tabs>
+        // this.test$ = Observable.timer(1000, 1000);<gx-nav-tabs style="flex:0 ;width:750px;"></gx-nav-tabs>
         // console.log(this.router);
     }
 

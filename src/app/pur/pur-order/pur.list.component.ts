@@ -159,7 +159,7 @@ export class PurListComponent extends ComponentBase implements OnInit {
             this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.pageModel.closeAfterFn = this.closeAfterFn;
         }
-        return this.appStore.taskManager.show(this.pageModel, modalOptions);
+        return this.appStore.navTabManager.show(this.pageModel, modalOptions);
     }
     showModal(modalOptions?: FormOptions): any {
         if (this.pageModel) {
@@ -168,7 +168,7 @@ export class PurListComponent extends ComponentBase implements OnInit {
             this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.pageModel.closeAfterFn = this.closeAfterFn;
         }
-        return this.appStore.taskManager.showModal(this.pageModel, modalOptions);
+        return this.appStore.navTabManager.showModal(this.pageModel, modalOptions);
     }
 
     ngOnInit() {
@@ -187,10 +187,10 @@ export class PurListComponent extends ComponentBase implements OnInit {
             this.pageModel.closeAfterFn = this.closeAfterFn;
 
             if (this.pageModel.showType === ShowTypeEnum.showForm) {
-                this.appStore.taskManager.show(this.pageModel);
+                this.appStore.navTabManager.show(this.pageModel);
             }
             if (this.pageModel.showType === ShowTypeEnum.showFormModal) {
-                this.appStore.taskManager.showModal(this.pageModel);
+                this.appStore.navTabManager.showModal(this.pageModel);
             }
         }
 

@@ -65,13 +65,13 @@ export class PurDetailComponent extends ComponentBase implements OnInit, AfterCo
         this.pageModel.title = this.title;
         this.pageModel.elementRef = this.elementRef.nativeElement;
         this.pageModel.closeAfterFn = this.closeAfterFn;
-        return this.appStore.taskManager.show(this.pageModel, modalOptions);
+        return this.appStore.navTabManager.show(this.pageModel, modalOptions);
     }
     showModal(modalOptions?: FormOptions) {
         this.pageModel.title = this.title;
         this.pageModel.elementRef = this.elementRef.nativeElement;
         this.pageModel.closeAfterFn = this.closeAfterFn;
-        return this.appStore.taskManager.showModal(this.pageModel, modalOptions);
+        return this.appStore.navTabManager.showModal(this.pageModel, modalOptions);
     }
     setHostElementStyle() {
         let elStyle = ` 

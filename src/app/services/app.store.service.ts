@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs/Rx';
 import { Subject } from 'rxjs/Subject';
 import { IAction, ISubject } from '../Models/IAction';
 import { UUID } from '../untils/uuid';
-import { ChromeTabsComponent, TabModel } from '../common/chrome-tabs/chrome-tabs.component';
+import { NavTabsComponent } from '../common/nav-tabs/nav-tabs.component';
 import { ShowTypeEnum } from '../basic/show-type-enum';
 import { IComponentFactoryType } from '../basic/IComponentFactoryType';
 import { IComponentFactoryContainer } from '../basic/IComponentFactoryContainer';
@@ -15,6 +15,7 @@ import { TaskQueueManager } from '../untils/taskQueue';
 import { MediaMonitor } from './mediaquery/media-monitor';
 import { MediaChange } from './mediaquery/media-change';
 import { BreakPoint } from './mediaquery/breakpoints/break-point';
+import { NavTabModel } from '../common/nav-tabs/NavTabModel';
 
 @Injectable()
 export class AppStoreService {
@@ -86,7 +87,7 @@ export class AppStoreService {
         this.blockUIEvent.emit(false);
     }
     public taskQueueManager: TaskQueueManager = new TaskQueueManager();
-    public taskManager: ChromeTabsComponent;
+    public navTabManager: NavTabsComponent;
     public showType: ShowTypeEnum = ShowTypeEnum.tab;
     //活动breakPoints
     public activeBreakPoints: BreakPoint[] = [];
@@ -128,8 +129,8 @@ export class AppStoreService {
 
     commandLinks: DesktopItem[] = [
         { title: "计划采购订单", favicon: "assets/img/home.png", path: "/pc/news", subsystem: "news" },
-        { key: 'pur', title: "采购订单", favicon: "assets/img/save.png", path: "purOrder", outlet: "pur", subsystem: "news" },
-        { key: 'sale', title: "销售订单", favicon: "assets/img/setting.png", path: "sale", outlet: "sale", subsystem: "news" },
+        { key: 'pur', title: "采购订单", favicon: "/assets/img/save.png", path: "purOrder", outlet: "pur", subsystem: "news" },
+        { key: 'sale', title: "销售订单", favicon: "/assets/img/setting.png", path: "sale", outlet: "sale", subsystem: "news" },
         { title: "销售订单明细查询", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "news" },
         { title: "外协订单", favicon: "assets/img/save.png", path: "/pc/d3", subsystem: "news" },
         { title: "外协订单明细查询", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "news" },
@@ -165,7 +166,7 @@ export class AppStoreService {
         if (navItem.key.length < 8) {
             navItem.key = UUID.uuid(10, 10).toString();
         }
-        let taskGrp: TabModel = {
+        let taskGrp: NavTabModel = {
             key: navItem.key,
             name: navItem.key,
             title: navItem.title,
@@ -176,7 +177,7 @@ export class AppStoreService {
             path: navItem.path,
             daemon: true
         };
-        return await this.taskManager.createTaskGroup(taskGrp);
+        return await this.navTabManager.createNavTab(taskGrp);
     }
     public handleResolve(resolveData: any) {
         const resolve = resolveData || {};

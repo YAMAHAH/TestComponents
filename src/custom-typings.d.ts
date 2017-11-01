@@ -3,6 +3,7 @@ declare var System: SystemJS;
 interface SystemJS {
     import: (path?: string) => Promise<any>;
 }
+declare var Draggabilly: any;
 
 declare var printJS: PrintJS;
 
@@ -160,6 +161,6 @@ interface PropertyDescriptor {
     writable?: boolean;
     get?(): any;
     set?(v: any): void;
-    initializer?:any;
+    initializer?: any;
 }
 

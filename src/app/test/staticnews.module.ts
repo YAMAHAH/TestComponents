@@ -4,11 +4,11 @@ import { RouterModule } from '@angular/router';
 import { rootRouterConfig } from './staticnews.router';
 import { StaticNewsComponent } from './staticnews.component';
 import { ChildNewsComponent } from './childnews.component';
-import { ChromeTabsModule } from '../common/chrome-tabs/chrome-tabs.module';
+import { NavTabsModule } from '../common/nav-tabs/nav-tabs.module';
 
 @NgModule({
   imports: [CommonModule,
-    RouterModule.forChild(rootRouterConfig),ChromeTabsModule
+    RouterModule.forChild(rootRouterConfig),NavTabsModule
   ],
   declarations: [StaticNewsComponent, ChildNewsComponent],
   exports: [StaticNewsComponent, ChildNewsComponent]

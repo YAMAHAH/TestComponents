@@ -411,8 +411,8 @@ export class Form implements AfterViewInit, AfterViewChecked, OnDestroy, OnChang
             if (this.formModel && this.formModel.componentFactoryRef) {
                 if (this.formModel.formType == PageTypeEnum.container)
                     this.formModel.globalManager &&
-                        this.formModel.globalManager.taskManager &&
-                        this.formModel.globalManager.taskManager.closeTaskGroup(() => this.formModel.key);
+                        this.formModel.globalManager.navTabManager &&
+                        this.formModel.globalManager.navTabManager.closeNavTab(() => this.formModel.key);
                 else
                     this.formModel.componentFactoryRef.removePageModel(this.formModel);
             }

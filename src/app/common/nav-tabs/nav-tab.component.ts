@@ -1,17 +1,16 @@
-import { Component, OnInit, Input, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
-import { TabModel } from './chrome-tabs.component';
+import { Component, OnInit, Input, AfterViewInit, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { NavTabModel } from './NavTabModel';
 
 @Component({
     moduleId: module.id,
-    selector: 'x-chrome-tab',
-    templateUrl: 'chrome-tab.component.html',
-    styleUrls: ['chrome-tab.css']
+    selector: 'gx-nav-tab',
+    templateUrl: 'nav-tab.component.html'
 })
-export class ChromeTabComponent implements OnInit, AfterViewInit {
+export class NavTabComponent implements OnInit, AfterViewInit {
 
     @ViewChild('tabtitle') titleEl: ElementRef;
     @ViewChild('tabfavicon') faviconEl: ElementRef;
-    @Input() tabModel: TabModel;
+    @Input() tabModel: NavTabModel;
 
     constructor() { }
     ngOnInit() { }
@@ -19,4 +18,5 @@ export class ChromeTabComponent implements OnInit, AfterViewInit {
         (this.titleEl.nativeElement as Element).textContent = this.tabModel.title;
         (this.faviconEl.nativeElement as HTMLStyleElement).style.backgroundImage = `url('${this.tabModel.favicon}')`;
     }
+
 }

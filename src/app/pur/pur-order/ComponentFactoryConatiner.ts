@@ -258,11 +258,11 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
                         deletedDependModel.componentRef.destroy();
                     }
 
-                    if (this.principalPageModels.isEmpty() && this.dependentPageModels.isEmpty() && !this.appStore.taskManager.closeTasking(this.taskId)) {
-                        this.appStore.taskManager.closeTaskGroup(this.taskId);
+                    if (this.principalPageModels.isEmpty() && this.dependentPageModels.isEmpty() && !this.appStore.navTabManager.navTabInClosing(this.taskId)) {
+                        this.appStore.navTabManager.closeNavTab(this.taskId);
                     }
                     if (this.principalPageModels.every(model => model.tag.showNode == false) && this.dependentPageModels.isNotEmpty()) {
-                        this.appStore.taskManager.hideTaskGroup(this.taskId);
+                        this.appStore.navTabManager.hideNavTab(this.taskId);
                     }
                 }
             }
@@ -458,7 +458,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             options.isForceAppend = true;
             options.append = pageModel.elementRef;
             //以pageViewer显示
-            this.appStore.taskManager
+            this.appStore.navTabManager
                 .showPage(pageModel, options)
                 .subscribe((res: any) => console.log(res));
         }
@@ -489,7 +489,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
             options.append = pageModel.elementRef;
 
             //以pageViewer显示
-            this.appStore.taskManager
+            this.appStore.navTabManager
                 .show(pageModel, options)
                 .subscribe((res: any) => console.log(res));
         }
@@ -603,7 +603,7 @@ export abstract class ComponentFactoryConatiner extends ComponentBase
     }
     getComponentRef<T extends IComponentBase>(componentType: Type<T>, formModel?: IPageModel): ComponentRef<T> {
         const rootContainer = this.viewContainerRef ||
-            this.appStore.taskManager.hostFactoryContainer.viewContainerRef;
+            this.appStore.navTabManager.hostFactoryContainer.viewContainerRef;
         if (!rootContainer) {
             throw new Error('Should setup ViewContainerRef on modal options or config service!');
         }

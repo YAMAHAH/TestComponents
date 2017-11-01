@@ -62,7 +62,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
             this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.pageModel.closeAfterFn = this.closeAfterFn;
         }
-        return this.appStore.taskManager.show(this.pageModel, modalOptions);
+        return this.appStore.navTabManager.show(this.pageModel, modalOptions);
     }
 
     showModal(modalOptions?: FormOptions) {
@@ -73,7 +73,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
             this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.pageModel.closeAfterFn = this.closeAfterFn;
         }
-        return this.appStore.taskManager.showModal(this.pageModel, modalOptions);
+        return this.appStore.navTabManager.showModal(this.pageModel, modalOptions);
     }
 
     showPage(pageViewerOptions?: PageViewerOptions) {
@@ -84,7 +84,7 @@ export abstract class ComponentBase implements OnInit, OnDestroy, IComponentBase
             this.pageModel.closeBeforeCheckFn = this.closeBeforeCheckFn;
             this.pageModel.closeAfterFn = this.closeAfterFn;
         }
-        return this.appStore.taskManager.showPage(this.pageModel, pageViewerOptions);
+        return this.appStore.navTabManager.showPage(this.pageModel, pageViewerOptions);
     }
     closeBeforeCheckFn: Function = async (event: any) => {
         return new Promise<any>(resolve => {

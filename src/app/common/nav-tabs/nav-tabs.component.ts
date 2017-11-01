@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, ViewChild, ViewChildren, QueryList, ElementRef, AfterViewInit, ViewEncapsulation, EventEmitter, Injectable, ViewContainerRef, ChangeDetectorRef } from '@angular/core';
 import { LoadScriptService } from '../../services/load-script-service';
-import { ChromeTabComponent } from './chrome-tab.component';
+import { NavTabComponent } from './nav-tab.component';
 import { ActivatedRoute } from '@angular/router';
 import { RouterService } from '../../services/router.service';
 import { AppStoreService } from '../../services/app.store.service';
@@ -22,88 +22,55 @@ import { IPageModel } from '../../basic/IFormModel';
 import { SaleComponent } from '../../sale/sale.component';
 import { PageViewerOptions } from '../page-viewer/page-viewer.options';
 import { ReportViewer } from '../report-viewer/report.viewer';
-declare var Draggabilly: any;
+import { NavTabModel } from './NavTabModel';
+import { OverlayPanel } from '../../components/overlaypanel/overlaypanel';
 
-export interface TabModel {
-    /**
-     * 主键
-     */
-    key: string;
-    /**
-     * 名称
-     */
-    name?: string;
-    /**
-     * 标题
-     */
-    title: string;
-    /**
-     * 图标路径
-     */
-    favicon: string;
-    /**
-     * 组件入口
-     */
-    outlet: string;
-    /**
-     * 相对访问路径
-     */
-    path?: string;
-    /**
-     *  指示是否活动
-     */
-    active?: boolean;
-    /**
-     * Tab方式显示
-     */
-    showTabContent?: boolean;
-    /**
-     * 后台运行
-     */
-    daemon?: boolean;
-}
+
 let instanceId = 0;
 
-//   
+//   // 'flexboxgrid/flexboxgrid.css',
+// './toasty/style-default.css',
+// './toasty/style-bootstrap.css',
+// './toasty/style-material.css'
+// 'primeng/resources/primeng.min.css',
+// 'primeng/resources/themes/omega/theme.css',
+// 'font-awesome-4.7.0/css/font-awesome.min.css',
+// 'bootstrap/css/bootstrap.min.css',
+
 @Component({
     moduleId: module.id,
-    selector: 'x-chrome-tabs',
-    templateUrl: 'chrome-tabs.component.html',
+    selector: 'gx-nav-tabs',
+    templateUrl: 'nav-tabs.component.html',
     styleUrls: [
         'common.css',
-        'chrome-tabs.component.css',
-        'primeng/resources/primeng.min.css',
-        'primeng/resources/themes/omega/theme.css',
-        'font-awesome-4.7.0/css/font-awesome.min.css',
-        'bootstrap/css/bootstrap.min.css',
-        'chrome-themes.css',
-        'flexboxgrid/flexboxgrid.css',
-        './toasty/style-default.css',
-        './toasty/style-bootstrap.css',
-        './toasty/style-material.css'
+        'nav-tabs.component.css',
+        'chrome-themes.css'
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class ChromeTabsComponent implements OnInit, AfterViewInit {
-    @ViewChild("tabs") mytabs: ElementRef;
+export class NavTabsComponent implements OnInit, AfterViewInit {
+    @ViewChild("tabs") navTabSetRef: ElementRef;
     @ViewChild("bottomBarEl") bottomBarEl: ElementRef;
     @ViewChild("tabContentEl") _tabContentEl: ElementRef;
-    @ViewChildren(ChromeTabComponent, { read: ElementRef }) tabComps: QueryList<ElementRef>;
+    @ViewChild("menuPopup") _popupMenuRef: OverlayPanel;
+
+    @ViewChildren(NavTabComponent, { read: ElementRef }) tabComps: QueryList<ElementRef>;
     @ViewChild(HostViewContainerDirective) hostFactoryContainer: HostViewContainerDirective;
 
-    @Output() tabAfterAdd: EventEmitter<TabModel> = new EventEmitter<TabModel>();
-    @Output() tabAfterRemove: EventEmitter<TabModel> = new EventEmitter<TabModel>();
-    @Output() activeTabChanged: EventEmitter<TabModel> = new EventEmitter<TabModel>();
+    @Output() tabAfterAdd: EventEmitter<NavTabModel> = new EventEmitter<NavTabModel>();
+    @Output() tabAfterRemove: EventEmitter<NavTabModel> = new EventEmitter<NavTabModel>();
+    @Output() activeTabChanged: EventEmitter<NavTabModel> = new EventEmitter<NavTabModel>();
 
-    @Output() tabBeforeAdd: EventEmitter<TabModel> = new EventEmitter<TabModel>();
-    @Output() tabBeforeRemove: EventEmitter<TabModel> = new EventEmitter<TabModel>();
+    @Output() tabBeforeAdd: EventEmitter<NavTabModel> = new EventEmitter<NavTabModel>();
+    @Output() tabBeforeRemove: EventEmitter<NavTabModel> = new EventEmitter<NavTabModel>();
 
     defaultTapProperties = {
         title: '',
         favicon: '',
         outlet: ''
     };
-    homeTab: TabModel = {
+    homeTab: NavTabModel = {
+        order: 1,
         key: 'main',
         title: '系统导航',
         favicon: '/assets/images/google-favicon.png',
@@ -112,13 +79,19 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         showTabContent: true,
         daemon: false
     };
-    tabModels: TabModel[] = [this.homeTab];
+    navTabModels: NavTabModel[] = [this.homeTab];
 
+    navTabModelOrders: NavTabModel[] = [];
+
+    getNavTabModelOrderList() {
+        this.navTabModelOrders = this.navTabModels.sort((a, b) => a.order - b.order);
+        return this.navTabModelOrders;
+    }
     get tabHeaders() {
-        return this.tabModels.filter(tab => !!!tab.daemon);
+        return this.navTabModels.filter(tab => !!!tab.daemon);
     }
 
-    selected: TabModel;
+    selected: NavTabModel;
     draggabillyInstances: any[] = [];
     constructor(private loadScript: LoadScriptService,
         private routerService: RouterService,
@@ -128,7 +101,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         private dialogModalService: FormService,
         private changeDetectorRef: ChangeDetectorRef) {
         this.reducer();
-        this.appStore.taskManager = this;
+        this.appStore.navTabManager = this;
 
     }
 
@@ -142,19 +115,19 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
                     this.addTab(act.data.state);
                     break;
                 case act instanceof RemoveTabAction:
-                    this.removeTab(act.data.state);
+                    this.removeNavTab(act.data.state);
                     break;
                 case act instanceof SelectTabAction:
                     this.select(act.data.state);
                     break;
                 case act instanceof ExistTabAction:
-                    let retValue = this.existTab(act.data.state);
+                    let retValue = this.hasNavTab(act.data.state);
                     if (act.data.sender) {
                         act.data.sender.next(retValue);
                     }
                     break;
                 case act instanceof CreateTabAction:
-                    this.createTaskGroup(act.data.state);
+                    this.createNavTab(act.data.state);
                     break;
                 case act instanceof ShowFormModalAction:
                     this.showModal(act.data.state);
@@ -163,16 +136,16 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
                     this.show(act.data.state);
                     break;
                 case act instanceof GetTaskGroupModalAction:
-                    let taskGroupModal = this.getTaskGroup(act.data.state.key);
+                    let taskGroupModal = this.getNavTab(act.data.state.key);
                     if (act.data.sender) {
                         act.data.sender.next(taskGroupModal);
                     }
                     break;
                 case act instanceof CloseTaskGroupAction:
-                    this.closeTaskGroup(act.data.state.key);
+                    this.closeNavTab(act.data.state.key);
                     break;
                 case act instanceof CloseAllTaskGroupAction:
-                    this.closeAllTaskGroup();
+                    this.closeNavTabs();
                     break;
                 default:
                     break;
@@ -180,41 +153,41 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         });
     }
 
-    closeAllTaskGroup() {
-        this.tabModels.forEach(taskGrp => {
-            this.removeTab(taskGrp);
+    closeNavTabs() {
+        this.navTabModels.forEach(taskGrp => {
+            this.removeNavTab(taskGrp);
         });
     }
-    closeTaskGroup(key: string | Function) {
+    closeNavTab(key: string | Function) {
 
         let parseKey: any = key;
         if (isFunction(parseKey)) {
             parseKey = parseKey();
         }
-        let taskGrp = this.getTaskGroup(parseKey);
+        let taskGrp = this.getNavTab(parseKey);
         if (taskGrp) {
-            this.removeTab(taskGrp);
+            this.removeNavTab(taskGrp);
         }
     }
-    closeTasking(key: string) {
-        return this.taskClosing.has(key);
+    navTabInClosing(key: string) {
+        return this.navTabClosingMap.has(key);
     }
-    getTaskGroup(key: string) {
-        let taskGrp = this.tabModels.find(t => t.key == key);
+    getNavTab(key: string) {
+        let taskGrp = this.navTabModels.find(t => t.key == key);
         return taskGrp;
     }
-    hideTaskGroup(key: string | Function) {
+    hideNavTab(key: string | Function) {
         let parseKey: any = key;
         if (isFunction(parseKey)) {
             parseKey = parseKey();
         }
-        let taskGrp = this.getTaskGroup(parseKey);
+        let taskGrp = this.getNavTab(parseKey);
         this.getNextVisibleTab(taskGrp);
         taskGrp.daemon = true;
         //隐藏后设置当前活动TAB
     }
 
-    getNextVisibleTab(tabModel: TabModel) {
+    getNextVisibleTab(tabModel: NavTabModel) {
         let enabledModels = this.tabHeaders;
         if (this.tabHeaders.length > 1) enabledModels = this.tabHeaders.filter(tab => tab != this.homeTab);
         let idx = enabledModels.findIndex(value => value == tabModel);
@@ -224,7 +197,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             this.select(enabledModels[idx + 1]);
         }
     }
-    async select(tab: TabModel) {
+    async select(tab: NavTabModel) {
         if (!!!tab) return;
         if (this.selected) this.selected.active = false;
         //Tab页面切换时,隐藏非活动页面所有已打开的非最小化窗体,排除homeTab
@@ -239,15 +212,15 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         this.emit('activeTabChange', { tab });
     }
     ngOnInit() {
-        this.select(this.tabModels[0]);
+        this.select(this.navTabModels[0]);
 
     }
 
     ngAfterViewInit() {
-        let el = this.mytabs.nativeElement as HTMLElement;
+        let navTabSet = this.navTabSetRef.nativeElement as HTMLElement;
         this.loadScript.loadDraggabilly.then(drag => {
-            this.init(el, {
-                tabOverlapDistance: 14,
+            this.init(navTabSet, {
+                tabOverlapDistance: 0, //14
                 minWidth: 45,
                 maxWidth: 243
             });
@@ -266,11 +239,11 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             state: addTabModel
         }));
     }
-    async createTaskGroup(tab: TabModel) {
+    async createNavTab(tab: NavTabModel) {
         let factoryRef, formInstance;
-        if (this.existTab(tab.key)) {
+        if (this.hasNavTab(tab.key)) {
 
-            let curr = this.tabModels.find(t => t.key == tab.key);
+            let curr = this.navTabModels.find(t => t.key == tab.key);
             if (!tab.daemon) {
                 curr.daemon = false;
                 this.layoutTabs();
@@ -290,7 +263,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
     }
 
 
-    getContentClass(tabModel: TabModel) {
+    getContentClass(tabModel: NavTabModel) {
         return {
             showTabContent: (tabModel.active && tabModel.showTabContent),
             hideTabContent: !tabModel.active || !tabModel.showTabContent
@@ -403,33 +376,33 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
     }
 
     onRemoveTab() {
-        this.removeTab(this.selected);
+        this.removeNavTab(this.selected);
         // this.removeTab(this.el.querySelector('.chrome-tab-current'));
     }
     onToggleTheme() {
-        if (this.el.classList.contains('chrome-tabs-dark-theme')) {
+        if (this.navTabSetElRef.classList.contains('chrome-tabs-dark-theme')) {
             document.documentElement.classList.remove('dark-theme');
-            this.el.classList.remove('chrome-tabs-dark-theme');
+            this.navTabSetElRef.classList.remove('chrome-tabs-dark-theme');
         } else {
             document.documentElement.classList.add('dark-theme');
-            this.el.classList.add('chrome-tabs-dark-theme');
+            this.navTabSetElRef.classList.add('chrome-tabs-dark-theme');
         }
     }
 
-    mouseDownModel: TabModel;
-    onTabMouseDown(event: Event, data: TabModel) {
+    mouseDownModel: NavTabModel;
+    onTabMouseDown(event: Event, data: NavTabModel) {
         this.mouseDownModel = data;
     }
 
-    el: HTMLElement;
+    navTabSetElRef: HTMLElement;
     options: any;
     init(el: Element, options: any) {
-        this.el = el as HTMLElement;
+        this.navTabSetElRef = el as HTMLElement;
         this.options = options
 
         // this.instanceId = instanceId
         instanceId += 1;
-        this.el.setAttribute('data-chrome-tabs-instance-id', instanceId.toString(10));
+        this.navTabSetElRef.setAttribute('data-chrome-tabs-instance-id', instanceId.toString(10));
 
         this.setupStyleEl();
         this.setupEvents();
@@ -458,7 +431,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
     animationStyleEl: HTMLStyleElement;
     setupStyleEl() {
         this.animationStyleEl = document.createElement('style');
-        this.el.appendChild(this.animationStyleEl);
+        this.navTabSetElRef.appendChild(this.animationStyleEl);
     }
 
     setupEvents() {
@@ -484,11 +457,11 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
 
     get tabEls(): Element[] {
         // return this.tabComps.map(tab => tab.nativeElement);
-        return Array.prototype.slice.call(this.el.querySelectorAll('.chrome-tab'));
+        return Array.prototype.slice.call(this.navTabSetElRef.querySelectorAll('.chrome-tab'));
     }
 
     get tabCount() {
-        return this.tabModels.length;
+        return this.navTabModels.length;
     }
 
     get tabContentEl() {
@@ -496,8 +469,8 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
     }
 
     get tabWidth() {
-        const tabsContentWidth = this.tabContentEl.clientWidth - this.options.tabOverlapDistance;
-        const width = (tabsContentWidth / this.tabEls.length) + this.options.tabOverlapDistance;
+        const tabsContentWidth = this.tabContentEl.clientWidth - this.options.tabOverlapDistance - 25;
+        const width = (tabsContentWidth / (this.tabEls.length - 1)) + this.options.tabOverlapDistance;
         return Math.max(this.options.minWidth, Math.min(this.options.maxWidth, width));
     }
 
@@ -521,13 +494,22 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         const tabWidth = this.tabWidth;
 
         this.cleanUpPreviouslyDraggedTabs();
-        this.tabEls.forEach((tabEl: any) => tabEl.style.width = tabWidth + 'px');
+        this.tabEls.forEach((tabEl: any, i) => {
+            if (i == this.tabEls.length - 1) {
+                tabEl.style.width = 25 + 'px';
+                tabEl.style.height = 43 + 'px';
+            }
+            else tabEl.style.width = tabWidth + 'px';
+        });
         requestAnimationFrame(() => {
             let styleHTML = ''
             this.tabPositions.forEach((left, i) => {
+
+                let currLeft = left;
+                if (i == this.tabEls.length - 1) currLeft = left + 1;
                 styleHTML += `
             .chrome-tabs[data-chrome-tabs-instance-id="${instanceId}"] .chrome-tab:nth-child(${i + 1}) {
-              transform: translate3d(${left}px, 0, 0)
+              transform: translate3d(${currLeft}px, 0, 0)
             }
           `;
             });
@@ -537,33 +519,42 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
 
 
     isJustAdded: boolean = false;
-    addTab(tabModel: TabModel) {
+    addTab(tabModel: NavTabModel) {
         this.isJustAdded = true;
+        tabModel.order = this.navTabModels.length + 1;
         setTimeout(() => this.isJustAdded = false, 500);
-        this.tabModels.push(tabModel);
+        this.navTabModels.push(tabModel);
 
         this.emit('tabAdd', tabModel);
         if (!tabModel.daemon) this.select(tabModel);
-
+        this.getNavTabModelOrderList();
         setTimeout(() => {
             this.layoutTabs();
             this.setupDraggabilly();
         }, 20);
     }
 
-    async onTabClick(event: Event, tab: TabModel) {
+    async onTabClick(event: Event, tab: NavTabModel) {
         let targetEl = event.target as Element;
         if (targetEl.classList.contains('chrome-tab')) {
             this.select(tab);
         } else if (targetEl.classList.contains('chrome-tab-close')) {
-            await this.removeTab(tab);
+            await this.removeNavTab(tab);
         } else if (targetEl.classList.contains('chrome-tab-title') ||
             targetEl.classList.contains('chrome-tab-favicon')) {
             this.select(tab);
         }
     }
-
-
+    onMenuPopup(event: Event, navTabModel: NavTabModel) {
+        event.stopPropagation();
+        this._popupMenuRef.toggle(event);
+        this.select(navTabModel);
+    }
+    onMenuItemClick(event: Event, navTabModel: NavTabModel) {
+        // event.stopPropagation();
+        this.select(navTabModel);
+        this._popupMenuRef.close();
+    }
     closeBeforeCheckFn: Function = async (event: any) => {
         return new Promise<any>(resolve => {
             return resolve(event.cancel);
@@ -575,7 +566,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
      * close self sucessful callback
      */
     closeAfterFn: Function = () => { };
-    async closeTaskChildPage(taskModal: TabModel) {
+    async closeTaskChildPage(taskModal: NavTabModel) {
         let state$ = new BehaviorSubject<any>(null);
         let eventArgs = { sender: this, cancel: true, data: taskModal };
         let allowClose = await this.closeBeforeCheckFn(eventArgs);
@@ -590,15 +581,21 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         return state$;
     }
 
-    taskClosing: Map<string, string> = new Map<string, string>();
-    async removeTab(tabModel: TabModel) {
+    resetNavTabModelOrder() {
+        for (var index = 0; index < this.navTabModels.length; index++) {
+            this.navTabModels[index].order = index + 1;
+        }
+        this.getNavTabModelOrderList();
+    }
+    navTabClosingMap: Map<string, string> = new Map<string, string>();
+    async removeNavTab(tabModel: NavTabModel) {
         if (!!!tabModel) return;
         if (tabModel.key == 'main') return;
-        if (this.taskClosing.has(tabModel.key)) {
+        if (this.navTabClosingMap.has(tabModel.key)) {
             console.log("TAB正在关闭......");
             return;
         }
-        this.taskClosing.set(tabModel.key, tabModel.key);
+        this.navTabClosingMap.set(tabModel.key, tabModel.key);
         let result = await this.closeTaskChildPage(tabModel);
         result.subscribe((res: { processFinish: boolean; result: boolean }) => {
             if (res && res.processFinish) {
@@ -612,8 +609,9 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
                         } else if (enabledModels[idx + 1]) {
                             this.select(enabledModels[idx + 1]);
                         }
-                        let tabIndex = this.tabModels.findIndex(value => value == tabModel)
-                        let removeTabModel = this.tabModels.splice(tabIndex, 1);
+                        let tabIndex = this.navTabModels.findIndex(value => value == tabModel)
+                        let removeTabModel = this.navTabModels.splice(tabIndex, 1);
+                        this.resetNavTabModelOrder();
 
                         let r = {};
                         r[tabModel.outlet] = null;
@@ -625,19 +623,19 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
                         }, 10);
                     }
                 }
-                this.taskClosing.delete(tabModel.key);
+                this.navTabClosingMap.delete(tabModel.key);
                 result.unsubscribe();
                 result = null;
             }
         });
     }
 
-    async removeTabHandler(tabmodel: TabModel) {
+    async removeTabHandler(tabmodel: NavTabModel) {
 
     }
 
-    existTab(tabKey: string) {
-        return this.tabModels.some(tab => tab.key == tabKey || tab.outlet == tabKey);
+    hasNavTab(tabKey: string) {
+        return this.navTabModels.some(tab => tab.key == tabKey || tab.outlet == tabKey);
     }
 
 
@@ -653,7 +651,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
         this.draggabillyInstances.forEach(draggabillyInstance => draggabillyInstance.destroy());
 
         tabEls.forEach((tabEl: Element, originalIndex: number) => {
-            if (originalIndex == 0) return;
+            if (originalIndex == 0 || originalIndex == tabEls.length - 1) return;
             const originalTabPositionX = tabPositions[originalIndex]
             const draggabillyInstance = new Draggabilly(tabEl, {
                 axis: 'x',
@@ -665,7 +663,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
             draggabillyInstance.on('dragStart', () => {
                 this.cleanUpPreviouslyDraggedTabs();
                 tabEl.classList.add('chrome-tab-currently-dragged');
-                this.el.classList.add('chrome-tabs-sorting');
+                this.navTabSetElRef.classList.add('chrome-tabs-sorting');
                 (tabEl as HTMLStyleElement).style.zIndex = '9999999';
                 // this.fixZIndexes();
             });
@@ -681,7 +679,7 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
 
                     requestAnimationFrame(() => {
                         tabEl.classList.remove('chrome-tab-currently-dragged');
-                        this.el.classList.remove('chrome-tabs-sorting');
+                        this.navTabSetElRef.classList.remove('chrome-tabs-sorting');
 
                         // this.setCurrentTab(tabEl);
                         if (this.mouseDownModel) {
@@ -717,11 +715,20 @@ export class ChromeTabsComponent implements OnInit, AfterViewInit {
     }
 
     animateTabMove(tabEl: Element, originIndex: number, destinationIndex: number) {
-        if (destinationIndex == 0) { return; }
+        if (destinationIndex == 0 || destinationIndex == this.tabEls.length - 1) return;
+        let moveed: boolean = false;
         if (destinationIndex < originIndex) {
             tabEl.parentNode.insertBefore(tabEl, this.tabEls[destinationIndex]);
+            moveed = true;
         } else {
             tabEl.parentNode.insertBefore(tabEl, this.tabEls[destinationIndex + 1]);
+            moveed = true;
+        }
+        if (moveed) {
+            let originTab = this.navTabModels[originIndex];
+            let destTab = this.navTabModels[destinationIndex];
+            [originTab.order, destTab.order] = [destTab.order, originTab.order];
+            this.getNavTabModelOrderList();
         }
     }
 }

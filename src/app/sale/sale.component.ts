@@ -682,10 +682,10 @@ export class SaleComponent extends ComponentFactoryConatiner
         this.pageModel.title = this.title;
         // this.formModel.instance = this;
         if (this.pageModel.showType === ShowTypeEnum.showForm) {
-            this.appStore.taskManager.show(this.pageModel);
+            this.appStore.navTabManager.show(this.pageModel);
         }
         if (this.pageModel.showType === ShowTypeEnum.showFormModal) {
-            this.appStore.taskManager.showModal(this.pageModel);
+            this.appStore.navTabManager.showModal(this.pageModel);
         }
 
 

@@ -57,7 +57,7 @@ export class ReportManagerService {
         if (typeof resource === 'string')
             defaultParams.printable = resource;
 
-        return this.globalService.taskManager
+        return this.globalService.navTabManager
             .showReportViewer({
                 resolve: {
                     data: defaultParams.data,

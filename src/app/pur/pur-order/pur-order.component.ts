@@ -9,7 +9,6 @@ import { PurOrderActions, AddPurOrderAction, RemovePurOrderAction } from '../../
 import { AddAction, RemoveAction, SetCurrentAction, GetformModelArrayAction, CloseTaskGroupAction, ComponentFactoryType, PurComponentFactoryType, PurchaseListComponentType, PurchaseEditComponentType } from '../../actions/actions-base';
 import { UUID } from '../../untils/uuid';
 import { purList } from '../../static-news.1/pur.component';
-import { TabModel } from '../../common/chrome-tabs/chrome-tabs.component';
 import { ActivatedRoute } from '@angular/router';
 import { IComponentBase } from '../../basic/IComponentBase';
 import { PageModelExtras } from '../../basic/PageModelExtras';
