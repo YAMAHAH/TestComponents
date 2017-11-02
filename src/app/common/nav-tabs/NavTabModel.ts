@@ -39,4 +39,9 @@ export interface NavTabModel {
      * 后台运行
      */
     daemon?: boolean;
+    /**
+     * 是否选中
+     */
+    checked?:boolean;
+    
 }

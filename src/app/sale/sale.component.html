@@ -13,7 +13,7 @@
                 <button gxKeyBinding='btn9sdfddf596' class="btn btn-default" (click)="prompt();">Prompt</button>
                 <button gxKeyBinding='btn9dfssdswerw596' class="btn btn-default" reTitle="雾里看花" trigger="hover" rePopover="打开模式窗口" placement="top" (click)="openModal();">Open modal!</button>
                 <button class="btn btn-default" (click)="addToast()">Add Toast</button>
-                <x-overlayPanel position="bottom" [style]="{width:'455px'}" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="true" [dismissable]="true" #op1>
+                <gx-overlayPanel position="bottom" [style]="{width:'455px'}" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="true" [dismissable]="true" #op1>
                     <div class="ui-g-12 ui-md-6">
                         <x-calendar [(ngModel)]="date3" [showIcon]="true"></x-calendar>
                         <span style="margin-left:35px">{{date3|date}}</span>
@@ -24,12 +24,12 @@
                     <div class="ui-g-12 ui-md-6">
                         <x-calendar [(ngModel)]="date6" [showTime]="true" [showSeconds]="true"></x-calendar> {{date6}}
                     </div>
-                </x-overlayPanel>
+                </gx-overlayPanel>
                 <hr>
                 <div gxKeyBinding='div9sdfddf596'>
                     <x-dropdown [options]="cars" [(ngModel)]="selectedCar2" [style]="{'width':'250px'}">
-                        <x-overlayPanel (onFocus)="op2.toggle($event)" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="false" [dismissable]="false" #op2>
-                        </x-overlayPanel>
+                        <gx-overlayPanel (onFocus)="op2.toggle($event)" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="false" [dismissable]="false" #op2>
+                        </gx-overlayPanel>
                         <ng-template let-car pTemplate="item">
                             <div class="ui-helper-clearfix" style="position: relative;height: 25px;">
                                 <img src="https://www.primefaces.org/primeng/showcase/resources/demo/images/car/{{car.label}}.gif" style="width:24px;position:absolute;top:1px;left:5px" />

@@ -4,7 +4,7 @@ import { MenuItem } from '../common/api';
 import { Router } from '@angular/router';
 import { ContextMenu } from './contextmenu';
 @Component({
-    selector: 'x-contextMenuSub',
+    selector: 'gx-contextMenuSub',
     templateUrl: './contextMenuSub.html',
     providers: [DomHandler]
 })
@@ -13,6 +13,7 @@ export class ContextMenuSub {
     @Input() item: MenuItem;
 
     @Input() root: boolean;
+    @Input() data: any;
 
     constructor(public domHandler: DomHandler,
         public router: Router,
@@ -59,7 +60,8 @@ export class ContextMenuSub {
 
             item.eventEmitter.emit({
                 originalEvent: event,
-                item: item
+                item: item,
+                data: this.data
             });
         }
 

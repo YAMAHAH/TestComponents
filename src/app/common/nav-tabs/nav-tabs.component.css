@@ -53,7 +53,7 @@
     position: absolute;
     left: 0;
     height: 2.8em;
-    width: 24em;
+    width: 243px;
     border: 0;
     margin: 0;
     z-index: 1;
@@ -72,7 +72,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100%;24em
     height: 100%;
     overflow: hidden;
     pointer-events: none;
@@ -115,7 +115,7 @@ div.chrome-tab.popupBtn {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: white;
+    /* background-color: white; */
 }
 
 
@@ -230,6 +230,46 @@ div.chrome-tab.popupBtn {
 .showTabContent {
     display: flex;
     flex: 1;
+}
+
+.menuStandartItemOver_Mouse,
+div.flex-row-col.flex-col-xs:hover {
+    height: 34px;
+    white-space: nowrap;
+    background: #d3f0ec;
+    color: #444;
+    cursor: default;
+    font-family: Arial;
+    font-size: 14px;
+    user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+}
+
+div>i.fa.fa-fw.fa-times-circle:hover {
+    color: red;
+}
+
+div.flex-row-col.flex-col-xs.activeItem {
+    background: #a5b4c4;
+}
+
+.gx-menu-item {
+    margin: 0em;
+    padding: 5px;
+    height: 34px;
+}
+
+.gx-menu-item .gx-menu-item-text {
+    padding: 0px 20px 0px 5px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.gx-menu-item .gx-menu-item-image {
+    padding: 0px 5px;
+    text-align: left;
 }
 
 .x-confirm,

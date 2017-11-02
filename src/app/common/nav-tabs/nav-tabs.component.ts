@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, ViewChild, ViewChildren, QueryList, ElementRef, AfterViewInit, ViewEncapsulation, EventEmitter, Injectable, ViewContainerRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Output, ViewChild, ViewChildren, QueryList, ElementRef, AfterViewInit, ViewEncapsulation, EventEmitter, Injectable, ViewContainerRef, ChangeDetectorRef, Renderer2, AfterViewChecked } from '@angular/core';
 import { LoadScriptService } from '../../services/load-script-service';
 import { NavTabComponent } from './nav-tab.component';
 import { ActivatedRoute } from '@angular/router';
@@ -9,21 +9,26 @@ import {
     AppTaskBarActions, AddTabAction, RemoveTabAction, SelectTabAction,
     ExistTabAction, CreateTabAction, ShowFormModalAction, ShowFormAction
 } from '../../actions/app-main-tab/app-main-tab-actions';
-import { ActionsBase, GetTaskGroupModalAction, CloseTaskGroupAction, CloseAllTaskGroupAction, SaleComponentFactoryType } from '../../actions/actions-base';
+import {
+    ActionsBase, GetTaskGroupModalAction, CloseTaskGroupAction,
+    CloseAllTaskGroupAction, SaleComponentFactoryType
+} from '../../actions/actions-base';
 
-import { PurOrderActions } from '../../actions/pur/pur-order-actions';
 import { BehaviorSubject } from 'rxjs/Rx';
 import { isFunction } from '../toasty/toasty.utils';
 import { ModalOptions } from '../modal/modal-options.model';
 import { HostViewContainerDirective } from '../directives/host.view.container';
-import { FormService } from '../../components/form/FormService';
 import { FormOptions } from '../../components/form/FormOptions';
 import { IPageModel } from '../../basic/IFormModel';
-import { SaleComponent } from '../../sale/sale.component';
+
 import { PageViewerOptions } from '../page-viewer/page-viewer.options';
 import { ReportViewer } from '../report-viewer/report.viewer';
 import { NavTabModel } from './NavTabModel';
 import { OverlayPanel } from '../../components/overlaypanel/overlaypanel';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
+import { MenuItem } from '../../components/common/api';
+import { ContextMenu } from '../../components/contextmenu/contextmenu';
 
 
 let instanceId = 0;
@@ -49,12 +54,14 @@ let instanceId = 0;
     encapsulation: ViewEncapsulation.None
 })
 export class NavTabsComponent implements OnInit, AfterViewInit {
+
     @ViewChild("tabs") navTabSetRef: ElementRef;
     @ViewChild("bottomBarEl") bottomBarEl: ElementRef;
     @ViewChild("tabContentEl") _tabContentEl: ElementRef;
     @ViewChild("menuPopup") _popupMenuRef: OverlayPanel;
+    @ViewChild("tabContextMenu") _navTabContextMenu: ContextMenu;
 
-    @ViewChildren(NavTabComponent, { read: ElementRef }) tabComps: QueryList<ElementRef>;
+    @ViewChildren(NavTabComponent, { read: ElementRef }) navTabComps: QueryList<ElementRef>;
     @ViewChild(HostViewContainerDirective) hostFactoryContainer: HostViewContainerDirective;
 
     @Output() tabAfterAdd: EventEmitter<NavTabModel> = new EventEmitter<NavTabModel>();
@@ -81,7 +88,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
     };
     navTabModels: NavTabModel[] = [this.homeTab];
 
-    navTabModelOrders: NavTabModel[] = [];
+    navTabModelOrders: NavTabModel[] = [this.homeTab];
 
     getNavTabModelOrderList() {
         this.navTabModelOrders = this.navTabModels.sort((a, b) => a.order - b.order);
@@ -96,19 +103,19 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
     constructor(private loadScript: LoadScriptService,
         private routerService: RouterService,
         private activeRouter: ActivatedRoute,
-        private appStore: AppStoreService,
+        private globalService: AppStoreService,
         public viewContainerRef: ViewContainerRef,
-        private dialogModalService: FormService,
-        private changeDetectorRef: ChangeDetectorRef) {
+        private changeDetectorRef: ChangeDetectorRef,
+        private renderer: Renderer2) {
         this.reducer();
-        this.appStore.navTabManager = this;
+        this.globalService.navTabManager = this;
 
     }
 
     taskBarSubject: ISubject;
     appTabSetActions = new AppTaskBarActions();
     reducer() {
-        this.taskBarSubject = this.appStore.select(this.appTabSetActions.key);
+        this.taskBarSubject = this.globalService.select(this.appTabSetActions.key);
         this.taskBarSubject.subject.subscribe(act => {
             switch (true) {
                 case act instanceof AddTabAction:
@@ -202,9 +209,9 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
         if (this.selected) this.selected.active = false;
         //Tab页面切换时,隐藏非活动页面所有已打开的非最小化窗体,排除homeTab
 
-        let factoryRef = this.selected && await this.appStore.GetOrCreateComponentFactory(this.selected.key);
+        let factoryRef = this.selected && await this.globalService.GetOrCreateComponentFactory(this.selected.key);
         factoryRef && factoryRef.hidePageModels()
-        factoryRef = tab && await this.appStore.GetOrCreateComponentFactory(tab.key);
+        factoryRef = tab && await this.globalService.GetOrCreateComponentFactory(tab.key);
         factoryRef && factoryRef.showPageModels();
 
         this.selected = tab;
@@ -213,9 +220,57 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
     }
     ngOnInit() {
         this.select(this.navTabModels[0]);
-
     }
+    private hasElement(element: any) {
+        for (let index = 0; index < this.menuItems.length; index++) {
+            if (this.menuItems[index] === element) return true;
+        }
+        return false;
+    }
+    menuItems: NodeListOf<Element>;
+    mouseOverSubscription: Subscription;
+    mouseLeaveSubscription: Subscription;
 
+    private menuItemHandler() {
+        this.menuItems = this._popupMenuRef.el.nativeElement.querySelectorAll("div.flex-row-col.flex-col-xs");
+        let active: any;
+        if (this.mouseOverSubscription) this.mouseOverSubscription.unsubscribe();
+        this.mouseOverSubscription = Observable.fromEvent<Event>(this.menuItems, 'mouseover')
+            .filter(e => this.hasElement(e.currentTarget))
+            .map(e => {
+                event.preventDefault();
+                event.stopPropagation();
+                return e.currentTarget;
+            })
+            .switchMap(e => [e])
+            .subscribe(el => {
+                if (el != active) {
+                    this.renderer.addClass(el, "menuStandartItemOver_Mouse");
+                    active = el;
+                }
+            });
+        if (this.mouseLeaveSubscription) this.mouseLeaveSubscription.unsubscribe();
+        this.mouseLeaveSubscription = Observable.fromEvent<Event>(this.menuItems, 'mouseleave')
+            .filter(e => this.hasElement(e.currentTarget))
+            .map(e => {
+                event.preventDefault();
+                event.stopPropagation();
+                return e.currentTarget;
+            })
+            .switchMap(e => [e])
+            .subscribe((el) => {
+
+                this.renderer.removeClass(el, "menuStandartItemOver_Mouse");
+                active = null;
+            });
+        //<div> <i class="fa fa-fw fa-times-circle">
+        // Observable.fromEvent<Event>(this.menuItems, 'click')
+        //     .filter(e => this.hasElement(e.currentTarget))
+        //     .switchMap(e => [e])
+        //     .subscribe(el => {
+        //         this.itemPopupMenuRef.close();
+        //     });
+    }
     ngAfterViewInit() {
         let navTabSet = this.navTabSetRef.nativeElement as HTMLElement;
         this.loadScript.loadDraggabilly.then(drag => {
@@ -225,6 +280,8 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
                 maxWidth: 243
             });
         });
+
+
     }
 
     onAddTab() {
@@ -234,7 +291,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
             outlet: 'sborder' + new Date().getTime(),
             active: true
         };
-        this.appStore.dispatch(this.appTabSetActions.addTabAction({
+        this.globalService.dispatch(this.appTabSetActions.addTabAction({
             sender: this.appTabSetActions.key,
             state: addTabModel
         }));
@@ -249,19 +306,18 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
                 this.layoutTabs();
             }
             this.select(curr);
-            factoryRef = await this.appStore.GetOrCreateComponentFactory(tab.key);
+            factoryRef = await this.globalService.GetOrCreateComponentFactory(tab.key);
         } else {
-            this.addTab(tab);
+            await this.addTab(tab);
             let r = {};
             r[tab.outlet] = tab.path;
 
             this.changeDetectorRef.detectChanges();
             await this.routerService.navigateToOutlet(r, { taskId: tab.key }, this.activeRouter);
-            factoryRef = await this.appStore.GetOrCreateComponentFactory(tab.key);
+            factoryRef = await this.globalService.GetOrCreateComponentFactory(tab.key);
         }
         return factoryRef;
     }
-
 
     getContentClass(tabModel: NavTabModel) {
         return {
@@ -290,7 +346,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
             if (pageModel.closeBeforeCheckFn) options.checkCloseBeforeFn = pageModel.closeBeforeCheckFn;
             if (pageModel.closeAfterFn) options.closeAfterCallBackFn = pageModel.closeAfterFn;
             if (pageModel.componentRef) options.componentRef = pageModel.componentRef;
-            this.appStore.pageViewerService.showPage(options).subscribe(result);
+            this.globalService.pageViewerService.showPage(options).subscribe(result);
         }, 10);
         return result;
     }
@@ -314,7 +370,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
             if (pageModel.closeBeforeCheckFn) options.checkCloseBeforeFn = pageModel.closeBeforeCheckFn;
             if (pageModel.closeAfterFn) options.closeAfterCallBackFn = pageModel.closeAfterFn;
             if (pageModel.componentRef) options.componentRef = pageModel.componentRef;
-            this.appStore.modalService.showForm(options).subscribe(result);
+            this.globalService.modalService.showForm(options).subscribe(result);
         }, 20);
         return result;
     }
@@ -340,7 +396,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
             if (pageModel.closeBeforeCheckFn) options.checkCloseBeforeFn = pageModel.closeBeforeCheckFn;
             if (pageModel.closeAfterFn) options.closeAfterCallBackFn = pageModel.closeAfterFn;
             if (pageModel.componentRef) options.componentRef = pageModel.componentRef;
-            return this.appStore.modalService.showForm(options).subscribe(result);
+            return this.globalService.modalService.showForm(options).subscribe(result);
         }, 20);
         return result;
     }
@@ -369,7 +425,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
             options.componentOutlets = [ReportViewer];
             options.enableFlex = true;
             options.header = "报表查看器";
-            this.appStore.modalService.showForm(options)
+            this.globalService.modalService.showForm(options)
                 .subscribe(result);
         }, 20);
         return result;
@@ -517,12 +573,11 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
         });
     }
 
-
     isJustAdded: boolean = false;
-    addTab(tabModel: NavTabModel) {
+    async addTab(tabModel: NavTabModel) {
         this.isJustAdded = true;
         tabModel.order = this.navTabModels.length + 1;
-        setTimeout(() => this.isJustAdded = false, 500);
+        setTimeout(() => this.isJustAdded = false, 15);
         this.navTabModels.push(tabModel);
 
         this.emit('tabAdd', tabModel);
@@ -545,33 +600,91 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
             this.select(tab);
         }
     }
+
+    navTab_contextmenu(event: MouseEvent, navTabModel: NavTabModel) {
+        this._navTabContextMenu.show(event, navTabModel);
+    }
+    tabMenuItems: MenuItem[] = [
+        {
+            label: '关闭标签页',
+            icon: 'fa-chevron-right',
+            command: (event) => this.removeNavTab(event.data)
+        },
+        {
+            label: '关闭左侧标标签页',
+            icon: 'fa-chevron-left',
+            command: (event) => console.log(event)
+        }
+    ];
     onMenuPopup(event: Event, navTabModel: NavTabModel) {
         event.stopPropagation();
+        this.navTabModels.forEach(item => {
+            item.checked = false;
+        });
+        this.selectedItems = [];
         this._popupMenuRef.toggle(event);
         this.select(navTabModel);
+        this.menuItemHandler();
     }
     onMenuItemClick(event: Event, navTabModel: NavTabModel) {
         // event.stopPropagation();
         this.select(navTabModel);
-        this._popupMenuRef.close();
+        this.closePopupMenu();
     }
+    closeAll_MenuItemClick(event: Event) {
+        event.stopPropagation();
+        this.closeNavTabs();
+        this.closePopupMenu();
+    }
+    close_menuItemClick(event: Event, navItem: NavTabModel) {
+        event.stopPropagation();
+        this.closePopupMenu();
+        this.removeNavTab(navItem);
+    }
+    check_menuItemClick(event: Event, navItem: NavTabModel) {
+        event.stopPropagation();
+        navItem.checked = !navItem.checked;
+        this.selectedItems = this.navTabModels.filter(navItem => {
+            return navItem.checked;
+        }) || [];
+    }
+    closePopupMenu() {
+        this._popupMenuRef.close();
+        this.selectedItems = [];
+    }
+    selectedItems: NavTabModel[] = [];
+    closeSelected_MenuItemClick(event: Event) {
+        event.stopPropagation();
+        this._popupMenuRef.close();
+        for (var index = 0; index < this.selectedItems.length; index++) {
+            this.removeNavTab(this.selectedItems[index]);
+        }
+    }
+    close_mouseoverHandler(event: Event) {
+        event.stopPropagation();
+        this.renderer.addClass(event.target, "fa-times-circle");
+    }
+    close_mouseleaveHandler(event: Event) {
+        event.stopPropagation();
+        this.renderer.removeClass(event.target, "fa-times-circle");
+    }
+
     closeBeforeCheckFn: Function = async (event: any) => {
         return new Promise<any>(resolve => {
             return resolve(event.cancel);
         });
     }
 
-
     /**
      * close self sucessful callback
      */
     closeAfterFn: Function = () => { };
-    async closeTaskChildPage(taskModal: NavTabModel) {
+    async closeNavTabChildPage(taskModal: NavTabModel) {
         let state$ = new BehaviorSubject<any>(null);
         let eventArgs = { sender: this, cancel: true, data: taskModal };
         let allowClose = await this.closeBeforeCheckFn(eventArgs);
         if (allowClose) {
-            let componentFactoryRef = await this.appStore.GetOrCreateComponentFactory(taskModal.key);
+            let componentFactoryRef = await this.globalService.GetOrCreateComponentFactory(taskModal.key);
             if (componentFactoryRef) {
                 componentFactoryRef.closeAllPages({ target: taskModal.key, data: { sender: state$ } });
             } else {
@@ -596,7 +709,7 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
             return;
         }
         this.navTabClosingMap.set(tabModel.key, tabModel.key);
-        let result = await this.closeTaskChildPage(tabModel);
+        let result = await this.closeNavTabChildPage(tabModel);
         result.subscribe((res: { processFinish: boolean; result: boolean }) => {
             if (res && res.processFinish) {
                 if (res.result) {
@@ -628,10 +741,6 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
                 result = null;
             }
         });
-    }
-
-    async removeTabHandler(tabmodel: NavTabModel) {
-
     }
 
     hasNavTab(tabKey: string) {
@@ -710,21 +819,21 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
                 if (currentIndex !== destinationIndex) {
                     this.animateTabMove(tabEl, currentIndex, destinationIndex);
                 }
-            })
+            });
         })
     }
 
     animateTabMove(tabEl: Element, originIndex: number, destinationIndex: number) {
         if (destinationIndex == 0 || destinationIndex == this.tabEls.length - 1) return;
-        let moveed: boolean = false;
+        let moved: boolean = false;
         if (destinationIndex < originIndex) {
             tabEl.parentNode.insertBefore(tabEl, this.tabEls[destinationIndex]);
-            moveed = true;
+            moved = true;
         } else {
             tabEl.parentNode.insertBefore(tabEl, this.tabEls[destinationIndex + 1]);
-            moveed = true;
+            moved = true;
         }
-        if (moveed) {
+        if (moved) {
             let originTab = this.navTabModels[originIndex];
             let destTab = this.navTabModels[destinationIndex];
             [originTab.order, destTab.order] = [destTab.order, originTab.order];

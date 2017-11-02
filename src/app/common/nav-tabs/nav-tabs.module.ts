@@ -12,6 +12,7 @@ import { ToastyModule } from '../toasty/index';
 import { ReportViewerModule } from '../report-viewer/report.viewer.module';
 import { ReportViewer } from '../report-viewer/report.viewer';
 import { OverlayPanelModule } from '../../components/overlaypanel/overlaypanel';
+import { ContextMenuModule } from '../../components/contextmenu/contextmenu';
 
 @NgModule({
     imports: [
@@ -21,7 +22,8 @@ import { OverlayPanelModule } from '../../components/overlaypanel/overlaypanel';
         CoreModule,
         ToastyModule,
         ReportViewerModule.forRoot(),
-        OverlayPanelModule
+        OverlayPanelModule,
+        ContextMenuModule
     ],
     declarations: [
         NavTabsComponent,

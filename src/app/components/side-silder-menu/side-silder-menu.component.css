@@ -256,12 +256,12 @@ nav.side-silder-menu li.active>a,
     -webkit-user-select: none;
 }
 
-x-overlayPanel div.flex-row-col.start-xs>div:hover {
+gx-overlayPanel div.flex-row-col.start-xs>div:hover {
     background: #d3f0ec;
     cursor: pointer;
 }
 
-x-overlayPanel div.flex-row-col.start-xs>div {
+gx-overlayPanel div.flex-row-col.start-xs>div {
     height: 80px;
     width: 55px;
     text-align: center;

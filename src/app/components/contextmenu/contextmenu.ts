@@ -8,7 +8,7 @@ import { ContextMenuSub } from './ContextMenuSub';
 
 
 @Component({
-    selector: 'x-contextMenu',
+    selector: 'gx-contextMenu',
     templateUrl: './contextMenu.html',
     providers: [DomHandler]
 })
@@ -17,6 +17,7 @@ export class ContextMenu implements AfterViewInit, OnDestroy {
     @Input() model: MenuItem[];
 
     @Input() global: boolean;
+    @Input() target: any;
 
     @Input() style: any;
 
@@ -33,6 +34,7 @@ export class ContextMenu implements AfterViewInit, OnDestroy {
     documentClickListener: any;
 
     documentRightClickListener: any;
+    rightClickListener: any;
 
     constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer) { }
 
@@ -44,9 +46,15 @@ export class ContextMenu implements AfterViewInit, OnDestroy {
         });
 
         if (this.global) {
-            this.documentRightClickListener = this.renderer.listenGlobal('body', 'contextmenu', (event:any) => {
+            this.documentRightClickListener = this.renderer.listenGlobal('body', 'contextmenu', (event: any) => {
                 this.show(event);
                 event.preventDefault();
+            });
+        } else if (this.target) {
+            this.rightClickListener = this.renderer.listen(this.target, 'contextmenu', (event: any) => {
+                this.show(event);
+                event.preventDefault();
+                event.stopPropagation();
             });
         }
 
@@ -58,7 +66,9 @@ export class ContextMenu implements AfterViewInit, OnDestroy {
         }
     }
 
-    show(event?: MouseEvent) {
+    detailData: any;
+    show(event?: MouseEvent, data?: any) {
+        this.detailData = data || {};
         this.position(event);
         this.visible = true;
         this.domHandler.fadeIn(this.container, 250);
@@ -72,11 +82,11 @@ export class ContextMenu implements AfterViewInit, OnDestroy {
         this.visible = false;
     }
 
-    toggle(event?: MouseEvent) {
+    toggle(event?: MouseEvent, data?: any) {
         if (this.visible)
             this.hide();
         else
-            this.show(event);
+            this.show(event, data);
     }
 
     position(event?: MouseEvent) {

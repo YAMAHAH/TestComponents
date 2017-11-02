@@ -1,5 +1,4 @@
-<nav #navcontainer (mouseover)="mouseOverHandler($event)" (mouseleave)="mouseLeaveHandler($event)" [style.width.px]="isExpanded ? 255:55"
-    class="side-silder-menu">
+<nav #navcontainer (mouseover)="mouseOverHandler($event)" (mouseleave)="mouseLeaveHandler($event)" [style.width.px]="isExpanded ? 255:55" class="side-silder-menu">
     <div class="logo"></div>
     <div (click)="headerClickHandler($event)" class="settings">
         <a (click)="expandClick($event)">
@@ -13,8 +12,7 @@
     </div>
     <ul style="clear: both">
         <li *ngFor="let item of items">
-            <a [style.width.px]="isExpanded ? 255:55" (click)="popup.toggle($event)" [routerLink]="item.routerLink" [queryParams]="item.queryParams"
-                [skipLocationChange]="item.skipLocationChange">
+            <a [style.width.px]="isExpanded ? 255:55" (click)="popup.toggle($event)" [routerLink]="item.routerLink" [queryParams]="item.queryParams" [skipLocationChange]="item.skipLocationChange">
                 <i jyTooltip="{{item.title}}" [tooltipDisabled]="isExpanded" tooltipPosition="right" class="{{item.iconCss}}"></i>
                 <span [style.display]="isExpanded ? '':'none'" class="nav-text">{{item.title}}</span>
             </a>
@@ -29,8 +27,7 @@
         </li>
     </ul>
 </nav>
-<x-overlayPanel [contentStyle]="{padding:'0.5em 0em'}" [style]="{width:'189px','max-height':'455px'}" [showCloseIcon]="false"
-    [dismissable]="true" #popup>
+<gx-overlayPanel [contentStyle]="{padding:'0.5em 0em'}" [style]="{width:'189px','max-height':'455px'}" [showCloseIcon]="false" [dismissable]="true" #popup>
     <div class="flex-row-col flex-col-xs middle-xs" style="height:24px">
         <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3 ">
             <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAACOSURBVHjaYvz//z8DJYAFRLimu5Jlyu6ZuxlZYBwjx2CSNJ/bvxbhAhSJ20vxajRSjcb0AiFF+AxnYqAQsBBrE9EG4HI+QQNIsRUCOFANmJS8hGit28+tY9j+ZBumF0ASFAWip1EQ0S7AagBFLshrTGEQlVZieP30HlE0HIByo0uay39yaBBmpDQ7AwQYAKvMXw3NrZ7jAAAAAElFTkSuQmCC">
@@ -111,10 +108,9 @@
     </div>
     <div class="flex-row-col flex-col-xs middle-xs" style="height:1px;margin: 5px 0px 5px 0px;background: #c6c6c6">
     </div>
-</x-overlayPanel>
+</gx-overlayPanel>
 
-<x-overlayPanel (click)="testClick($event)" [contentStyle]="{padding:'0em 0em'}" position="right" [style]="{'max-height':'350px','max-width':'328px'}"
-    [showCloseIcon]="false" [dismissable]="true" #bottomPopup>
+<gx-overlayPanel (click)="testClick($event)" [contentStyle]="{padding:'0em 0em'}" position="right" [style]="{'max-height':'350px','max-width':'328px'}" [showCloseIcon]="false" [dismissable]="true" #bottomPopup>
     <div style="padding: 0px;width:100%;vertical-align: middle; text-align: center;line-height:24px; white-space: nowrap;background: #eee">导航标题栏</div>
     <div class="flex-row-col start-xs" style="flex-wrap:wrap">
         <div class="" style="height:80px;width:55px;text-align: center;margin: 5px;padding:3px;flex:none">
@@ -191,6 +187,6 @@
             </a>
         </div>
     </div>
-</x-overlayPanel>
+</gx-overlayPanel>
 
 <!--(mouseover)="mouseOverHandler($event)" (mouseleave)="mouseLeaveHandler($event)"-->

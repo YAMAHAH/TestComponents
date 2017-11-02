@@ -8,7 +8,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 @Component({
-    selector: 'x-overlayPanel',
+    selector: 'gx-overlayPanel',
     template: `
         <div [ngClass]="'ui-overlaypanel ui-widget ui-widget-content ui-corner-all ui-shadow'" [ngStyle]="style" [class]="styleClass"
             [style.display]="visible ? 'block' : 'none'" (click)="onPanelClick($event)">

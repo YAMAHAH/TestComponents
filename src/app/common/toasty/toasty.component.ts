@@ -14,7 +14,7 @@ import { DomHandler } from '../dom/domhandler';
  * Toasty is container for Toast components
  */
 @Component({
-  selector: 'x-toasty',
+  selector: 'gx-toasty',
   templateUrl: './toasty.component.html'
 })
 export class ToastyComponent implements OnInit {

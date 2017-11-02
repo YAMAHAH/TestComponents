@@ -1,11 +1,11 @@
 <div (resize)="layoutTabs()" style="display:flex;flex-direction: column;flex: 1 0 auto;">
     <div #tabs class="chrome-tabs" style="flex:0 0 45px;height: 45px;min-height: 45px;">
         <div #tabContentEl class="chrome-tabs-content">
-            <gx-nav-tab (click)="onTabClick($event,tab)" (mousedown)="onTabMouseDown($event,tab)" [style.zIndex]="tab.active ? tabCount + 2 : tabCount - idx " class="chrome-tab" [class.chrome-tab-just-added]="isJustAdded" [class.chrome-tab-current]='tab.active' *ngFor="let tab of tabHeaders let idx = index"
-                [tabModel]="tab">
+            <gx-nav-tab #navTab (contextmenu)="navTab_contextmenu($event,tab)" (click)="onTabClick($event,tab)" (mousedown)="onTabMouseDown($event,tab)" [style.zIndex]="tab.active ? tabCount + 2 : tabCount - idx " class="chrome-tab" [class.chrome-tab-just-added]="isJustAdded"
+                [class.chrome-tab-current]='tab.active' *ngFor="let tab of tabHeaders let idx = index" [tabModel]="tab">
             </gx-nav-tab>
-            <div (click)="onMenuPopup($event)" class="chrome-tab popupBtn">
-                <i class="fa fa-fw fa-chevron-down"></i>
+            <div [style.display]="isJustAdded ? 'none' : 'flex'" (click)="onMenuPopup($event)" class="chrome-tab popupBtn">
+                <i class="fa fa-fw fa-ellipsis-v"></i>
             </div>
         </div>
         <div #bottomBarEl style="display:none" [style.zIndex]="tabCount + 1 " class="chrome-tabs-bottom-bar"></div>
@@ -21,18 +21,40 @@
         <ng-template gxHostContainer></ng-template>
     </div>
 </div>
-<x-toasty></x-toasty>
-<x-overlayPanel #menuPopup [contentStyle]="{padding:'0.5em 0em'}" position="bottom" [style]="{width:'189px','max-height':'455px'}" [showCloseIcon]="false" [dismissable]="true">
-    <div style="width:189px;height:189px;overflow:auto">
-        <ng-container *ngFor="let tabcontent of navTabModelOrders">
-            <div (click)=" onMenuItemClick($event,tabcontent)" class="flex-row-col flex-col-xs middle-xs" style="height:24px">
-                <div style="font-size: 0px; padding: 0px 5px; text-align: left;" class="flex-xs-col-3 ">
-                    <img style="width:16px;height:16px;" [attr.src]="tabcontent.favicon">
+<gx-toasty></gx-toasty>
+<gx-overlayPanel #menuPopup [contentStyle]="{padding:'0em'}" position="bottom" [style]="{padding:'0em','max-height':'455px'}" [showCloseIcon]="false" [dismissable]="true">
+
+    <div (click)="closeAll_MenuItemClick($event)" class="gx-menu-item flex-row-col flex-col-xs middle-xs">
+        <div class="flex-xs-col-3 gx-menu-item-image">
+            <i class="fa fa-fw fa-reorder"></i>
+        </div>
+        <div class="flex-col-xs gx-menu-item-text">关闭全部标签</div>
+    </div>
+    <div *ngIf="selectedItems.length > 0" (click)="closeSelected_MenuItemClick($event)" class="gx-menu-item flex-row-col flex-col-xs middle-xs">
+        <div class="flex-xs-col-3 gx-menu-item-image">
+            <i class="fa fa-fw fa-reorder"></i>
+        </div>
+        <div class="flex-col-xs gx-menu-item-text">关闭选择标签</div>
+    </div>
+
+    <div class="flex-row-col flex-col-xs middle-xs" style="height:1px;margin: 5px 0px 5px 0px;background: #c6c6c6">
+    </div>
+
+    <div style="width:189px;height:auto;max-height:455px;overflow:auto;">
+        <ng-container *ngFor="let navItem of navTabModelOrders">
+            <div (click)="onMenuItemClick($event,navItem)" [ngClass]="{'activeItem':navItem.active}" class="gx-menu-item flex-row-col flex-col-xs middle-xs">
+                <div *ngIf="navItem.key!='main'">
+                    <i (click)="check_menuItemClick($event,navItem)" [ngClass]="{'fa-check-square-o':navItem.checked,'fa-square-o':!navItem.checked}" class="fa fa-fw fa-lg"></i>
                 </div>
-                <div style="padding: 0px 20px 0px 5px; text-align: left; white-space: nowrap;" class="flex-col-xs">{{tabcontent.title}}-{{tabcontent.order}}</div>
+                <div class="flex-xs-col-3 gx-menu-item-image">
+                    <img style="width:16px;height:16px;" [attr.src]="navItem.favicon">
+                </div>
+                <div class="flex-col-xs gx-menu-item-text">{{navItem.title}}</div>
+                <div *ngIf="navItem.key!='main'">
+                    <i (mouseover)="close_mouseoverHandler($event)" (mouseleave)="close_mouseleaveHandler($event)" (click)="close_menuItemClick($event,navItem)" class="fa fa-fw fa-lg fa-times"></i>
+                </div>
             </div>
         </ng-container>
     </div>
-    <!-- <div class="flex-row-col flex-col-xs middle-xs" style="height:1px;margin: 5px 0px 5px 0px;background: #c6c6c6">
-    </div> -->
-</x-overlayPanel>
+</gx-overlayPanel>
+<gx-contextMenu #tabContextMenu [model]="tabMenuItems"></gx-contextMenu>
