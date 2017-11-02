@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { DesktopItem } from '../../Models/desktop-Item';
 import { Route, Router, ActivatedRoute } from '@angular/router';
 import { styleUntils } from '../../untils/style';
@@ -7,6 +7,8 @@ import { AppTaskBarActions } from '../../actions/app-main-tab/app-main-tab-actio
 import { UUID } from '../../untils/uuid';
 import { ShowTypeEnum } from '../../basic/show-type-enum';
 import { NavTabModel } from '../nav-tabs/NavTabModel';
+import { MenuItem } from '../../components/common/api';
+import { ContextMenu } from '../../components/contextmenu/contextmenu';
 
 @Component({
     selector: 'x-desktop',
@@ -14,39 +16,10 @@ import { NavTabModel } from '../nav-tabs/NavTabModel';
     styleUrls: ['desktop.component.css']
 })
 export class DesktopComponent implements OnInit, AfterViewInit {
-    // items: DesktopItem[] = [
-    //     { title: "计划采购订单", favicon: "assets/img/home.png", path: "/pc/news", subsystem: "news" },
-    //     { key: 'pur', title: "采购订单", favicon: "assets/img/save.png", path: "purOrder", outlet: "pur", subsystem: "news" },
-    //     { key: 'sale', title: "销售订单", favicon: "assets/img/setting.png", path: "sale", outlet: "sale", subsystem: "news" },
-    //     { title: "销售订单明细查询", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "外协订单", favicon: "assets/img/save.png", path: "/pc/d3", subsystem: "news" },
-    //     { title: "外协订单明细查询", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "计划外协订单", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "生产订单", favicon: "assets/img/save.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "生产订单物料查询", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "生产领料单", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "仓库调拨单", favicon: "assets/img/save.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "生产入库单", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "销售送货单", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "生产计划MPS", favicon: "assets/img/save.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "外协领料单", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "news" },
-    //     { title: "生产报工单", favicon: "assets/img/save.png", path: "/auth/login", subsystem: "snews" },
-    //     { title: "生产订单明细查询", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "snews" },
-    //     { title: "生产退料单", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "snews" },
-    //     { title: "仓库盘点单", favicon: "assets/img/save.png", path: "/auth/login", subsystem: "snews" },
-    //     { title: "生产返工单", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "snews" },
-    //     { title: "销售退货单", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "snews" },
-    //     { title: "计划外生产计划单", favicon: "assets/img/save.png", path: "/auth/login", subsystem: "snews" },
-    //     { title: "计划外需求分析单", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "snews" },
-    //     { title: "产品单层BOM维护", favicon: "assets/img/save.png", path: "/auth/login", subsystem: "myapp" },
-    //     { title: "产品层次BOM", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "myapp" },
-    //     { title: "生产补料单", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "myapp" },
-    //     { title: "盘点盈亏单", favicon: "assets/img/save.png", path: "/auth/login", subsystem: "myapp" },
-    //     { title: "生产通知单", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "myapp" },
-    //     { title: "销售挂账单", favicon: "assets/img/home.png", path: "/auth/login", subsystem: "myapp" },
-    //     { title: "应收款明细查询", favicon: "assets/img/save.png", path: "/auth/login", subsystem: "myapp" },
-    //     { title: "产品资料", favicon: "assets/img/setting.png", path: "/auth/login", subsystem: "myapp" },
-    // ];
+
+
+    @ViewChild('desktopItemContextMenu') _itemContextMenu: ContextMenu;
+    @ViewChild('desktopContextMenu') _desktopContextMenu: ContextMenu;
 
     get items() {
         return this.appStore.commandLinks;
@@ -75,7 +48,80 @@ export class DesktopComponent implements OnInit, AfterViewInit {
         this.setupStyleEl();
     }
 
-    async itemDoubleClickHandler(event: any) {
+    desktopItem_contextmenu(event: MouseEvent, itemModel: DesktopItem) {
+        this._itemContextMenu.show(event, itemModel);
+        event.stopPropagation();
+    }
+    desktopItemMenuItems: MenuItem[] = [
+        {
+            label: '打开模板',
+            icon: 'fa-chevron-right',
+            command: (event) => this.openItem({ event, item: event.data })
+        },
+        {
+            label: '移除模板',
+            icon: 'fa-chevron-left',
+            command: (event) => console.log(event)
+        },
+        {
+            label: '模板属性',
+            icon: 'fa-chevron-left',
+            command: (event) => console.log(event)
+        }
+    ];
+
+    // <!--
+    // function document.oncontextmenu()
+    // {
+    // return false;
+    // }
+
+
+    // function nocontextmenu()
+    // {
+    // if(document.all) {
+    // event.cancelBubble=true;
+    // event.returnvalue=false;
+    // return false;
+    // }
+    // }
+    // -->
+    // </script>
+    // 第二种方法：在body里加入onmousedown="rclick()" oncontextmenu= "nocontextmenu()"
+    // <br>
+    // <script language="javascript">
+    // <!--
+    // function rclick()
+    // {
+    // if(document.all) {
+    // if (event.button == 2){
+    // event.returnvalue=false;
+    // }
+    // }
+    // }
+    desktop_contextmenu(event: MouseEvent) {
+        this._desktopContextMenu.show(event);
+        event.stopPropagation();
+    }
+    desktopMenuItems: MenuItem[] = [
+        {
+            label: '添加模板',
+            icon: 'fa-chevron-right',
+            command: (event) => console.log(event.data)
+        },
+        {
+            label: '刷新',
+            icon: 'fa-chevron-left',
+            command: (event) => location.reload(true)
+        },
+        {
+            label: '桌面配置',
+            icon: 'fa-chevron-left',
+            command: (event) => console.log(event)
+        }
+    ];
+
+    private async openItem(event: any) {
         // let mainTabActions = new AppTaskBarActions();
         let navItem = event.item as DesktopItem;
         if (navItem.key.length < 8) {
@@ -97,6 +143,9 @@ export class DesktopComponent implements OnInit, AfterViewInit {
             showType: this.appStore.showType || ShowTypeEnum.showForm,
             resolve: { data: 'resolve data' }
         });
+    }
+    async itemDoubleClickHandler(event: any) {
+        this.openItem(event);
     }
 
     get fCallback() {

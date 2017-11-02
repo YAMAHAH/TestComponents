@@ -232,22 +232,22 @@
 //         }
 //     }
 
-//     bindDocumentClickListener() {
-//         if (!this.documentClickListener) {
-//             this.documentClickListener = this.renderer.listen('document', 'click', (event) => {
-//                 if (this.visible && event.button !== 2) {
-//                     this.hide();
-//                 }
-//             });
-//         }
-//     }
+    // bindDocumentClickListener() {
+    //     if (!this.documentClickListener) {
+    //         this.documentClickListener = this.renderer.listen('document', 'click', (event) => {
+    //             if (this.visible && event.button !== 2) {
+    //                 this.hide();
+    //             }
+    //         });
+    //     }
+    // }
 
-//     unbindDocumentClickListener() {
-//         if (this.documentClickListener) {
-//             this.documentClickListener();
-//             this.documentClickListener = null;
-//         }
-//     }
+    // unbindDocumentClickListener() {
+    //     if (this.documentClickListener) {
+    //         this.documentClickListener();
+    //         this.documentClickListener = null;
+    //     }
+    // }
 
 //     ngOnDestroy() {
 //         this.unbindDocumentClickListener();

@@ -1,8 +1,8 @@
-import { NgModule, Component, ElementRef, AfterViewInit, OnDestroy, Input, Output, Renderer, EventEmitter, Inject, forwardRef, ViewChild } from '@angular/core';
+import { NgModule, Component, ElementRef, AfterViewInit, OnDestroy, Input, Output, EventEmitter, Inject, forwardRef, ViewChild, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MenuItem } from '../common/api';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { DomHandler } from '../../common/dom/domhandler';
 import { ContextMenuSub } from './ContextMenuSub';
 
@@ -36,17 +36,14 @@ export class ContextMenu implements AfterViewInit, OnDestroy {
     documentRightClickListener: any;
     rightClickListener: any;
 
-    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer) { }
+    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer2) { }
 
     ngAfterViewInit() {
         this.container = <HTMLDivElement>this.containerViewChild.nativeElement;
 
-        this.documentClickListener = this.renderer.listenGlobal('body', 'click', () => {
-            this.hide();
-        });
 
         if (this.global) {
-            this.documentRightClickListener = this.renderer.listenGlobal('body', 'contextmenu', (event: any) => {
+            this.documentRightClickListener = this.renderer.listen('document', 'contextmenu', (event: any) => {
                 this.show(event);
                 event.preventDefault();
             });
@@ -72,6 +69,7 @@ export class ContextMenu implements AfterViewInit, OnDestroy {
         this.position(event);
         this.visible = true;
         this.domHandler.fadeIn(this.container, 250);
+        this.bindDocumentClickListener();
 
         if (event) {
             event.preventDefault();
@@ -80,6 +78,7 @@ export class ContextMenu implements AfterViewInit, OnDestroy {
 
     hide() {
         this.visible = false;
+        this.unbindDocumentClickListener();
     }
 
     toggle(event?: MouseEvent, data?: any) {
@@ -122,29 +121,28 @@ export class ContextMenu implements AfterViewInit, OnDestroy {
         }
     }
 
-    unsubscribe(item: any) {
-        if (item.eventEmitter) {
-            item.eventEmitter.unsubscribe();
+    bindDocumentClickListener() {
+        if (!this.documentClickListener) {
+            this.documentClickListener = this.renderer.listen('document', 'click', (event: any) => {
+                if (this.visible && event.button !== 2) {
+                    this.hide();
+                }
+            });
         }
+    }
 
-        if (item.items) {
-            for (let childItem of item.items) {
-                this.unsubscribe(childItem);
-            }
+    unbindDocumentClickListener() {
+        if (this.documentClickListener) {
+            this.documentClickListener();
+            this.documentClickListener = null;
         }
     }
 
     ngOnDestroy() {
-        this.documentClickListener();
+        this.unbindDocumentClickListener();
 
-        if (this.global) {
-            this.documentRightClickListener();
-        }
-
-        if (this.model) {
-            for (let item of this.model) {
-                this.unsubscribe(item);
-            }
+        if (this.rightClickListener) {
+            this.rightClickListener();
         }
 
         if (this.appendTo) {
@@ -155,7 +153,7 @@ export class ContextMenu implements AfterViewInit, OnDestroy {
 }
 
 @NgModule({
-    imports: [CommonModule],
+    imports: [CommonModule, RouterModule],
     exports: [ContextMenu],
     declarations: [ContextMenu, ContextMenuSub]
 })

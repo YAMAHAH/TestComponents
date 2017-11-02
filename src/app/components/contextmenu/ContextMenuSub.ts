@@ -16,9 +16,7 @@ export class ContextMenuSub {
     @Input() data: any;
 
     constructor(public domHandler: DomHandler,
-        public router: Router,
-        @Inject(forwardRef(() => ContextMenu)) public contextMenu: ContextMenu)
-    { }
+        @Inject(forwardRef(() => ContextMenu)) public contextMenu: ContextMenu) { }
 
     activeItem: any;
 
@@ -53,20 +51,11 @@ export class ContextMenuSub {
         }
 
         if (item.command) {
-            if (!item.eventEmitter) {
-                item.eventEmitter = new EventEmitter();
-                item.eventEmitter.subscribe(item.command);
-            }
-
-            item.eventEmitter.emit({
+            item.command({
                 originalEvent: event,
                 item: item,
                 data: this.data
             });
-        }
-
-        if (item.routerLink) {
-            this.router.navigate(item.routerLink);
         }
     }
 

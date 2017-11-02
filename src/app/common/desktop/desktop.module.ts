@@ -10,14 +10,16 @@ import { desktopRouterConfig } from './desktop.router';
 import { DesktopComponent } from './desktop.component';
 import { DesktopItemModule } from './desktop-item/desktop-item.module';
 import { CoreModule } from '../shared/shared-module';
+import { ContextMenuModule } from '../../components/contextmenu/contextmenu';
 
 @NgModule({
     imports: [
-        CommonModule,CoreModule,
+        CommonModule, CoreModule,
         RouterModule.forChild(desktopRouterConfig),
         DesktopLayoutContainerModule,
         DesktopItemModule,
-        CoreModule
+        CoreModule,
+        ContextMenuModule
     ],
     declarations: [
         DesktopComponent,
