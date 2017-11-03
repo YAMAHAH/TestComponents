@@ -699,7 +699,7 @@ export class FlexItemDirective implements OnChanges, OnInit, DoCheck, OnDestroy 
             if (this._flexContainer && this._flexContainer.style)
                 currStyle = Object.assign(this._buildStyleMap(this._flexContainer.style), currStyle);
 
-            this._fxStyleInstance.ngStyle = currStyle;
+            if (this._fxStyleInstance) this._fxStyleInstance.ngStyle = currStyle;
         }
     }
     itemShowHideProcess(event?: EventArgs) {

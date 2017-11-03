@@ -106,17 +106,17 @@ export class DesktopComponent implements OnInit, AfterViewInit {
     desktopMenuItems: MenuItem[] = [
         {
             label: '添加模板',
-            icon: 'fa-chevron-right',
+            icon: 'fa-plus',
             command: (event) => console.log(event.data)
         },
         {
             label: '刷新',
-            icon: 'fa-chevron-left',
+            icon: 'fa-refresh',
             command: (event) => location.reload(true)
         },
         {
             label: '桌面配置',
-            icon: 'fa-chevron-left',
+            icon: 'fa-cog',
             command: (event) => console.log(event)
         }
     ];

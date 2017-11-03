@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 
 import { TooltipDirective } from './tooltip.directive';
 import { TooltipPopupComponent } from './tooltip-popup.component';
-import { CommonModule } from '@angular/common';
+import { NgTemplateOutlet, NgIf, CommonModule } from '@angular/common';
 
 @NgModule({
   imports: [CommonModule],

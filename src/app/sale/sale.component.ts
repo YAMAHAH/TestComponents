@@ -109,45 +109,45 @@ export class SaleComponent extends ComponentFactoryConatiner
         super(injector);
         // console.log(injector.get(TenantManageTemplate));
 
-        setTimeout(() => {
-            if (this.testLg && this.testLg.span) {
-                this.testLg.span = 8;
-                this.testLg.order = 4;
-                this.testLg.style = 'font-size:14px;color:red;';
-                this.testXL.span = 9;
-                this.testLg2.span = 5;
-                this.testLg3.span = 3;
-                this.changeDetectorRef.markForCheck();
-                this.decoratorTimeout();
-            }
+        // setTimeout(() => {
+        //     if (this.testLg && this.testLg.span) {
+        //         this.testLg.span = 8;
+        //         this.testLg.order = 4;
+        //         this.testLg.style = 'font-size:14px;color:red;';
+        //         this.testXL.span = 9;
+        //         this.testLg2.span = 5;
+        //         this.testLg3.span = 3;
+        //         this.changeDetectorRef.markForCheck();
+        //         this.decoratorTimeout();
+        //     }
 
-        }, 6000);
-        setTimeout(() => {
-            if (this.testLg && this.testLg.span) {
-                this.testLg = FlexItem.create({ span: 15, order: 1 });
-                this.testXL = FlexItem.create({ span: 10 });
-                this.testLg2 = FlexItem.create({ span: 11 });
-                this.testLg3 = { span: 10 };
-                this.changeDetectorRef.markForCheck();
-            }
-        }, 10000);
-        setTimeout(() => {
-            if (this.testLg && this.testLg.span) {
-                this.testLg.span = 6;
-                this.testLg.order = -1;
-                this.testLg.style = 'font-size:18px;color:white;';
-                this.testXL.span = 13;
-                this.testLg2.span = 6;
-                this.testLg3.span = 8;
-                this.changeDetectorRef.markForCheck();
-            }
-        }, 15000);
-        setTimeout(() => {
-            if (this.testLg && this.testLg.span) {
-                this.testLg3.span = 6;
-                this.changeDetectorRef.markForCheck();
-            }
-        }, 25000);
+        // }, 6000);
+        // setTimeout(() => {
+        //     if (this.testLg && this.testLg.span) {
+        //         this.testLg = FlexItem.create({ span: 15, order: 1 });
+        //         this.testXL = FlexItem.create({ span: 10 });
+        //         this.testLg2 = FlexItem.create({ span: 11 });
+        //         this.testLg3 = { span: 10 };
+        //         this.changeDetectorRef.markForCheck();
+        //     }
+        // }, 10000);
+        // setTimeout(() => {
+        //     if (this.testLg && this.testLg.span) {
+        //         this.testLg.span = 6;
+        //         this.testLg.order = -1;
+        //         this.testLg.style = 'font-size:18px;color:white;';
+        //         this.testXL.span = 13;
+        //         this.testLg2.span = 6;
+        //         this.testLg3.span = 8;
+        //         this.changeDetectorRef.markForCheck();
+        //     }
+        // }, 15000);
+        // setTimeout(() => {
+        //     if (this.testLg && this.testLg.span) {
+        //         this.testLg3.span = 6;
+        //         this.changeDetectorRef.markForCheck();
+        //     }
+        // }, 25000);
         this.cars = [];
         this.cars.push({ label: 'Audi', value: 'Audi' });
         this.cars.push({ label: 'BMW', value: 'BMW' });
