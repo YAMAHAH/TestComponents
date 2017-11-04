@@ -1,7 +1,7 @@
-<div [ngClass]="'ui-tabview ui-widget ui-widget-content ui-corner-all ui-tabview-' + orientation" [ngStyle]="style" [class]="styleClass">
-    <ul x-tabViewNav role="tablist" *ngIf="orientation!='bottom'" [tabs]="tabs" [orientation]="orientation" (onTabClick)="open($event.originalEvent, $event.tab)" (onTabCloseClick)="close($event.originalEvent, $event.tab)"></ul>
+<!-- <div [ngClass]="'ui-tabview ui-widget ui-widget-content ui-corner-all ui-tabview-' + orientation" [ngStyle]="style" [class]="styleClass">
+    <ul x-tabViewNav role="tablist" *ngIf="navOrientation!='bottom'" [tabs]="tabModels" [orientation]="navOrientation" (onTabClick)="open($event.originalEvent, $event.tab)" (onTabCloseClick)="close($event.originalEvent, $event.tab)"></ul>
     <div class="ui-tabview-panels">
         <ng-content></ng-content>
     </div>
-    <ul x-tabViewNav role="tablist" *ngIf="orientation=='bottom'" [tabs]="tabs" [orientation]="orientation" (onTabClick)="open($event.originalEvent, $event.tab)" (onTabCloseClick)="close($event.originalEvent, $event.tab)"></ul>
-</div>
+    <ul x-tabViewNav role="tablist" *ngIf="navOrientation=='bottom'" [tabs]="tabModels" [orientation]="navOrientation" (onTabClick)="open($event.originalEvent, $event.tab)" (onTabCloseClick)="close($event.originalEvent, $event.tab)"></ul>
+</div> -->

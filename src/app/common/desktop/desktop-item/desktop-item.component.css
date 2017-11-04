@@ -17,6 +17,12 @@ p a {
     text-shadow: 0.2em 0.1em 0.3em #000000;
 }
 
+p a img {
+    width: 64px;
+    height: 64px;
+    border: 0;
+}
+
 p a:hover {
     border: solid 1px #bbd6ec;
     border-radius: 3px;

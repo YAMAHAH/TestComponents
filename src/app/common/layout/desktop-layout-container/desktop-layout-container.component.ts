@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-    selector: 'x-desktop-layout-container',
+    selector: 'gx-desktop-layout-container',
     templateUrl: 'desktop-layout-container.html',
     styleUrls: ['desktop-layout-container.css']
 })

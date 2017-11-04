@@ -10,7 +10,7 @@ import { TabViewNav } from './tabViewNav';
 })
 export class TabView implements AfterContentInit, BlockableUI {
 
-    @Input() orientation: string = 'top';
+    @Input('orientation') navOrientation: string = 'top';
 
     @Input() style: any;
 
@@ -28,7 +28,7 @@ export class TabView implements AfterContentInit, BlockableUI {
 
     initialized: boolean;
 
-    tabs: TabPanel[];
+    tabModels: TabPanel[];
 
     constructor(public el: ElementRef) { }
 
@@ -41,14 +41,14 @@ export class TabView implements AfterContentInit, BlockableUI {
     }
 
     initTabs(): void {
-        this.tabs = this.tabPanels.toArray();
-        for (let tab of this.tabs) {
+        this.tabModels = this.tabPanels.toArray();
+        for (let tab of this.tabModels) {
             tab.lazy = this.lazy;
         }
 
         let selectedTab: TabPanel = this.findSelectedTab();
-        if (!selectedTab && this.tabs.length) {
-            this.tabs[0].selected = true;
+        if (!selectedTab && this.tabModels.length) {
+            this.tabModels[0].selected = true;
         }
     }
 
@@ -94,8 +94,8 @@ export class TabView implements AfterContentInit, BlockableUI {
     closeTab(tab: TabPanel) {
         if (tab.selected) {
             tab.selected = false;
-            for (let i = 0; i < this.tabs.length; i++) {
-                let tabPanel = this.tabs[i];
+            for (let i = 0; i < this.tabModels.length; i++) {
+                let tabPanel = this.tabModels[i];
                 if (!tabPanel.closed && !tab.disabled) {
                     tabPanel.selected = true;
                     break;
@@ -107,9 +107,9 @@ export class TabView implements AfterContentInit, BlockableUI {
     }
 
     findSelectedTab() {
-        for (let i = 0; i < this.tabs.length; i++) {
-            if (this.tabs[i].selected) {
-                return this.tabs[i];
+        for (let i = 0; i < this.tabModels.length; i++) {
+            if (this.tabModels[i].selected) {
+                return this.tabModels[i];
             }
         }
         return null;
@@ -117,8 +117,8 @@ export class TabView implements AfterContentInit, BlockableUI {
 
     findTabIndex(tab: TabPanel) {
         let index = -1;
-        for (let i = 0; i < this.tabs.length; i++) {
-            if (this.tabs[i] == tab) {
+        for (let i = 0; i < this.tabModels.length; i++) {
+            if (this.tabModels[i] == tab) {
                 index = i;
                 break;
             }

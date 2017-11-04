@@ -2,7 +2,6 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { NgModule, ApplicationRef } from '@angular/core';
 import { removeNgStyles, createNewHosts, createInputTransfer, bootloader } from '@angularclass/hmr';
 
-import { AppComponent } from './app/app.component';
 import { AppStore, State } from './app-store';
 import { AppHMRModule } from './app/app.module.hmr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -12,6 +11,7 @@ import { UUID } from './app/untils/uuid';
 import { BehaviorSubject } from 'rxjs/Rx';
 import { HTMLElementExtendService } from './app/untils/html-element-extend';
 import { ArrayExtensions } from './app/untils/array-extensions';
+import { AppHmrComponent } from './app/app.hmr.comp';
 
 applyMixins(String, [stringExtend]);
 applyMixins(Array, [ArrayExtensions]);
@@ -19,7 +19,7 @@ applyMixins(Array, [ArrayExtensions]);
 
 @NgModule({
     bootstrap: [
-        AppComponent
+        AppHmrComponent
     ],
     imports: [
         AppHMRModule, BrowserAnimationsModule

@@ -157,6 +157,7 @@ export class DisposableResource {
         }
         console.log('unsubscribe');
     }
+    version:any;
 
     dispose() {
         if (!this.disposed) {

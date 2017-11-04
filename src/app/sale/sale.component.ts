@@ -92,7 +92,6 @@ export class SaleComponent extends ComponentFactoryConatiner
     testLg3 = { span: 9 };
     constructor(
         protected injector: Injector,
-        private loadScript: LoadScriptService,
         private dialogService: DialogService,
         private modalService: ModalService,
         private toastyService: ToastyService,
@@ -103,10 +102,11 @@ export class SaleComponent extends ComponentFactoryConatiner
         private reportMan: ReportManagerService,
         private carService: CarService,
         private router: Router,
-        @Inject(forwardRef(() => TenantManageTemplate)) public td: TenantManageTemplate
+        @Inject(forwardRef(() => TenantManageTemplate)) @Optional() public td: TenantManageTemplate
 
     ) { //
         super(injector);
+        // @Optional() @Inject(forwardRef(() => TenantManageTemplate)) public td: TenantManageTemplate
         // console.log(injector.get(TenantManageTemplate));
 
         // setTimeout(() => {
@@ -181,7 +181,7 @@ export class SaleComponent extends ComponentFactoryConatiner
             }).unsubscribe();
     }
 
-    @decorators.setTimeout(30000, res => console.log('测试装饰器,是否可以定时执行这个方法呢'))
+    // @decorators.setTimeout(30000, res => console.log('测试装饰器,是否可以定时执行这个方法呢'))
     decoratorTimeout() {
         if (this.testLg && this.testLg.span) {
             this.testLg3.span = 10;

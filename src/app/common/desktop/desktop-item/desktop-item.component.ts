@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { DesktopItem } from '../../../Models/desktop-Item';
 
 @Component({
-    selector: 'x-desktop-item',
+    selector: 'gx-desktop-item',
     templateUrl: 'desktop-item.component.html',
     styleUrls: ['desktop-item.component.css']
 })

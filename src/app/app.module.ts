@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.router';
@@ -21,10 +21,12 @@ import { MediaQueriesModule } from './services/mediaquery/MediaQueriesModule';
 
 @NgModule({
   imports: [
-    BrowserModule, BrowserAnimationsModule,
-    StaticNewsModule, HttpClientModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    StaticNewsModule,
+    HttpClientModule,
     LayoutModule,
-    RouterModule.forRoot(rootRouterConfig, { useHash: true }),
+    RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     PageLoadingModule.forRoot(),
     XYZUIModule.forRoot(),
     ToastyModule.forRoot(),
@@ -37,6 +39,6 @@ import { MediaQueriesModule } from './services/mediaquery/MediaQueriesModule';
   providers: [...appRootProviders]
 })
 export class AppModule {
-  constructor(public router: Router) {
+  constructor() {
   }
 }

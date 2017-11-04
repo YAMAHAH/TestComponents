@@ -23,5 +23,5 @@
 </div> -->
 
 <div #tabfavicon class="chrome-tab-favicon"></div>
-<div #tabtitle class="chrome-tab-title">{{title}}</div>
+<div #tabtitle class="chrome-tab-title">{{tabModel?.title}}</div>
 <div [ngClass]="{'chrome-tab-close':tabModel.key!='main'}"></div>

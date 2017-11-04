@@ -63,6 +63,7 @@ let webpackConfig = {
             disable: false,
             allChunks: true
         }),
+
         new webpack.optimize.CommonsChunkPlugin({
             // name:"common",filename:"vendor.bundle.js"
             names: ['bvendor', 'amanifest'],

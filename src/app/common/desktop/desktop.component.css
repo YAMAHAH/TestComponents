@@ -1,4 +1,4 @@
-x-desktop-layout-container {
+gx-desktop-layout-container {
     /*height: 100%;*/
     /*width: 100%;*/
     /*border: 1px solid black;*/
@@ -15,7 +15,7 @@ x-desktop-layout-container {
     background-size: 100% 100%;
 }
 
-x-desktop-item {
+gx-desktop-item {
     width: 100px;
     height: 100px;
     text-align: center;

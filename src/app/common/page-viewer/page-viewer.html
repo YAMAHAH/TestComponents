@@ -2,7 +2,7 @@
     <ng-container *ngFor="let comp of componentOutlets | filter:enablePredicate">
         <ng-container *gxComponentOutlet="comp;context: compctx"></ng-container>
     </ng-container>
-    <ng-template *gxHostContainer=" !!!isAppend && pageModel && pageModel.componentRef? pageModel.componentRef :componentRef;context:compctx"></ng-template>
+    <ng-template *gxHostContainer=" !!!isForceAppend && pageModel && pageModel.componentRef? pageModel.componentRef :componentRef;context:compctx"></ng-template>
     <ng-content></ng-content>
 </div>
 <!-- [style.display]="visible ? 'block' : 'none'" -->

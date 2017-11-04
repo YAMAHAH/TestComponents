@@ -1,4 +1,4 @@
-import { NgModule, Component, ElementRef, AfterViewInit, OnDestroy, Input, Output, Renderer, EventEmitter } from '@angular/core';
+import { NgModule, Component, ElementRef, AfterViewInit, OnDestroy, Input, Output, Renderer, EventEmitter, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MenuItem } from '../common/api';
 import { Location } from '@angular/common';
@@ -10,12 +10,7 @@ import { TieredMenuSub } from './tieredMenuSub';
 
 @Component({
     selector: 'x-tieredMenu',
-    template: `
-        <div [ngClass]="{'ui-tieredmenu ui-menu ui-widget ui-widget-content ui-corner-all ui-helper-clearfix':true,'ui-menu-dynamic ui-shadow':popup}" 
-            [class]="styleClass" [ngStyle]="style">
-            <x-tieredMenuSub [item]="model" root="root"></x-tieredMenuSub>
-        </div>
-    `,
+    templateUrl:"./tieredmenu.html",
     providers: [DomHandler]
 })
 export class TieredMenu implements AfterViewInit, OnDestroy {
@@ -34,13 +29,13 @@ export class TieredMenu implements AfterViewInit, OnDestroy {
 
     preventDocumentDefault: any;
 
-    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer) { }
+    constructor(public el: ElementRef, public domHandler: DomHandler, public renderer: Renderer2) { }
 
     ngAfterViewInit() {
         this.container = this.el.nativeElement.children[0];
 
         if (this.popup) {
-            this.documentClickListener = this.renderer.listenGlobal('body', 'click', () => {
+            this.documentClickListener = this.renderer.listen('body', 'click', () => {
                 if (!this.preventDocumentDefault) {
                     this.hide();
                 }

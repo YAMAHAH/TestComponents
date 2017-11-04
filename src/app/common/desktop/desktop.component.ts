@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, Renderer2, Input } from '@angular/core';
 import { DesktopItem } from '../../Models/desktop-Item';
 import { Route, Router, ActivatedRoute } from '@angular/router';
 import { styleUntils } from '../../untils/style';
@@ -9,6 +9,7 @@ import { ShowTypeEnum } from '../../basic/show-type-enum';
 import { NavTabModel } from '../nav-tabs/NavTabModel';
 import { MenuItem } from '../../components/common/api';
 import { ContextMenu } from '../../components/contextmenu/contextmenu';
+import { DesktopLayoutContainerComponent } from '../layout/desktop-layout-container/desktop-layout-container.component';
 
 @Component({
     selector: 'x-desktop',
@@ -21,13 +22,16 @@ export class DesktopComponent implements OnInit, AfterViewInit {
     @ViewChild('desktopItemContextMenu') _itemContextMenu: ContextMenu;
     @ViewChild('desktopContextMenu') _desktopContextMenu: ContextMenu;
 
+    @ViewChild('gx-desktop-layout-container', { read: ElementRef }) _desktopLayoutContainerRef: ElementRef;
+
     get items() {
-        return this.appStore.commandLinks;
+        return this.globalService.commandLinks;
     }
     subSystem: string = "news";
     constructor(
-        private appStore: AppStoreService,
-        private activeRouter: ActivatedRoute, private changeDetectorRef: ChangeDetectorRef,
+        private globalService: AppStoreService,
+        private activeRouter: ActivatedRoute,
+        private renderer: Renderer2,
         private elementRef: ElementRef) {
         // this.activeRouter.data.subscribe((data: any) => {
         //     this.subSystem = data.subsystem;
@@ -110,6 +114,16 @@ export class DesktopComponent implements OnInit, AfterViewInit {
             command: (event) => console.log(event.data)
         },
         {
+            label: '按列排列',
+            icon: 'fa-refresh',
+            command: (event) => this.arrangementType = 'col'
+        },
+        {
+            label: '按行排列',
+            icon: 'fa-refresh',
+            command: (event) => this.arrangementType = 'row'
+        },
+        {
             label: '刷新',
             icon: 'fa-refresh',
             command: (event) => location.reload(true)
@@ -121,8 +135,9 @@ export class DesktopComponent implements OnInit, AfterViewInit {
         }
     ];
 
+    @Input() arrangementType: string = 'col';
+
     private async openItem(event: any) {
-        // let mainTabActions = new AppTaskBarActions();
         let navItem = event.item as DesktopItem;
         if (navItem.key.length < 8) {
             navItem.key = UUID.uuid(10, 10).toString();
@@ -134,13 +149,13 @@ export class DesktopComponent implements OnInit, AfterViewInit {
             favicon: navItem.favicon,
             outlet: navItem.outlet,
             active: false,
-            showTabContent: this.appStore.showType === ShowTypeEnum.tab ? true : false,
+            showTabContent: this.globalService.showType === ShowTypeEnum.tab ? true : false,
             path: navItem.path,
             daemon: false
         };
-        var result = await this.appStore.navTabManager.createNavTab(taskGrp);
+        var result = await this.globalService.navTabManager.createNavTab(taskGrp);
         result && result.createGroupList({
-            showType: this.appStore.showType || ShowTypeEnum.showForm,
+            showType: this.globalService.showType || ShowTypeEnum.showForm,
             resolve: { data: 'resolve data' }
         });
     }

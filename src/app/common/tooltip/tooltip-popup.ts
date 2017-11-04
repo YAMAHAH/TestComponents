@@ -8,6 +8,9 @@ export class TooltipPopup {
   @Input() cssClass: string;
   isOpen: boolean;
 
+   get contentIsTemplateRef(){
+     return typeof this.content === 'string' ? false:true;
+   }
   constructor(protected elementRef: ElementRef, protected renderer: Renderer) {
   }
 

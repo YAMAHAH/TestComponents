@@ -241,8 +241,8 @@ export class CoreDecorators {
      * @param key 
      */
     static logType(target: any, key: string) {
-        let t = Reflect.getMetadata("design:type", target, key);
-        console.log(`${key} type: ${t.name}`);
+        // let t = Reflect.getMetadata("design:type", target, key);
+        // console.log(`${key} type: ${t.name}`);
     }
     /**
      *  @logParameters // apply parameter decorator
@@ -253,9 +253,9 @@ export class CoreDecorators {
      * @param key 
      */
     static logParamTypes(target: any, key: string) {
-        let types = Reflect.getMetadata("design:paramtypes", target, key);
-        let s = types.map((a: any) => a.name).join();
-        console.log(`${key} param types: ${s}`);
+        // let types = Reflect.getMetadata("design:paramtypes", target, key);
+        // let s = types.map((a: any) => a.name).join();
+        // console.log(`${key} param types: ${s}`);
     }
     /**
      * Reflect.getMetadata("design:returntype", target, key);

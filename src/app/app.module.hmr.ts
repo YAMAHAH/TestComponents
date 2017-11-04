@@ -8,7 +8,6 @@ import { PageLoadingModule } from './common/page-loading/page-loading-module';
 import { rootRouterConfig } from './app.router';
 import { appRootProviders } from './app.service';
 import { StaticNewsModule } from './test/staticnews.module';
-import { PCLayoutComponent } from './pc.layout.component';
 import { LayoutModule } from './common/layout/layout-module';
 import { XYZUIModule } from './common/rebirth-ui.module';
 import { ToastyModule } from './common/toasty/index';
@@ -17,6 +16,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PageViewerModule } from './common/page-viewer/page-viewer.module';
 import { HttpClientModule } from '@angular/common/http';
 import { MediaQueriesModule } from './services/mediaquery/MediaQueriesModule';
+import { AppHmrComponent } from './app.hmr.comp';
+import { HMRLayoutComponent } from './hmr-layout.component';
+import { rootHMRRouterConfig } from './app-hmr.router';
 
 
 @NgModule({
@@ -26,14 +28,14 @@ import { MediaQueriesModule } from './services/mediaquery/MediaQueriesModule';
     PageLoadingModule.forRoot(),
     LayoutModule,
     StaticNewsModule,
-    RouterModule.forRoot(rootRouterConfig, { useHash: false }),
+    RouterModule.forRoot(rootHMRRouterConfig, { useHash: false }),
     XYZUIModule.forRoot(),
     ToastyModule.forRoot(),
     WebFormModule.forRoot(),
     PageViewerModule.forRoot(),
     MediaQueriesModule
   ],
-  declarations: [AppComponent, PCLayoutComponent],
+  declarations: [AppHmrComponent, HMRLayoutComponent],
   providers: [...appRootProviders]
 })
 export class AppHMRModule {

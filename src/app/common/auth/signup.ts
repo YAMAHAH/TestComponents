@@ -22,7 +22,7 @@ export class Signup implements OnInit {
         private elementRef: ElementRef) {
     }
 
-    signup(event: Event, username: string, password: string, avatar: string): void {
+    signup(event: Event, username: string, password: string, avatar?: string): void {
         event.preventDefault();
         this.authService.signup(username, password).then(() => {
             this.modalResult.emit({ 'action': 'signup', 'status': 'sucessful' });

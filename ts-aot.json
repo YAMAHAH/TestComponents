@@ -21,14 +21,23 @@
     },
     "include": [
         "./src/**/*.module.ts",
-        "./src/*.d.ts"
+        "./src/*.d.ts",
+        "./src/*.ts",
+        "./src/**/*.ts"
     ],
-
-    "angularCompilerOptions": {
-        "debug": false,
-        "genDir": "ngc",
-        "skipMetadataEmit": false
-    },
+    "exclude": [
+        ".src/app/app.module.hmr.ts",
+        "node_modules",
+        "*.d.ts",
+        "**/*-aot.ts",
+        "dist",
+        "aot"
+    ],
+    // "angularCompilerOptions": {
+    //     "debug": false,
+    //     "genDir": "ngc",
+    //     "skipMetadataEmit": false
+    // },
     "compileOnSave": false,
     "buildOnSave": false
 }

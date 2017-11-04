@@ -13,7 +13,9 @@ export class TieredMenuSub {
 
     @Input() root: boolean;
 
-    constructor(public domHandler: DomHandler, public router: Router, public location: Location) { }
+    constructor(public domHandler: DomHandler,
+        public router: Router
+    ) { }
 
     activeItem: Element;
 

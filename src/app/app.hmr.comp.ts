@@ -21,7 +21,7 @@ require("./app.scss");
     <router-outlet></router-outlet>
   `
 })
-export class AppComponent implements OnInit {
+export class AppHmrComponent implements OnInit {
     name = 'Angular App';
     constructor(private appStoreService: AppStoreService,
         private rebirthConfig: XYZUIConfig,

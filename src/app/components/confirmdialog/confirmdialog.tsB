@@ -10,10 +10,12 @@ import { DomHandler } from '../../common/dom/domhandler';
     selector: 'x-confirmDialog',
     template: `
         <div [ngClass]="{'ui-dialog ui-confirmdialog ui-widget ui-widget-content ui-corner-all ui-shadow':true,'ui-dialog-rtl':rtl}" 
-            [style.display]="visible ? 'block' : 'none'" [style.width.px]="width" [style.height.px]="height" (mousedown)="moveOnTop()" [@dialogState]="visible ? 'visible' : 'hidden'">
+            [style.display]="visible ? 'block' : 'none'" [style.width.px]="width" [style.height.px]="height" (mousedown)="moveOnTop()"
+             [@dialogState]="visible ? 'visible' : 'hidden'">
             <div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix ui-corner-top">
                 <span class="ui-dialog-title" *ngIf="header">{{header}}</span>
-                <a *ngIf="closable"  [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" href="#" role="button" (click)="hide($event)">
+                <a *ngIf="closable"  [ngClass]="{'ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all':true}" 
+                href="#" role="button" (click)="hide($event)">
                     <span class="fa fa-fw fa-close"></span>
                 </a>
             </div>
@@ -21,12 +23,12 @@ import { DomHandler } from '../../common/dom/domhandler';
                 <i [class]="icon"></i>
                 <span class="ui-confirmdialog-message">{{message}}</span>
             </div>
-            <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" *ngIf="footer">
+            <div *ngIf="footer" class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" >
                 <ng-content select="p-footer"></ng-content>
             </div>
-            <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" *ngIf="!footer">
-                <button type="button" pButton [icon]="rejectIcon" [label]="rejectLabel" (click)="reject()" *ngIf="rejectVisible"></button>
-                <button type="button" pButton [icon]="acceptIcon" [label]="acceptLabel" (click)="accept()" *ngIf="acceptVisible"></button>
+            <div *ngIf="!footer" class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix" >
+                <button *ngIf="rejectVisible" type="button" pButton [icon]="rejectIcon" [label]="rejectLabel" (click)="reject()" ></button>
+                <button *ngIf="acceptVisible" type="button" pButton [icon]="acceptIcon" [label]="acceptLabel" (click)="accept()" ></button>
             </div>
         </div>
     `,

@@ -6,7 +6,7 @@ import { PageLoadingService } from '../common/page-loading';
 import { LoadScriptService } from '../services/load-script-service';
 //let Snap = require("snapsvg");
 //let Draggabilly = require('draggabilly');
-let Snap :any;
+let Snap: any;
 @Component({
     selector: 'home',
     template: `
@@ -20,7 +20,7 @@ let Snap :any;
 export class HomeComponent implements OnInit, AfterViewInit {
     test$: Observable<number>;
     constructor(private router: Router,
-        private pageLoadService: PageLoadingService,
+        public pageLoadService: PageLoadingService,
         private loadScriptService: LoadScriptService
     ) {
         this.test$ = Observable.timer(1000, 1000);
@@ -79,7 +79,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             strokeWidth: 10,
             fillOpacity: 0
         }).click(function () {
-            Snap.animate(0, 360, function (val:number) {
+            Snap.animate(0, 360, function (val: number) {
                 table.transform("t" +
                     [
                         210 * Math.cos(Snap.rad(val + 90)),

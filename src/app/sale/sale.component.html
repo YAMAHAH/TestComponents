@@ -27,7 +27,7 @@
                 </gx-overlayPanel>
                 <hr>
                 <div gxKeyBinding='div9sdfddf596'>
-                    <x-dropdown [options]="cars" [(ngModel)]="selectedCar2" [style]="{'width':'250px'}">
+                    <x-dropdown [options]="cars" [(ngModel)]="selectedCar" [style]="{'width':'250px'}">
                         <gx-overlayPanel (onFocus)="op2.toggle($event)" (selectResult)="selectResult($event)" [componentOutlet]="componentOutlet" [context]="{data:'overlayPanel'}" [showCloseIcon]="false" [dismissable]="false" #op2>
                         </gx-overlayPanel>
                         <ng-template let-car pTemplate="item">
@@ -115,7 +115,7 @@
                     <div fxItem="none" [fxItem.lg]="testLg2" [fxItemClass]="['first', 'second']" fxItemHeight="65px">
                         <div style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">fxitem-col-4</div>
                     </div>
-                    <div fxItem="none" [fxItemClass]="{'x-custome-classes':true,'x-custome-order':1==2}">
+                    <div fxItem="none" [fxItemClass]="{'x-custome-classes':true,'x-custome-order':false}">
                         <div style="background: #00A0E9;padding: 5px 0;text-align: center;height:100%;">fxitem-col-4</div>
                     </div>
                     <div fxItem="auto" [fxItemClass]="{'class1 class2 class3' : true}">

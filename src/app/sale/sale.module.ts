@@ -146,8 +146,10 @@ export class TenantManageTemplate2 extends TemplateClassBase {
         SaleComponent, ColumnBodyComponent, DateColumnBodyComponent, CellEditorComponent
     ],
     providers: [
-        ...getClassProviders([TenantManageTemplate, TenantManageTemplate2]),
-        SaleOrderDataResolver
+        // ...getClassProviders([TenantManageTemplate, TenantManageTemplate2]),
+        { provide: TenantManageTemplate, useClass: TenantManageTemplate },
+        { provide: TenantManageTemplate2, useClass: TenantManageTemplate2 },
+        { provide: SaleOrderDataResolver, useClass: SaleOrderDataResolver }
     ]
 })
 export class SaleModule {

@@ -616,14 +616,14 @@ export class NavTabsComponent implements OnInit, AfterViewInit {
             command: (event) => console.log(event)
         }
     ];
-    onMenuPopup(event: Event, navTabModel: NavTabModel) {
+    onMenuPopup(event: Event, navTabModel?: NavTabModel) {
         event.stopPropagation();
         this.navTabModels.forEach(item => {
             item.checked = false;
         });
         this.selectedItems = [];
         this._popupMenuRef.toggle(event);
-        this.select(navTabModel);
+        // this.select(navTabModel);
         this.menuItemHandler();
     }
     onMenuItemClick(event: Event, navTabModel: NavTabModel) {

@@ -14,11 +14,11 @@ export class SplitButton implements OnInit, OnDestroy {
 
     @Input() model: MenuItem[];
 
-    @Input() icon: string;
+    @Input('icon') btnIcon: string;
 
     @Input() iconPos: string = 'left';
 
-    @Input() label: string;
+    @Input('label') btnLabel: string;
 
     @Output() onClick: EventEmitter<any> = new EventEmitter();
 

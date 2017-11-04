@@ -9,6 +9,9 @@ import { TooltipPopup } from '../tooltip/tooltip-popup';
 export class PopoverPopupComponent extends TooltipPopup {
   @Input() title: string | TemplateRef<any>;
 
+  get isTemplateRef() {
+    return typeof this.title === 'string' ? false : true;
+  }
   constructor(elementRef: ElementRef, renderer: Renderer) {
     super(elementRef, renderer);
   }

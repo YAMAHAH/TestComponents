@@ -1,6 +1,5 @@
-<x-desktop-layout-container (contextmenu)="desktop_contextmenu($event)" preLoad="true" [imgLazyLoad]="'/assets/img/win10.jpg'">
-    <x-desktop-item (contextmenu)="desktopItem_contextmenu($event,item)" (ItemDoubleClick)="itemDoubleClickHandler($event)" *ngFor="let item of items | filter:fCallback"
-        [item]="item"></x-desktop-item>
-</x-desktop-layout-container>
+<gx-desktop-layout-container style="width: 30px;" [style.flexFlow]="arrangementType=='col' ? 'column wrap' : 'row wrap'" (contextmenu)="desktop_contextmenu($event)" preLoad="true" [imgLazyLoad]="'/assets/img/win10.jpg'">
+    <gx-desktop-item (contextmenu)="desktopItem_contextmenu($event,item)" (ItemDoubleClick)="itemDoubleClickHandler($event)" *ngFor="let item of items | filter:fCallback" [item]="item"></gx-desktop-item>
+</gx-desktop-layout-container>
 <gx-contextMenu #desktopItemContextMenu [model]="desktopItemMenuItems"></gx-contextMenu>
 <gx-contextMenu #desktopContextMenu [model]="desktopMenuItems"></gx-contextMenu>
